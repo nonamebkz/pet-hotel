@@ -11,6 +11,7 @@ final class FileUploadService
         'profil' => ['image/jpeg', 'image/png', 'image/webp'],
         'kucing' => ['image/jpeg', 'image/png', 'image/webp'],
         'vaksin' => ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'],
+        'bukti_transfer' => ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'],
     ];
 
     /**

@@ -73,19 +73,20 @@ Lihat folder [diagrams/](./diagrams/README.md):
 - relasi: setiap kucing terhubung ke akun pelanggan (user_id), bukan data global petshop
 - catatan: data kucing dipakai ulang di fitur grooming, penitipan, dan pet care
 
-### layanan antar-jemput (global, hardcode — berlaku grooming & penitipan saja)
+### layanan antar-jemput (global — berlaku grooming & penitipan saja)
 
 - opsi di booking grooming & penitipan: **antar-jemput** atau **antar sendiri**
 - pet care: **hanya antar sendiri** (pelanggan bawa kucing sendiri ke petshop, tanpa opsi antar-jemput)
 - jika pilih antar-jemput → alamat profil pelanggan wajib lengkap
-- perhitungan jarak: dari alamat petshop (koordinat hardcode) ke alamat pelanggan
-- aturan biaya (hardcode, tidak bisa diubah dari dashboard):
-  - jarak ≤ 3 km → biaya antar-jemput **gratis** (Rp 0)
-  - jarak > 3 km → biaya tambahan = `(jarak - 3) × biaya per km`
-  - konstanta hardcode:
-    - `PICKUP_FREE_RADIUS_KM = 3`
-    - `PICKUP_EXTRA_FEE_PER_KM = 5000` (contoh: Rp 5.000 per km di atas 3 km)
-    - `PETSHOP_LAT`, `PETSHOP_LNG` (lokasi petshop)
+- perhitungan jarak: dari koordinat petshop (pengaturan bisnis) ke alamat pelanggan
+- aturan biaya (dikelola owner lewat **Pengaturan Bisnis**; default instalasi dari `.env`):
+  - jarak ≤ radius gratis → biaya antar-jemput **gratis** (Rp 0)
+  - jarak > radius gratis → biaya tambahan = `(jarak - radius) × biaya per km`
+  - nilai yang dapat diubah owner:
+    - lokasi petshop (`petshop_lat`, `petshop_lng`) — pilih via peta
+    - `pickup_free_radius_km` (default 3)
+    - `pickup_extra_fee_per_km` (default Rp 5.000)
+- perubahan pengaturan **tidak retroaktif** — booking lama tetap memakai snapshot jarak & biaya saat booking dibuat
 - tampilkan estimasi jarak & biaya antar-jemput saat pelanggan pilih opsi antar-jemput (sebelum submit booking)
 - biaya antar-jemput masuk rincian tagihan terpisah (bukan digabung ke harga layanan)
 - jika pilih **antar sendiri** → biaya antar-jemput = Rp 0
@@ -106,7 +107,7 @@ Lihat folder [diagrams/](./diagrams/README.md):
   - pilih jenis grooming (lengkap / jamur / kutu.)
   - pilih tanggal grooming (hanya tanggal dengan kuota tersisa)
   - pilih opsi antar-jemput atau antar sendiri
-    - jika antar-jemput: tampilkan jarak & biaya tambahan (gratis ≤ 3 km, charge di atas 3 km)
+    - jika antar-jemput: tampilkan jarak & biaya tambahan (gratis ≤ radius gratis, charge di atas radius)
   - catatan khusus (opsional)
   - ringkasan biaya (harga grooming + biaya antar-jemput jika ada)
 - melihat status booking
@@ -123,24 +124,20 @@ Lihat folder [diagrams/](./diagrams/README.md):
 
 ### penitipan kucing (pet hotel)
 
-- syarat vaksin pet hotel (hardcode di sistem, tidak bisa diubah dari dashboard)
-  - wajib saat booking pet hotel: minimal **1 riwayat vaksin** dengan **jenis vaksin** & **tanggal vaksin** terisi
-  - upload sertifikat / bukti vaksin **tetap opsional** (tidak wajib upload meskipun untuk pet hotel)
-  - konstanta hardcode: `MIN_VACCINATION_COUNT = 1`
+- syarat vaksin pet hotel (dikelola owner lewat **Pengaturan Bisnis**; default `MIN_VACCINATION_COUNT = 1`)
+  - wajib saat booking pet hotel: minimal **1 riwayat vaksin** dengan **jenis vaksin** & **tanggal vaksin** terisi (jumlah minimum dapat diubah owner)
   - validasi saat pilih kucing di form penitipan:
     - jika riwayat vaksin kosong / < 1 entri lengkap → kucing tidak bisa dipilih / form ditolak
     - tampilkan pesan: lengkapi riwayat vaksin (jenis & tanggal) di menu "Kucing Saya" terlebih dahulu
   - validasi saat konfirmasi staff:
     - jika data vaksin tidak lengkap → booking **ditolak**
   - dropdown kucing hanya menampilkan kucing yang memenuhi syarat vaksin (atau tampilkan semua dengan status eligible / belum eligible)
-- promo penitipan (hardcode di sistem, tidak bisa diubah dari dashboard)
-  - syarat: durasi penitipan > 7 hari (selisih tanggal check-in & check-out)
-  - potongan: 10% dari total tagihan penitipan
+- promo penitipan (dikelola owner lewat **Pengaturan Bisnis**; default 7 hari / 10%)
+  - syarat: durasi penitipan > minimal hari promo (default 7 hari)
+  - potongan: persen diskon dari pengaturan (default 10%) dari total tagihan penitipan
   - berlaku 1 kali per akun pelanggan (berlaku setiap kali ada penitipan)
-  - tidak kumulatif: jika durasi 14 hari atau lebih, tetap hanya potongan 10% (bukan 20%)
-  - konstanta hardcode:
-    - `PROMO_MIN_DAYS = 7`
-    - `PROMO_DISCOUNT_PERCENT = 10`
+  - tidak kumulatif: jika durasi 14 hari atau lebih, tetap hanya potongan sesuai persen promo (bukan ganda)
+  - nilai yang dapat diubah owner: `promo_min_days`, `promo_discount_percent`
   - saat ajukan penitipan: tampilkan estimasi harga normal & harga setelah promo (jika eligible)
 - ajukan penitipan (form)
   - pilih kucing (dari "Kucing Saya" — hanya kucing dengan riwayat vaksin ≥ 1)
@@ -149,7 +146,7 @@ Lihat folder [diagrams/](./diagrams/README.md):
   - input lama penitipan dalam hari
   - catatan makan & kebiasaan kucing
   - opsi antar-jemput atau antar sendiri
-    - jika antar-jemput: tampilkan jarak & biaya tambahan (gratis ≤ 3 km, charge di atas 3 km)
+    - jika antar-jemput: tampilkan jarak & biaya tambahan (gratis ≤ radius gratis, charge di atas radius)
   - ringkasan biaya (subtotal penitipan, potongan promo jika ada, biaya antar-jemput jika ada, total akhir)
 - melihat status penitipan
   - menunggu konfirmasi
@@ -233,15 +230,15 @@ Lihat folder [diagrams/](./diagrams/README.md):
 - rincian tagihan:
   - subtotal layanan
   - potongan promo penitipan 10% (jika applicable — **hanya booking awal**, bukan perpanjangan)
-  - biaya antar-jemput (hanya grooming & penitipan booking awal; Rp 0 jika ≤ 3 km atau antar sendiri; charge jika > 3 km)
+  - biaya antar-jemput (hanya grooming & penitipan booking awal; Rp 0 jika ≤ radius gratis atau antar sendiri; charge jika > radius gratis)
   - total bayar
 - metode pembayaran: **transfer bank manual saja** (tidak ada payment gateway)
-  - tampilkan rekening tujuan petshop (hardcode: bank, no. rekening, atas nama)
+  - tampilkan rekening tujuan petshop (dari pengaturan bisnis: bank, no. rekening, atas nama)
   - pelanggan transfer sesuai total tagihan
   - **wajib upload bukti transfer** (form tidak bisa disubmit tanpa bukti)
   - setelah upload → status **menunggu verifikasi staff**
   - booking dianggap belum bayar sampai staff menyetujui bukti transfer
-- batas waktu pembayaran setelah booking disetujui staff (berlaku grooming & penitipan; juga tagihan perpanjangan setelah staff konfirmasi perpanjangan — **tidak berlaku pet care**)
+- batas waktu pembayaran setelah booking disetujui staff (nilai dari pengaturan bisnis; default 24 jam; berlaku grooming & penitipan; juga tagihan perpanjangan setelah staff konfirmasi perpanjangan — **tidak berlaku pet care**)
 - jika lewat batas waktu → booking / permintaan perpanjangan otomatis dibatalkan & kuota dikembalikan
 - unduh invoice / struk setelah pembayaran diverifikasi staff
 - riwayat transaksi (grooming, penitipan, perpanjangan penitipan)
@@ -251,8 +248,8 @@ Lihat folder [diagrams/](./diagrams/README.md):
 - dua skenario pembatalan:
   - **belum terkonfirmasi / belum bayar** → pelanggan batalkan langsung dari app
   - **sudah terkonfirmasi & sudah bayar (perlu refund)** → pelanggan **tidak bisa** batalkan otomatis dari app
-- fitur **Hubungi Kami** (hardcode)
-  - tombol/link ke WhatsApp: `https://wa.me/{PETSHOP_WHATSAPP}` (konstanta hardcode)
+- fitur **Hubungi Kami**
+  - tombol/link ke WhatsApp: `https://wa.me/{petshop_whatsapp}` (nomor dari pengaturan bisnis)
   - tampilkan di halaman detail booking & menu bantuan
   - pelanggan hubungi via WhatsApp, sampaikan ID booking & alasan pembatalan
   - refund diproses manual oleh staff/owner (transfer balik) setelah verifikasi
@@ -302,6 +299,17 @@ Lihat folder [diagrams/](./diagrams/README.md):
 - nonaktifkan / aktifkan kembali akun staff
 - owner **tidak bisa** dihapus / dinonaktifkan oleh staff
 
+### pengaturan bisnis petshop (khusus owner)
+
+- lihat & ubah pengaturan bisnis petshop (`/admin/pengaturan`)
+- grup pengaturan:
+  - **lokasi petshop** — koordinat via peta (untuk hitung jarak antar-jemput)
+  - **antar-jemput** — radius gratis (km), biaya per km tambahan
+  - **pembayaran** — batas waktu pembayaran (jam), rekening bank tujuan transfer
+  - **promo & lainnya** — minimal hari promo, persen diskon, minimal vaksin pet hotel, nomor WhatsApp
+- default instalasi dari `.env`; setelah disimpan owner, nilai di database menjadi sumber kebenaran runtime
+- perubahan tidak mempengaruhi booking/transaksi yang sudah ada (snapshot tetap)
+
 ### akses operasional
 
 - owner memiliki **semua fitur dashboard staff** (grooming, penitipan, pet care, laporan, dll.)
@@ -343,7 +351,7 @@ Lihat folder [diagrams/](./diagrams/README.md):
 
 ### penitipan kucing (pet hotel)
 
-- promo penitipan (read-only, hardcode)
+- promo penitipan (read-only untuk staff — lihat apakah booking memakai promo dari pengaturan bisnis)
   - lihat apakah booking memakai promo 10% (durasi ≥ 7 hari & pelanggan belum pernah pakai promo)
   - lihat rincian: subtotal, potongan promo, biaya antar-jemput, total akhir pada detail booking
 - melihat daftar booking penitipan (filter: tanggal, status)

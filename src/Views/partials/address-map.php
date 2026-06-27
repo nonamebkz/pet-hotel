@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 $mapLat = old('latitude', $latitude ?? null);
 $mapLng = old('longitude', $longitude ?? null);
-$defaultLat = config('app')['petshop_lat'];
-$defaultLng = config('app')['petshop_lng'];
+$defaultLat = app_settings('petshop_lat');
+$defaultLng = app_settings('petshop_lng');
 $hasCoords = $mapLat !== null && $mapLat !== '' && $mapLng !== null && $mapLng !== '';
 ?>
 <div class="space-y-2">

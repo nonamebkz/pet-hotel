@@ -13,13 +13,20 @@ use App\Core\Csrf;
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="min-h-screen bg-gray-100">
-    <nav class="bg-slate-800 text-white">
+    <nav class="bg-slate-800 text-white print:hidden">
         <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
             <div class="flex items-center gap-6">
                 <a href="/admin/dashboard" class="font-bold">Petshop Admin</a>
                 <a href="/admin/dashboard" class="text-sm text-slate-300 hover:text-white">Dashboard</a>
+                <a href="/admin/pet-care/layanan" class="text-sm text-slate-300 hover:text-white">Pet Care</a>
+                <a href="/admin/grooming/layanan" class="text-sm text-slate-300 hover:text-white">Grooming</a>
+                <a href="/admin/penitipan/paket" class="text-sm text-slate-300 hover:text-white">Penitipan</a>
+                <a href="/admin/laporan" class="text-sm text-slate-300 hover:text-white">Laporan</a>
+                <a href="/admin/grooming/pembayaran" class="text-sm text-slate-300 hover:text-white">Verifikasi Grooming</a>
+                <a href="/admin/penitipan/pembayaran" class="text-sm text-slate-300 hover:text-white">Verifikasi Penitipan</a>
                 <?php if (($role ?? null)?->value === 'OWNER'): ?>
                     <a href="/admin/staff" class="text-sm text-slate-300 hover:text-white">Manajemen Staff</a>
+                    <a href="/admin/pengaturan" class="text-sm text-slate-300 hover:text-white">Pengaturan</a>
                 <?php endif; ?>
             </div>
             <div class="flex items-center gap-4">
@@ -33,8 +40,10 @@ use App\Core\Csrf;
             </div>
         </div>
     </nav>
-    <main class="max-w-6xl mx-auto px-4 py-8">
-        <?php require __DIR__ . '/../partials/flash.php'; ?>
+    <main class="max-w-6xl mx-auto px-4 py-8 print:max-w-none print:px-0">
+        <div class="print:hidden">
+            <?php require __DIR__ . '/../partials/flash.php'; ?>
+        </div>
         <?= $content ?? '' ?>
     </main>
 </body>

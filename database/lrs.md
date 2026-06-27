@@ -612,6 +612,31 @@ Notifikasi in-app untuk pelanggan dan staff.
 | staff | bukti_transfer | 1 : N | Staff verifikasi bukti |
 | staff | monitoring_penitipan | 1 : N | Staff input monitoring |
 | staff | perpanjangan_penitipan | 1 : N | Staff konfirmasi/tolak perpanjangan |
+| staff | pengaturan_petshop | 1 : 0..1 | Owner terakhir mengubah pengaturan |
+
+---
+
+## 20. Tabel `pengaturan_petshop`
+
+Pengaturan bisnis petshop (single row). Default instalasi dari `.env`; owner mengubah lewat `/admin/pengaturan`.
+
+| No | Nama Field | Tipe Data | Panjang | Null | Keterangan | Deskripsi |
+|----|------------|-----------|---------|------|------------|-----------|
+| 1 | id | UUID | — | Tidak | PK | Identitas unik baris pengaturan |
+| 2 | petshop_lat | DECIMAL | 10,8 | Tidak | — | Koordinat lintang petshop |
+| 3 | petshop_lng | DECIMAL | 11,8 | Tidak | — | Koordinat bujur petshop |
+| 4 | pickup_free_radius_km | DECIMAL | 5,2 | Tidak | DF 3 | Radius gratis antar-jemput (km) |
+| 5 | pickup_extra_fee_per_km | INT | — | Tidak | DF 5000 | Biaya per km di atas radius (Rp) |
+| 6 | payment_deadline_hours | INT | — | Tidak | DF 24 | Batas waktu bayar setelah konfirmasi (jam) |
+| 7 | bank_name | VARCHAR | 50 | Tidak | — | Nama bank tujuan transfer |
+| 8 | bank_account_number | VARCHAR | 30 | Tidak | — | Nomor rekening |
+| 9 | bank_account_name | VARCHAR | 100 | Tidak | — | Atas nama rekening |
+| 10 | promo_min_days | INT | — | Tidak | DF 7 | Minimal hari promo penitipan |
+| 11 | promo_discount_percent | INT | — | Tidak | DF 10 | Persen diskon promo penitipan |
+| 12 | min_vaccination_count | INT | — | Tidak | DF 1 | Minimal riwayat vaksin pet hotel |
+| 13 | petshop_whatsapp | VARCHAR | 20 | Tidak | — | Nomor WhatsApp (format 62…) |
+| 14 | updated_by_staff_id | UUID | — | Ya | FK → staff.id | Staff/owner terakhir mengubah |
+| 15 | updated_at | DATETIME | — | Tidak | DF | Waktu terakhir diubah |
 
 ---
 

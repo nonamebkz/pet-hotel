@@ -64,3 +64,32 @@ function e(?string $value): string
 {
     return htmlspecialchars($value ?? '', ENT_QUOTES, 'UTF-8');
 }
+
+/** @return array<string, mixed>|mixed */
+function app_settings(?string $key = null): mixed
+{
+    $service = new \App\Services\AppSettingsService();
+
+    if ($key === null) {
+        return $service->all();
+    }
+
+    return $service->get($key);
+}
+
+function whatsapp_url(?string $prefillMessage = null): string
+{
+    $number = preg_replace('/\D+/', '', (string) app_settings('petshop_whatsapp'));
+
+    if ($number === '') {
+        return '#';
+    }
+
+    $url = 'https://wa.me/' . $number;
+
+    if ($prefillMessage !== null && $prefillMessage !== '') {
+        $url .= '?text=' . rawurlencode($prefillMessage);
+    }
+
+    return $url;
+}

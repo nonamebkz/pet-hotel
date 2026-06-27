@@ -1,0 +1,37 @@
+@startuml sequence-pengaturan-petshop
+skinparam sequenceMessageAlign center
+skinparam responseMessageBelowArrow true
+
+title Sequence Diagram — Pengaturan Bisnis Petshop (Owner)
+
+actor Owner
+participant "Aplikasi Web\n(Admin)" as App
+participant "Backend API" as API
+database "Database" as DB
+
+Owner -> App : Buka /admin/pengaturan
+App -> API : GET pengaturan (auth owner)
+API -> DB : SELECT pengaturan_petshop
+DB --> API : row atau fallback .env
+API --> App : Form pengaturan terisi
+App --> Owner : Tampilkan form (peta, antar-jemput, bank, promo, WA)
+
+Owner -> App : Submit perubahan
+App -> API : POST /admin/pengaturan (CSRF)
+API -> API : Validasi field
+alt Valid
+  API -> DB : UPSERT pengaturan_petshop
+  API -> API : clearCache AppSettingsService
+  API --> App : success flash
+  App --> Owner : Redirect form + pesan sukses
+else Tidak valid
+  API --> App : errors per field
+  App --> Owner : Form dengan pesan error
+end
+
+note over Owner, DB
+  Perubahan hanya memengaruhi estimasi & booking baru.
+  Booking lama tetap memakai snapshot jarak/biaya.
+end note
+
+@enduml

@@ -14,7 +14,7 @@ Diagram urutan interaksi berdasarkan [idea.md](../../idea.md) dan [activity diag
 
 > **Preview:** Gunakan ekstensi PlantUML di VS Code/Cursor, atau render di [plantuml.com](https://www.plantuml.com/plantuml/uml).
 >
-> File `.puml` terpisah: `sequence-autentikasi-pelanggan.puml`, `sequence-autentikasi-staff.puml`, `sequence-data-kucing.puml`, `sequence-booking-grooming.puml`, `sequence-booking-penitipan.puml`, `sequence-booking-petcare.puml`, `sequence-pembayaran.puml`, `sequence-pembatalan-refund.puml`, `sequence-monitoring-penitipan.puml`, `sequence-perpanjangan-penitipan.puml`, `sequence-manajemen-staff-owner.puml`, `sequence-laporan.puml`
+> File `.puml` terpisah: `sequence-autentikasi-pelanggan.puml`, `sequence-autentikasi-staff.puml`, `sequence-data-kucing.puml`, `sequence-booking-grooming.puml`, `sequence-booking-penitipan.puml`, `sequence-booking-petcare.puml`, `sequence-pembayaran.puml`, `sequence-pembatalan-refund.puml`, `sequence-monitoring-penitipan.puml`, `sequence-perpanjangan-penitipan.puml`, `sequence-manajemen-staff-owner.puml`, `sequence-pengaturan-petshop.puml`, `sequence-laporan.puml`
 
 ---
 
@@ -33,7 +33,8 @@ Diagram urutan interaksi berdasarkan [idea.md](../../idea.md) dan [activity diag
 | 9 | Monitoring Penitipan | Staff, Pelanggan | [sequence-monitoring-penitipan.puml](./sequence-monitoring-penitipan.puml) |
 | 10 | Perpanjangan Penitipan | Pelanggan, Staff | [sequence-perpanjangan-penitipan.puml](./sequence-perpanjangan-penitipan.puml) |
 | 11 | Manajemen Staff (Owner) | Owner | [sequence-manajemen-staff-owner.puml](./sequence-manajemen-staff-owner.puml) |
-| 12 | Laporan (Dashboard Admin) | Staff, Owner | [sequence-laporan.puml](./sequence-laporan.puml) |
+| 12 | Pengaturan Bisnis Petshop (Owner) | Owner | [sequence-pengaturan-petshop.puml](./sequence-pengaturan-petshop.puml) |
+| 13 | Laporan (Dashboard Admin) | Staff, Owner | [sequence-laporan.puml](./sequence-laporan.puml) |
 
 ---
 

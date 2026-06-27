@@ -22,6 +22,11 @@ rectangle "Dashboard Owner" {
     usecase "Aktifkan / Nonaktifkan\nAkun Staff" as UC_AktifStaff
   }
 
+  rectangle "Pengaturan Bisnis Petshop\n(Khusus Owner)" {
+    usecase "Lihat Pengaturan Bisnis" as UC_LihatPengaturan
+    usecase "Ubah Pengaturan Bisnis" as UC_UbahPengaturan
+  }
+
   rectangle "Akses Operasional\n(Diwarisi dari Staff)" {
     usecase "Semua Fitur\nDashboard Staff" as UC_OpsAll
   }
@@ -35,6 +40,8 @@ Owner --> UC_TambahStaff
 Owner --> UC_EditStaff
 Owner --> UC_ResetPwdStaff
 Owner --> UC_AktifStaff
+Owner --> UC_LihatPengaturan
+Owner --> UC_UbahPengaturan
 Owner --> UC_OpsAll
 
 Staff --> UC_OpsAll

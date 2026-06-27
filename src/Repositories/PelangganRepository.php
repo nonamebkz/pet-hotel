@@ -94,4 +94,12 @@ final class PelangganRepository
             'foto_profil_url' => $fotoProfilUrl,
         ]);
     }
+
+    public function markPromoPenitipanUsed(string $id, PDO $pdo): void
+    {
+        $stmt = $pdo->prepare(
+            'UPDATE pelanggan SET pernah_pakai_promo_penitipan = 1 WHERE id = :id'
+        );
+        $stmt->execute(['id' => $id]);
+    }
 }

@@ -159,6 +159,35 @@ erDiagram
 | **pelanggan** | Akun pelanggan; autentikasi terpisah dari staff/owner |
 | **staff** | Akun internal; kolom `role = OWNER` untuk pemilik bisnis (generalisasi Owner → Staff) |
 
+### Pengaturan bisnis
+
+```mermaid
+erDiagram
+    staff ||--o| pengaturan_petshop : "updated_by"
+
+    pengaturan_petshop {
+        uuid id PK
+        decimal_10_8 petshop_lat "NOT NULL"
+        decimal_11_8 petshop_lng "NOT NULL"
+        decimal pickup_free_radius_km "DEFAULT 3"
+        int pickup_extra_fee_per_km "DEFAULT 5000"
+        int payment_deadline_hours "DEFAULT 24"
+        varchar bank_name "NOT NULL"
+        varchar bank_account_number "NOT NULL"
+        varchar bank_account_name "NOT NULL"
+        int promo_min_days "DEFAULT 7"
+        int promo_discount_percent "DEFAULT 10"
+        int min_vaccination_count "DEFAULT 1"
+        varchar petshop_whatsapp "NOT NULL"
+        uuid updated_by_staff_id FK
+        timestamptz updated_at
+    }
+```
+
+| Entitas | Keterangan |
+|---------|------------|
+| **pengaturan_petshop** | Single-row settings; owner edit via `/admin/pengaturan`; runtime via `AppSettingsService` |
+
 ---
 
 ## 3. Modul Data Kucing
@@ -594,18 +623,26 @@ erDiagram
 | `tipe_penerima` | `PELANGGAN`, `STAFF` |
 | `jenis_notifikasi` | `BOOKING_DISETUJUI`, `BOOKING_DITOLAK`, `JAM_GROOMING_DIUPDATE`, `REMINDER_PEMBAYARAN`, `PEMBAYARAN_JATUH_TEMPO`, `MONITORING_PENITIPAN`, `LAYANAN_SELESAI`, `BOOKING_DIBATALKAN`, `STATUS_REFUND`, `PERPANJANGAN_PENITIPAN_MENUNGGU_KONFIRMASI`, `PERPANJANGAN_PENITIPAN_DISETUJUI`, `PERPANJANGAN_PENITIPAN_DITOLAK`, `PERPANJANGAN_PENITIPAN_MENUNGGU_PEMBAYARAN` |
 
-### Konstanta hardcode (bukan tabel)
+### Konstanta hardcode (bukan tabel — infra / bootstrap)
 
 | Konstanta | Nilai | Dipakai di |
 |-----------|-------|------------|
-| `PICKUP_FREE_RADIUS_KM` | 3 | Grooming, Penitipan |
-| `PICKUP_EXTRA_FEE_PER_KM` | 5000 | Grooming, Penitipan |
-| `PETSHOP_LAT`, `PETSHOP_LNG` | koordinat | Hitung jarak |
-| `MIN_VACCINATION_COUNT` | 1 | Validasi pet hotel |
-| `PROMO_MIN_DAYS` | 7 | Promo penitipan |
-| `PROMO_DISCOUNT_PERCENT` | 10 | Promo penitipan |
-| `PETSHOP_WHATSAPP` | nomor WA | Hubungi Kami |
-| Rekening bank | hardcode app | Transfer manual |
+| `GEOCODING_USER_AGENT` | string | Geocoding Nominatim |
+| `GEOCODING_TIMEOUT` | detik | Geocoding |
+| `UPLOAD_MAX_BYTES` | bytes | Upload file |
+
+### Pengaturan bisnis (tabel `pengaturan_petshop` — default dari `.env`)
+
+| Field | Default | Dipakai di |
+|-------|---------|------------|
+| `petshop_lat`, `petshop_lng` | koordinat | Hitung jarak antar-jemput |
+| `pickup_free_radius_km` | 3 | Grooming, Penitipan |
+| `pickup_extra_fee_per_km` | 5000 | Grooming, Penitipan |
+| `payment_deadline_hours` | 24 | Grooming, Penitipan, perpanjangan |
+| `bank_name`, `bank_account_number`, `bank_account_name` | rekening | Transfer manual |
+| `promo_min_days`, `promo_discount_percent` | 7 / 10 | Promo penitipan |
+| `min_vaccination_count` | 1 | Validasi pet hotel |
+| `petshop_whatsapp` | nomor WA | Hubungi Kami / refund |
 
 ---
 

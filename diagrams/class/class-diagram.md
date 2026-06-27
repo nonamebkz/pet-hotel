@@ -824,21 +824,42 @@ classDiagram
 
 ## 9. Layanan Antar-Jemput (Value Object / Service)
 
-Logika antar-jemput hardcode; berlaku grooming & penitipan saja.
+Logika antar-jemput; berlaku grooming & penitipan saja. Konstanta dibaca dari `AppSettingsService` (DB + fallback `.env`).
 
 ```mermaid
 classDiagram
     direction LR
 
-    class LayananAntarJemput {
+    class AppSettingsService {
         <<service>>
-        +Decimal PETSHOP_LAT
-        +Decimal PETSHOP_LNG
-        +Int PICKUP_FREE_RADIUS_KM
-        +Decimal PICKUP_EXTRA_FEE_PER_KM
-        +hitungJarak(alamatPelanggan) Decimal
+        +all() Map
+        +get(key) Any
+        +clearCache()
+    }
+
+    class PengaturanPetshop {
+        <<entity>>
+        +UUID id
+        +Decimal petshopLat
+        +Decimal petshopLng
+        +Decimal pickupFreeRadiusKm
+        +Int pickupExtraFeePerKm
+        +Int paymentDeadlineHours
+        +String bankName
+        +String bankAccountNumber
+        +String bankAccountName
+        +Int promoMinDays
+        +Int promoDiscountPercent
+        +Int minVaccinationCount
+        +String petshopWhatsapp
+        +UUID updatedByStaffId
+    }
+
+    class LayananAntarJemputService {
+        <<service>>
+        +hitungJarakKm(lat, lng) Decimal
         +hitungBiaya(jarakKm) Decimal
-        +validasiAlamatLengkap(pelanggan) Boolean
+        +estimasiUntukPelanggan(pelanggan) Map
     }
 
     class Pelanggan {
@@ -859,11 +880,13 @@ classDiagram
         +Decimal biayaAntarJemput
     }
 
-    LayananAntarJemput ..> Pelanggan : baca alamat
-    LayananAntarJemput ..> BookingGrooming : hitung biaya
-    LayananAntarJemput ..> BookingPenitipan : hitung biaya
+    AppSettingsService ..> PengaturanPetshop : baca DB
+    LayananAntarJemputService ..> AppSettingsService : koordinat & radius
+    LayananAntarJemputService ..> Pelanggan : baca alamat
+    LayananAntarJemputService ..> BookingGrooming : hitung biaya
+    LayananAntarJemputService ..> BookingPenitipan : hitung biaya
 
-    note for LayananAntarJemput "Gratis jika jarak ≤ 3 km; charge (jarak-3)×Rp5.000 jika > 3 km"
+    note for LayananAntarJemputService "Gratis jika jarak ≤ radius gratis; charge (jarak-radius)×feePerKm"
 ```
 
 ---
@@ -1017,7 +1040,9 @@ classDiagram
 | **BuktiTransfer** | file, status verifikasi, catatan penolakan | wajib upload pelanggan |
 | **Invoice** | nomor, file | setelah pembayaran lunas |
 | **Notifikasi** | jenis, judul, pesan, sudah dibaca | trigger in-app (+ email opsional) |
-| **LayananAntarJemput** | konstanta jarak & biaya | service/helper, bukan entitas DB |
+| **LayananAntarJemputService** | hitung jarak & biaya pickup | baca AppSettingsService + alamat Pelanggan |
+| **AppSettingsService** | merge DB + fallback .env | runtime pengaturan bisnis |
+| **PengaturanPetshop** | lokasi, pickup, bank, promo, WA | 1 row; updated_by Staff (owner) |
 
 ---
 
@@ -1031,18 +1056,17 @@ classDiagram
 | `<<enumeration>>` | Tipe enum |
 | `<<service>>` | Kelas layanan / helper (bukan entitas persisten) |
 
-**Konstanta hardcode (bukan kelas DB):**
+**Pengaturan bisnis (tabel `pengaturan_petshop`; default bootstrap dari `.env`):**
 
-| Konstanta | Nilai | Dipakai di |
-|-----------|-------|------------|
-| `PICKUP_FREE_RADIUS_KM` | 3 | Grooming, Penitipan |
-| `PICKUP_EXTRA_FEE_PER_KM` | 5000 | Grooming, Penitipan |
-| `PETSHOP_LAT`, `PETSHOP_LNG` | koordinat petshop | Hitung jarak antar-jemput |
-| `MIN_VACCINATION_COUNT` | 1 | Validasi booking pet hotel |
-| `PROMO_MIN_DAYS` | 7 | Promo penitipan 10% |
-| `PROMO_DISCOUNT_PERCENT` | 10 | Promo penitipan |
-| `PETSHOP_WHATSAPP` | nomor WA | Link Hubungi Kami (refund manual) |
-| Rekening bank petshop | bank, no rekening, atas nama | Halaman transfer manual |
+| Field | Default | Dipakai di |
+|-------|---------|------------|
+| `petshop_lat`, `petshop_lng` | koordinat | Hitung jarak antar-jemput |
+| `pickup_free_radius_km`, `pickup_extra_fee_per_km` | 3 / 5000 | Grooming, Penitipan |
+| `payment_deadline_hours` | 24 | Batas waktu bayar |
+| Rekening bank | BCA, dll. | Transfer manual |
+| `promo_min_days`, `promo_discount_percent` | 7 / 10 | Promo penitipan |
+| `min_vaccination_count` | 1 | Validasi pet hotel |
+| `petshop_whatsapp` | nomor WA | Hubungi Kami (refund manual) |
 
 **Aturan bisnis penting:**
 - Setiap booking awal (grooming, penitipan) menghasilkan **1 Transaksi**; **pet care tidak ada transaksi** (bayar di loket).

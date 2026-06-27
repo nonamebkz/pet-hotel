@@ -25,9 +25,15 @@ Spesifikasi fitur lengkap: [idea.md](idea.md)
 ```
 petshop/
 ├── README.md
+├── docker-compose.yml      # Deployment MariaDB + PHP Apache
+├── Dockerfile
 ├── composer.json
 ├── .env                    # Konfigurasi lokal (jangan commit)
 ├── .env.example
+├── .env.docker.example     # Template env untuk Docker Compose
+├── scripts/
+│   ├── db-init.sh          # Import schema & seed (Docker / lokal)
+│   └── docker-up.sh        # Build, up, init DB
 ├── public/
 │   ├── index.php           # Front controller — semua request masuk sini
 │   └── .htaccess
@@ -62,7 +68,7 @@ petshop/
 |------|----------|--------|--------------|------------|
 | **Pelanggan** | `pelanggan` | Dashboard pelanggan | `/`, `/login`, `/register`, `/dashboard`, `/change-password` | `auth:pelanggan` |
 | **Staff** | `staff` (`role=STAFF`) | Dashboard internal | `/admin/*` | `auth:staff` |
-| **Owner** | `staff` (`role=OWNER`) | Dashboard internal + manajemen staff (fase berikutnya) | `/admin/*` | `auth:staff`, `role:owner` (route khusus) |
+| **Owner** | `staff` (`role=OWNER`) | Dashboard internal + manajemen staff & pengaturan bisnis | `/admin/*` | `auth:staff`, `role:owner` (route khusus) |
 
 **Aturan akses:**
 - Pelanggan **tidak bisa** akses `/admin/*`
@@ -106,11 +112,52 @@ DB_PASSWORD=
 
 SESSION_LIFETIME=120
 PASSWORD_RESET_EXPIRY=60
+
+# Pengaturan bisnis (default instalasi — owner dapat ubah lewat /admin/pengaturan)
+PETSHOP_LAT=-6.2088
+PETSHOP_LNG=106.8456
+PICKUP_FREE_RADIUS_KM=3
+PICKUP_EXTRA_FEE_PER_KM=5000
+PAYMENT_DEADLINE_HOURS=24
+PETSHOP_BANK_NAME=BCA
+PETSHOP_BANK_ACCOUNT=1234567890
+PETSHOP_BANK_ACCOUNT_NAME=Petshop Sejahtera
+PROMO_MIN_DAYS=7
+PROMO_DISCOUNT_PERCENT=10
+MIN_VACCINATION_COUNT=1
+PETSHOP_WHATSAPP=6281234567890
 ```
+
+Nilai bisnis di atas dipakai sebagai **default bootstrap**. Setelah owner menyimpan pengaturan lewat dashboard, database (`pengaturan_petshop`) menjadi sumber kebenaran runtime.
 
 ---
 
 ## Setup Lokal
+
+### Opsi A — Docker (disarankan untuk server)
+
+```bash
+cp .env.docker.example .env
+# Sesuaikan APP_URL, DB_PASSWORD, APP_DEBUG=false untuk production
+
+chmod +x scripts/*.sh
+./scripts/docker-up.sh
+```
+
+Perintah lain:
+
+```bash
+./scripts/db-init.sh --docker schema      # hanya schema
+./scripts/db-init.sh --docker seed-dev    # seed development
+./scripts/db-init.sh --docker --wait all  # schema + seed (DB sudah jalan)
+
+docker compose up -d --build                # manual tanpa init
+docker compose down                         # stop
+docker compose down -v                      # stop + hapus volume DB
+./scripts/docker-up.sh --fresh              # reset DB dari nol
+```
+
+### Opsi B — PHP native + MariaDB lokal/Docker
 
 ```bash
 # 1. Install dependencies
@@ -119,11 +166,13 @@ composer install
 # 2. Salin env
 cp .env.example .env
 
-# 3. Buat database & import schema auth
-mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS petshop CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-mysql -u root -p petshop < database/schema-mariadb-auth.sql
-mysql -u root -p petshop < database/schema-mariadb-kucing.sql
-mysql -u root -p petshop < database/seeds/seed-owner.sql
+# 3. Init database (auto-detect container petshop-mariadb atau CLI lokal)
+chmod +x scripts/db-init.sh
+./scripts/db-init.sh --wait all
+
+# Atau manual per file:
+# mysql -u root -p petshop < database/schema-mariadb-auth.sql
+# ...
 
 # 4. Jalankan dev server
 php -S localhost:8080 -t public
@@ -134,6 +183,25 @@ Buka http://localhost:8080
 **Akun owner default (dev):**
 - Email: `owner@petshop.local`
 - Password: `password123`
+
+---
+
+## Deployment Server (Docker Compose)
+
+Stack: **MariaDB 10.11** + **PHP 8.4 Apache** (docroot `public/`).
+
+1. Clone repo ke server, masuk folder proyek.
+2. `cp .env.docker.example .env` — set `APP_URL` ke domain/IP production, `APP_DEBUG=false`, ganti `DB_PASSWORD`.
+3. `chmod +x scripts/*.sh && ./scripts/docker-up.sh`
+4. (Opsional) Cron expire pembayaran — jalankan tiap 15 menit di host:
+
+```bash
+*/15 * * * * docker exec petshop-app php /var/www/html/scripts/expire-pending-payments.php
+```
+
+5. Reverse proxy (Nginx/Caddy) arahkan ke `localhost:${APP_PORT}` jika perlu HTTPS.
+
+Volume persisten: `petshop_mariadb_data`, `public/uploads`, `storage/logs`.
 
 ---
 
@@ -158,6 +226,31 @@ Buka http://localhost:8080
 | GET | `/kucing/edit` | Form edit kucing — `?id=` (auth) |
 | POST | `/kucing/update` | Simpan perubahan kucing (auth) |
 | POST | `/kucing/hapus` | Hapus kucing (auth) |
+| GET | `/pet-care` | Daftar layanan pet care (auth) |
+| GET | `/pet-care/booking` | Form booking pet care (auth) |
+| POST | `/pet-care/booking` | Submit booking (auth) |
+| GET | `/pet-care/riwayat` | Riwayat booking pet care (auth) |
+| POST | `/pet-care/booking/batalkan` | Batalkan booking (auth) |
+| GET | `/grooming` | Daftar layanan grooming (auth) |
+| GET/POST | `/grooming/booking` | Form & submit booking grooming (auth) |
+| GET | `/grooming/estimasi-pickup` | Estimasi jarak & biaya antar-jemput JSON (auth) |
+| GET | `/grooming/riwayat` | Riwayat booking grooming (auth) |
+| GET | `/grooming/detail` | Detail booking — `?id=` (auth) |
+| POST | `/grooming/booking/batalkan` | Batalkan booking (auth) |
+| GET/POST | `/grooming/pembayaran` | Upload bukti transfer (auth) |
+| GET | `/grooming/invoice` | Invoice setelah lunas — `?id=` (auth) |
+| GET | `/penitipan` | Daftar paket penitipan (auth) |
+| GET/POST | `/penitipan/booking` | Form & submit booking penitipan (auth) |
+| GET | `/penitipan/estimasi-biaya` | Estimasi biaya penitipan JSON (auth) |
+| GET | `/penitipan/estimasi-pickup` | Estimasi jarak & biaya antar-jemput JSON (auth) |
+| GET | `/penitipan/riwayat` | Riwayat booking penitipan (auth) |
+| GET | `/penitipan/detail` | Detail booking — `?id=` (auth) |
+| POST | `/penitipan/booking/batalkan` | Batalkan booking (auth) |
+| GET/POST | `/penitipan/pembayaran` | Upload bukti transfer (auth) |
+| GET | `/penitipan/invoice` | Invoice setelah lunas — `?id=` (auth) |
+| GET | `/penitipan/perpanjangan/estimasi` | Estimasi perpanjangan JSON (auth) |
+| POST | `/penitipan/perpanjangan` | Ajukan perpanjangan (auth) |
+| GET/POST | `/penitipan/perpanjangan/pembayaran` | Upload bukti perpanjangan (auth) |
 
 ### Staff / Owner (Internal)
 
@@ -168,6 +261,25 @@ Buka http://localhost:8080
 | GET/POST | `/admin/change-password` | Ubah password (auth) |
 | GET | `/admin/dashboard` | Home internal (auth) |
 | GET | `/admin/staff` | Placeholder manajemen staff (owner only) |
+| GET | `/admin/laporan` | Ringkasan laporan booking per layanan (auth) |
+| GET | `/admin/laporan/grooming` | Laporan data grooming — filter periode & status (auth) |
+| GET | `/admin/laporan/penitipan` | Laporan data pet hotel — filter periode & status (auth) |
+| GET | `/admin/laporan/pet-care` | Laporan data pet care — filter periode, status & layanan (auth) |
+| GET/POST | `/admin/pengaturan` | Pengaturan bisnis petshop (owner only) |
+| GET/POST | `/admin/pet-care/layanan/*` | CRUD layanan pet care (auth) |
+| GET/POST | `/admin/pet-care/slot/*` | Kelola slot dokter (auth) |
+| GET/POST | `/admin/pet-care/booking/*` | Kelola booking pet care (auth) |
+| GET/POST | `/admin/grooming/layanan/*` | CRUD jenis grooming (auth) |
+| GET/POST | `/admin/grooming/kuota/*` | Kelola kuota grooming harian (auth) |
+| GET/POST | `/admin/grooming/booking/*` | Konfirmasi/tolak booking, update status (auth) |
+| GET/POST | `/admin/grooming/pembayaran/*` | Verifikasi bukti transfer (auth) |
+| GET/POST | `/admin/penitipan/paket/*` | CRUD paket penitipan (auth) |
+| GET/POST | `/admin/penitipan/kamar/*` | CRUD kamar penitipan (auth) |
+| GET/POST | `/admin/penitipan/kuota/*` | Kelola kuota penitipan (auth) |
+| GET/POST | `/admin/penitipan/booking/*` | Konfirmasi/tolak, check-in/out (auth) |
+| GET/POST | `/admin/penitipan/monitoring/*` | Input monitoring harian (auth) |
+| GET/POST | `/admin/penitipan/perpanjangan/*` | Konfirmasi/tolak perpanjangan (auth) |
+| GET/POST | `/admin/penitipan/pembayaran/*` | Verifikasi bukti penitipan (auth) |
 
 ---
 
@@ -178,7 +290,16 @@ Buka http://localhost:8080
 | `database/schema.sql` | PostgreSQL | Referensi domain lengkap (diagram/ERD) |
 | `database/schema-mariadb-auth.sql` | MariaDB | Implementasi aktual — tabel auth |
 | `database/schema-mariadb-kucing.sql` | MariaDB | Tabel kucing & riwayat vaksin |
+| `database/schema-mariadb-pet-care.sql` | MariaDB | Tabel layanan, slot, & booking pet care |
+| `database/schema-mariadb-grooming.sql` | MariaDB | Tabel jenis grooming, kuota, & booking grooming |
+| `database/schema-mariadb-penitipan.sql` | MariaDB | Tabel paket, kamar, kuota, booking penitipan, monitoring, perpanjangan |
+| `database/schema-mariadb-transaksi.sql` | MariaDB | Tabel transaksi, bukti transfer, & invoice |
+| `database/schema-mariadb-pengaturan.sql` | MariaDB | Tabel pengaturan bisnis petshop |
 | `database/seeds/seed-owner.sql` | MariaDB | Seed akun owner dev |
+| `database/seeds/seed-pengaturan-dev.sql` | MariaDB | Seed pengaturan bisnis default dev |
+| `database/seeds/seed-pet-care-dev.sql` | MariaDB | Seed layanan & slot pet care dev |
+| `database/seeds/seed-grooming-dev.sql` | MariaDB | Seed jenis grooming & kuota dev |
+| `database/seeds/seed-penitipan-dev.sql` | MariaDB | Seed paket, kamar, & kuota penitipan dev |
 
 Konversi schema penuh ke MariaDB dilakukan bertahap per modul fitur.
 

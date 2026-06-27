@@ -1,0 +1,30 @@
+@startuml activity-pengaturan-petshop
+skinparam activityShape roundBox
+
+title Activity Diagram — Pengaturan Bisnis Petshop (Owner)
+
+start
+:Login dashboard owner;
+if (Role = OWNER?) then (ya)
+  :Buka menu Pengaturan;
+  :Muat nilai dari DB\n(fallback .env jika kosong);
+  :Tampilkan form 4 grup:\nLokasi, Antar-jemput,\nPembayaran, Promo & WA;
+  repeat
+    :Owner edit field;
+  repeat while (Klik Simpan?) is (tidak)
+  ->ya;
+  :Validasi input;
+  if (Valid?) then (ya)
+    :UPSERT pengaturan_petshop;
+    :Clear cache AppSettingsService;
+    :Flash sukses;
+  else (tidak)
+    :Tampilkan error per field;
+  endif
+else (tidak)
+  :Akses ditolak (403);
+  stop
+endif
+stop
+
+@enduml

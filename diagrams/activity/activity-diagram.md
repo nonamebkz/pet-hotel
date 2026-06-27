@@ -9,7 +9,7 @@ Diagram aktivitas berdasarkan [idea.md](../../idea.md).
 
 > **Preview:** Gunakan ekstensi PlantUML di VS Code/Cursor, atau render di [plantuml.com](https://www.plantuml.com/plantuml/uml).
 >
-> File `.puml` terpisah: `activity-autentikasi-pelanggan.puml`, `activity-data-kucing.puml`, `activity-booking-grooming.puml`, `activity-booking-penitipan.puml`, `activity-booking-petcare.puml`, `activity-pembayaran.puml`, `activity-pembatalan-refund.puml`, `activity-operasional-staff.puml`, `activity-penitipan-staff.puml`, `activity-perpanjangan-penitipan.puml`, `activity-manajemen-staff-owner.puml`, `activity-laporan.puml`
+> File `.puml` terpisah: `activity-autentikasi-pelanggan.puml`, `activity-data-kucing.puml`, `activity-booking-grooming.puml`, `activity-booking-penitipan.puml`, `activity-booking-petcare.puml`, `activity-pembayaran.puml`, `activity-pembatalan-refund.puml`, `activity-operasional-staff.puml`, `activity-penitipan-staff.puml`, `activity-perpanjangan-penitipan.puml`, `activity-manajemen-staff-owner.puml`, `activity-pengaturan-petshop.puml`, `activity-laporan.puml`
 
 ---
 
@@ -895,4 +895,5 @@ stop
 | 9 | Operasional Penitipan | `activity-penitipan-staff.puml` | Staff/Owner |
 | 10 | Perpanjangan Penitipan | `activity-perpanjangan-penitipan.puml` | Pelanggan, Staff/Owner, Sistem |
 | 11 | Manajemen Akun Staff | `activity-manajemen-staff-owner.puml` | Owner |
-| 12 | Laporan (Dashboard Admin) | `activity-laporan.puml` | Staff/Owner |
+| 12 | Pengaturan Bisnis Petshop | `activity-pengaturan-petshop.puml` | Owner |
+| 13 | Laporan (Dashboard Admin) | `activity-laporan.puml` | Staff/Owner |
