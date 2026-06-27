@@ -105,6 +105,17 @@ final class PerpanjanganPenitipanService
 
             $pdo->commit();
 
+            $tambahHari = (int) $data['tambah_hari'];
+            $checkOutFormatted = date('d/m/Y', strtotime($checkOutBaru));
+
+            $this->notifikasiService->notifyAllActiveStaff(
+                JenisNotifikasi::PERPANJANGAN_PENITIPAN_MENUNGGU_KONFIRMASI,
+                'Permintaan perpanjangan penitipan',
+                "Pelanggan mengajukan perpanjangan check-out ke {$checkOutFormatted} (+{$tambahHari} hari).",
+                $perpanjanganId,
+                'perpanjangan_penitipan',
+            );
+
             return ['success' => true, 'perpanjanganId' => $perpanjanganId];
         } catch (\Throwable) {
             if ($pdo->inTransaction()) {

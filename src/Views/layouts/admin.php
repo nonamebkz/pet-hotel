@@ -3,6 +3,18 @@
 declare(strict_types=1);
 
 use App\Core\Csrf;
+use App\Core\Session;
+use App\Repositories\NotifikasiRepository;
+
+$navUnreadCount = $unreadNotificationCount ?? null;
+
+if ($navUnreadCount === null && Session::get('auth.staff_id')) {
+    $navUnreadCount = (new NotifikasiRepository())->countUnreadByStaff(
+        (string) Session::get('auth.staff_id'),
+    );
+}
+
+$navUnreadCount = (int) ($navUnreadCount ?? 0);
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -18,6 +30,14 @@ use App\Core\Csrf;
             <div class="flex items-center gap-6">
                 <a href="/admin/dashboard" class="font-bold">Petshop Admin</a>
                 <a href="/admin/dashboard" class="text-sm text-slate-300 hover:text-white">Dashboard</a>
+                <a href="/admin/notifikasi" class="text-sm text-slate-300 hover:text-white inline-flex items-center gap-1">
+                    Notifikasi
+                    <?php if ($navUnreadCount > 0): ?>
+                        <span class="inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1 rounded-full bg-orange-500 text-white text-xs font-medium">
+                            <?= $navUnreadCount > 99 ? '99+' : $navUnreadCount ?>
+                        </span>
+                    <?php endif; ?>
+                </a>
                 <a href="/admin/pet-care/layanan" class="text-sm text-slate-300 hover:text-white">Pet Care</a>
                 <a href="/admin/grooming/layanan" class="text-sm text-slate-300 hover:text-white">Grooming</a>
                 <a href="/admin/penitipan/paket" class="text-sm text-slate-300 hover:text-white">Penitipan</a>

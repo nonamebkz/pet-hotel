@@ -129,6 +129,23 @@ final class TransaksiRepository
         return $stmt->rowCount() > 0;
     }
 
+    /** @return list<array<string, mixed>> */
+    public function findPendingPaymentReminders(int $hoursBefore): array
+    {
+        $stmt = Database::connection()->prepare(
+            "SELECT * FROM transaksi
+             WHERE status_pembayaran = 'MENUNGGU_PEMBAYARAN'
+               AND batas_waktu_bayar IS NOT NULL
+               AND batas_waktu_bayar > NOW()
+               AND batas_waktu_bayar <= DATE_ADD(NOW(), INTERVAL :hours HOUR)
+             ORDER BY batas_waktu_bayar ASC"
+        );
+        $stmt->bindValue('hours', $hoursBefore, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function updateStatusPembayaran(string $id, string $status, PDO $pdo): bool
     {
         $stmt = $pdo->prepare(

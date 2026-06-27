@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Controllers\Admin\NotifikasiController as AdminNotifikasiController;
 use App\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Controllers\Admin\GroomingController as AdminGroomingController;
 use App\Controllers\Admin\LaporanController as AdminLaporanController;
@@ -25,6 +26,7 @@ $router->post('/admin/reset-password', [StaffAuthController::class, 'resetPasswo
 $router->get('/admin/change-password', [StaffAuthController::class, 'showChangePassword'], ['auth:staff']);
 $router->post('/admin/change-password', [StaffAuthController::class, 'changePassword'], ['auth:staff']);
 $router->get('/admin/dashboard', [AdminDashboardController::class, 'index'], ['auth:staff']);
+$router->get('/admin/notifikasi', [AdminNotifikasiController::class, 'index'], ['auth:staff']);
 $router->get('/admin/staff', [AdminStaffManagementController::class, 'index'], ['auth:staff', 'role:owner']);
 $router->get('/admin/staff/tambah', [AdminStaffManagementController::class, 'create'], ['auth:staff', 'role:owner']);
 $router->post('/admin/staff/tambah', [AdminStaffManagementController::class, 'store'], ['auth:staff', 'role:owner']);

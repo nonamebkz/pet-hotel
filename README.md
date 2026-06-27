@@ -193,11 +193,15 @@ Stack: **MariaDB 10.11** + **PHP 8.4 Apache** (docroot `public/`).
 1. Clone repo ke server, masuk folder proyek.
 2. `cp .env.docker.example .env` — set `APP_URL` ke domain/IP production, `APP_DEBUG=false`, ganti `DB_PASSWORD`.
 3. `chmod +x scripts/*.sh && ./scripts/docker-up.sh`
-4. (Opsional) Cron expire pembayaran — jalankan tiap 15 menit di host:
+4. (Opsional) Cron notifikasi pembayaran — jalankan tiap 15 menit di host:
 
 ```bash
+*/15 * * * * docker exec petshop-app php /var/www/html/scripts/send-payment-reminders.php
 */15 * * * * docker exec petshop-app php /var/www/html/scripts/expire-pending-payments.php
 ```
+
+- `send-payment-reminders.php` — pengingat 6 jam sebelum `batas_waktu_bayar` (1x per transaksi)
+- `expire-pending-payments.php` — batalkan transaksi lewat batas waktu & kirim notifikasi jatuh tempo
 
 5. Reverse proxy (Nginx/Caddy) arahkan ke `localhost:${APP_PORT}` jika perlu HTTPS.
 

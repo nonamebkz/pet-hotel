@@ -35,6 +35,17 @@ final class StaffRepository
     }
 
     /** @return list<array<string, mixed>> */
+    public function findAllActiveInternal(): array
+    {
+        $stmt = Database::connection()->prepare(
+            "SELECT id FROM staff WHERE status = 'AKTIF' ORDER BY nama ASC"
+        );
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /** @return list<array<string, mixed>> */
     public function findAllStaff(): array
     {
         $stmt = Database::connection()->prepare(

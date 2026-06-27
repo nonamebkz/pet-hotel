@@ -124,4 +124,93 @@ final class NotifikasiRepository
             'tipe' => TipePenerima::PELANGGAN->value,
         ]);
     }
+
+    public function existsByReferensi(
+        string $penerimaId,
+        string $tipePenerima,
+        string $jenis,
+        string $referensiId,
+    ): bool {
+        $stmt = Database::connection()->prepare(
+            "SELECT 1 FROM notifikasi
+             WHERE penerima_id = :penerima_id
+               AND tipe_penerima = :tipe_penerima
+               AND jenis = :jenis
+               AND referensi_id = :referensi_id
+             LIMIT 1"
+        );
+        $stmt->execute([
+            'penerima_id' => $penerimaId,
+            'tipe_penerima' => $tipePenerima,
+            'jenis' => $jenis,
+            'referensi_id' => $referensiId,
+        ]);
+
+        return (bool) $stmt->fetchColumn();
+    }
+
+    /** @return list<array<string, mixed>> */
+    public function findRecentByStaff(string $staffId, int $limit = 5): array
+    {
+        $stmt = Database::connection()->prepare(
+            "SELECT * FROM notifikasi
+             WHERE penerima_id = :penerima_id
+               AND tipe_penerima = :tipe
+             ORDER BY created_at DESC
+             LIMIT :limit"
+        );
+        $stmt->bindValue('penerima_id', $staffId);
+        $stmt->bindValue('tipe', TipePenerima::STAFF->value);
+        $stmt->bindValue('limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function countUnreadByStaff(string $staffId): int
+    {
+        $stmt = Database::connection()->prepare(
+            "SELECT COUNT(*) FROM notifikasi
+             WHERE penerima_id = :penerima_id
+               AND tipe_penerima = :tipe
+               AND sudah_dibaca = 0"
+        );
+        $stmt->execute([
+            'penerima_id' => $staffId,
+            'tipe' => TipePenerima::STAFF->value,
+        ]);
+
+        return (int) $stmt->fetchColumn();
+    }
+
+    /** @return list<array<string, mixed>> */
+    public function findAllByStaff(string $staffId): array
+    {
+        $stmt = Database::connection()->prepare(
+            "SELECT * FROM notifikasi
+             WHERE penerima_id = :penerima_id
+               AND tipe_penerima = :tipe
+             ORDER BY created_at DESC"
+        );
+        $stmt->execute([
+            'penerima_id' => $staffId,
+            'tipe' => TipePenerima::STAFF->value,
+        ]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function markAllAsReadByStaff(string $staffId): void
+    {
+        $stmt = Database::connection()->prepare(
+            "UPDATE notifikasi SET sudah_dibaca = 1
+             WHERE penerima_id = :penerima_id
+               AND tipe_penerima = :tipe
+               AND sudah_dibaca = 0"
+        );
+        $stmt->execute([
+            'penerima_id' => $staffId,
+            'tipe' => TipePenerima::STAFF->value,
+        ]);
+    }
 }
