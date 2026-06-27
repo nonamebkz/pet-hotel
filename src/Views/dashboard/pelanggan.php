@@ -63,7 +63,10 @@ $recentNotifications = $recentNotifications ?? [];
         </div>
 
         <div class="bg-white rounded-xl border p-6">
-            <h2 class="text-lg font-semibold text-gray-800 mb-4">Tagihan Menunggu</h2>
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-semibold text-gray-800">Tagihan Menunggu</h2>
+                <a href="/transaksi" class="text-sm text-orange-600 hover:underline">Lihat riwayat transaksi →</a>
+            </div>
 
             <?php if ($pendingPayments === []): ?>
                 <p class="text-sm text-gray-500">Tidak ada tagihan menunggu pembayaran.</p>

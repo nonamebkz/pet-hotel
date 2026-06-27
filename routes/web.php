@@ -11,6 +11,7 @@ use App\Controllers\Pelanggan\PetCareController;
 use App\Controllers\Pelanggan\NotifikasiController;
 use App\Controllers\Pelanggan\PenitipanController;
 use App\Controllers\Pelanggan\ProfilController;
+use App\Controllers\Pelanggan\TransaksiController;
 use App\Core\Request;
 use App\Core\Response;
 use App\Core\Router;
@@ -46,6 +47,7 @@ $router->post('/change-password', [PelangganAuthController::class, 'changePasswo
 $router->get('/dashboard', [DashboardController::class, 'index'], ['auth:pelanggan']);
 $router->get('/bantuan', [BantuanController::class, 'index'], ['auth:pelanggan']);
 $router->get('/notifikasi', [NotifikasiController::class, 'index'], ['auth:pelanggan']);
+$router->get('/transaksi', [TransaksiController::class, 'index'], ['auth:pelanggan']);
 $router->get('/profil', [ProfilController::class, 'index'], ['auth:pelanggan']);
 $router->post('/profil', [ProfilController::class, 'update'], ['auth:pelanggan']);
 $router->get('/profil/geocode', [ProfilController::class, 'geocode'], ['auth:pelanggan']);

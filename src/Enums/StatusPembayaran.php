@@ -23,4 +23,15 @@ enum StatusPembayaran: string
             self::KEDALUWARSA->value => 'Kedaluwarsa',
         ];
     }
+
+    public function badgeClass(): string
+    {
+        return match ($this) {
+            self::MENUNGGU_PEMBAYARAN => 'bg-amber-100 text-amber-800',
+            self::MENUNGGU_VERIFIKASI => 'bg-blue-100 text-blue-800',
+            self::LUNAS => 'bg-green-100 text-green-800',
+            self::DIBATALKAN => 'bg-gray-100 text-gray-600',
+            self::KEDALUWARSA => 'bg-red-100 text-red-800',
+        };
+    }
 }

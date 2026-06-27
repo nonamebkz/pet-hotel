@@ -39,6 +39,7 @@ $navUnreadCount = (int) ($navUnreadCount ?? 0);
                     <?php endif; ?>
                 </a>
                 <a href="/bantuan" class="text-sm text-gray-600 hover:text-orange-600">Bantuan</a>
+                <a href="/transaksi" class="text-sm text-gray-600 hover:text-orange-600">Riwayat Transaksi</a>
                 <a href="/profil" class="text-sm text-gray-600 hover:text-orange-600">Profil</a>
                 <a href="/kucing" class="text-sm text-gray-600 hover:text-orange-600">Kucing Saya</a>
                 <a href="/pet-care" class="text-sm text-gray-600 hover:text-orange-600">Pet Care</a>

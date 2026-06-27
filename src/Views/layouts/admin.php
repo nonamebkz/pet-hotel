@@ -22,6 +22,7 @@ use App\Core\Csrf;
                 <a href="/admin/grooming/layanan" class="text-sm text-slate-300 hover:text-white">Grooming</a>
                 <a href="/admin/penitipan/paket" class="text-sm text-slate-300 hover:text-white">Penitipan</a>
                 <a href="/admin/laporan" class="text-sm text-slate-300 hover:text-white">Laporan</a>
+                <a href="/admin/transaksi" class="text-sm text-slate-300 hover:text-white">Riwayat Transaksi</a>
                 <a href="/admin/grooming/pembayaran" class="text-sm text-slate-300 hover:text-white">Verifikasi Grooming</a>
                 <a href="/admin/penitipan/pembayaran" class="text-sm text-slate-300 hover:text-white">Verifikasi Penitipan</a>
                 <?php if (($role ?? null)?->value === 'OWNER'): ?>

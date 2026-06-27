@@ -219,6 +219,40 @@ final class TransaksiRepository
         );
     }
 
+    /**
+     * @return array{grooming: int, penitipan: int, total: int}
+     */
+    public function countPendingVerification(): array
+    {
+        $pdo = Database::connection();
+
+        $stmtGrooming = $pdo->query(
+            "SELECT COUNT(*)
+             FROM transaksi t
+             INNER JOIN bukti_transfer bt ON bt.transaksi_id = t.id
+             WHERE t.jenis_layanan = 'GROOMING'
+               AND t.status_pembayaran = 'MENUNGGU_VERIFIKASI'
+               AND bt.status_verifikasi = 'MENUNGGU'"
+        );
+        $grooming = (int) $stmtGrooming->fetchColumn();
+
+        $stmtPenitipan = $pdo->query(
+            "SELECT COUNT(*)
+             FROM transaksi t
+             INNER JOIN bukti_transfer bt ON bt.transaksi_id = t.id
+             WHERE t.jenis_layanan = 'PENITIPAN'
+               AND t.status_pembayaran = 'MENUNGGU_VERIFIKASI'
+               AND bt.status_verifikasi = 'MENUNGGU'"
+        );
+        $penitipan = (int) $stmtPenitipan->fetchColumn();
+
+        return [
+            'grooming' => $grooming,
+            'penitipan' => $penitipan,
+            'total' => $grooming + $penitipan,
+        ];
+    }
+
     /** @return list<array<string, mixed>> */
     public function findPendingPaymentByPelanggan(string $pelangganId): array
     {
@@ -300,5 +334,136 @@ final class TransaksiRepository
         }
 
         return $transaksi;
+    }
+
+    /**
+     * @param array{status?: string|null} $filters
+     * @return list<array<string, mixed>>
+     */
+    public function findRiwayatByPelanggan(string $pelangganId, array $filters = []): array
+    {
+        $params = ['pelanggan_id' => $pelangganId];
+        $conditions = ['t.pelanggan_id = :pelanggan_id'];
+
+        $status = trim((string) ($filters['status'] ?? ''));
+        if ($status !== '') {
+            $conditions[] = 't.status_pembayaran = :status';
+            $params['status'] = $status;
+        }
+
+        $where = implode(' AND ', $conditions);
+
+        $stmt = Database::connection()->prepare(
+            "SELECT t.*,
+                    CASE
+                        WHEN t.jenis_layanan = 'GROOMING' THEN jg.nama
+                        WHEN t.perpanjangan_penitipan_id IS NOT NULL THEN CONCAT('Perpanjangan — ', ppak.nama)
+                        ELSE ppak.nama
+                    END AS layanan_label,
+                    bg.tanggal AS grooming_tanggal,
+                    bp.check_in AS penitipan_check_in,
+                    bp.check_out AS penitipan_check_out,
+                    pp.tambah_hari AS perpanjangan_tambah_hari,
+                    bt.status_verifikasi AS bukti_status_verifikasi,
+                    bt.catatan_penolakan AS bukti_catatan_penolakan,
+                    bt.file_url AS bukti_file_url,
+                    inv.id AS invoice_id,
+                    inv.nomor_invoice
+             FROM transaksi t
+             LEFT JOIN booking_grooming bg ON bg.id = t.booking_id AND t.jenis_layanan = 'GROOMING'
+             LEFT JOIN jenis_grooming jg ON jg.id = bg.jenis_grooming_id
+             LEFT JOIN booking_penitipan bp ON bp.id = t.booking_id AND t.jenis_layanan = 'PENITIPAN'
+             LEFT JOIN paket_penitipan ppak ON ppak.id = bp.paket_penitipan_id
+             LEFT JOIN perpanjangan_penitipan pp ON pp.id = t.perpanjangan_penitipan_id
+             LEFT JOIN bukti_transfer bt ON bt.transaksi_id = t.id
+             LEFT JOIN invoice inv ON inv.transaksi_id = t.id
+             WHERE {$where}
+             ORDER BY t.created_at DESC"
+        );
+        $stmt->execute($params);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * @param array{
+     *     status?: string|null,
+     *     jenis?: string|null,
+     *     mulai?: string,
+     *     akhir?: string,
+     *     q?: string
+     * } $filters
+     * @return list<array<string, mixed>>
+     */
+    public function findRiwayatForAdmin(array $filters = []): array
+    {
+        $params = [];
+        $conditions = ['1 = 1'];
+
+        $status = trim((string) ($filters['status'] ?? ''));
+        if ($status !== '') {
+            $conditions[] = 't.status_pembayaran = :status';
+            $params['status'] = $status;
+        }
+
+        $jenis = trim((string) ($filters['jenis'] ?? ''));
+        if ($jenis !== '') {
+            $conditions[] = 't.jenis_layanan = :jenis';
+            $params['jenis'] = $jenis;
+        }
+
+        $mulai = trim((string) ($filters['mulai'] ?? ''));
+        if ($mulai !== '') {
+            $conditions[] = 'DATE(t.created_at) >= :mulai';
+            $params['mulai'] = $mulai;
+        }
+
+        $akhir = trim((string) ($filters['akhir'] ?? ''));
+        if ($akhir !== '') {
+            $conditions[] = 'DATE(t.created_at) <= :akhir';
+            $params['akhir'] = $akhir;
+        }
+
+        $q = trim((string) ($filters['q'] ?? ''));
+        if ($q !== '') {
+            $conditions[] = 'pl.nama LIKE :q';
+            $params['q'] = '%' . $q . '%';
+        }
+
+        $where = implode(' AND ', $conditions);
+
+        $stmt = Database::connection()->prepare(
+            "SELECT t.*,
+                    pl.nama AS pelanggan_nama,
+                    pl.no_telepon AS pelanggan_telepon,
+                    CASE
+                        WHEN t.jenis_layanan = 'GROOMING' THEN jg.nama
+                        WHEN t.perpanjangan_penitipan_id IS NOT NULL THEN CONCAT('Perpanjangan — ', ppak.nama)
+                        ELSE ppak.nama
+                    END AS layanan_label,
+                    bg.tanggal AS grooming_tanggal,
+                    bp.check_in AS penitipan_check_in,
+                    bp.check_out AS penitipan_check_out,
+                    pp.tambah_hari AS perpanjangan_tambah_hari,
+                    bt.status_verifikasi AS bukti_status_verifikasi,
+                    bt.catatan_penolakan AS bukti_catatan_penolakan,
+                    bt.file_url AS bukti_file_url,
+                    inv.id AS invoice_id,
+                    inv.nomor_invoice
+             FROM transaksi t
+             INNER JOIN pelanggan pl ON pl.id = t.pelanggan_id
+             LEFT JOIN booking_grooming bg ON bg.id = t.booking_id AND t.jenis_layanan = 'GROOMING'
+             LEFT JOIN jenis_grooming jg ON jg.id = bg.jenis_grooming_id
+             LEFT JOIN booking_penitipan bp ON bp.id = t.booking_id AND t.jenis_layanan = 'PENITIPAN'
+             LEFT JOIN paket_penitipan ppak ON ppak.id = bp.paket_penitipan_id
+             LEFT JOIN perpanjangan_penitipan pp ON pp.id = t.perpanjangan_penitipan_id
+             LEFT JOIN bukti_transfer bt ON bt.transaksi_id = t.id
+             LEFT JOIN invoice inv ON inv.transaksi_id = t.id
+             WHERE {$where}
+             ORDER BY t.created_at DESC"
+        );
+        $stmt->execute($params);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

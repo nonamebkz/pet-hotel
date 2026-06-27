@@ -9,6 +9,7 @@ use App\Controllers\Admin\PenitipanController as AdminPenitipanController;
 use App\Controllers\Admin\PengaturanController as AdminPengaturanController;
 use App\Controllers\Admin\PetCareController as AdminPetCareController;
 use App\Controllers\Admin\StaffManagementController as AdminStaffManagementController;
+use App\Controllers\Admin\TransaksiController as AdminTransaksiController;
 use App\Controllers\Auth\StaffAuthController;
 use App\Core\Router;
 
@@ -36,6 +37,7 @@ $router->get('/admin/laporan', [AdminLaporanController::class, 'index'], ['auth:
 $router->get('/admin/laporan/grooming', [AdminLaporanController::class, 'grooming'], ['auth:staff']);
 $router->get('/admin/laporan/penitipan', [AdminLaporanController::class, 'penitipan'], ['auth:staff']);
 $router->get('/admin/laporan/pet-care', [AdminLaporanController::class, 'petCare'], ['auth:staff']);
+$router->get('/admin/transaksi', [AdminTransaksiController::class, 'index'], ['auth:staff']);
 $router->get('/admin/pengaturan', [AdminPengaturanController::class, 'index'], ['auth:staff', 'role:owner']);
 $router->post('/admin/pengaturan', [AdminPengaturanController::class, 'update'], ['auth:staff', 'role:owner']);
 $router->get('/admin/pet-care/layanan', [AdminPetCareController::class, 'layananIndex'], ['auth:staff']);
