@@ -260,7 +260,11 @@ Volume persisten: `petshop_mariadb_data`, `public/uploads`, `storage/logs`.
 | POST | `/admin/logout` | Logout |
 | GET/POST | `/admin/change-password` | Ubah password (auth) |
 | GET | `/admin/dashboard` | Home internal (auth) |
-| GET | `/admin/staff` | Placeholder manajemen staff (owner only) |
+| GET | `/admin/staff` | Daftar akun staff (owner only) |
+| GET/POST | `/admin/staff/tambah` | Tambah akun staff (owner only) |
+| GET/POST | `/admin/staff/edit` | Edit data staff — `?id=` (owner only) |
+| GET/POST | `/admin/staff/reset-password` | Reset password staff — `?id=` (owner only) |
+| POST | `/admin/staff/status` | Aktifkan / nonaktifkan staff (owner only) |
 | GET | `/admin/laporan` | Ringkasan laporan booking per layanan (auth) |
 | GET | `/admin/laporan/grooming` | Laporan data grooming — filter periode & status (auth) |
 | GET | `/admin/laporan/penitipan` | Laporan data pet hotel — filter periode & status (auth) |

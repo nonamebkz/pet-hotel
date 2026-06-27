@@ -28,20 +28,4 @@ final class DashboardController
 
         return Response::html($html);
     }
-
-    public function staffPlaceholder(Request $request): Response
-    {
-        $auth = new AuthService();
-        $role = $auth->currentStaffRole() ?? StaffRole::STAFF;
-
-        $html = View::render('dashboard/staff-management', [
-            'title' => 'Manajemen Staff',
-            'layout' => 'admin',
-            'nama' => Session::get('auth.staff_nama', 'Staff'),
-            'role' => $role,
-            'roleLabel' => $role->label(),
-        ]);
-
-        return Response::html($html);
-    }
 }

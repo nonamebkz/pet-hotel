@@ -8,6 +8,7 @@ use App\Controllers\Admin\LaporanController as AdminLaporanController;
 use App\Controllers\Admin\PenitipanController as AdminPenitipanController;
 use App\Controllers\Admin\PengaturanController as AdminPengaturanController;
 use App\Controllers\Admin\PetCareController as AdminPetCareController;
+use App\Controllers\Admin\StaffManagementController as AdminStaffManagementController;
 use App\Controllers\Auth\StaffAuthController;
 use App\Core\Router;
 
@@ -23,7 +24,14 @@ $router->post('/admin/reset-password', [StaffAuthController::class, 'resetPasswo
 $router->get('/admin/change-password', [StaffAuthController::class, 'showChangePassword'], ['auth:staff']);
 $router->post('/admin/change-password', [StaffAuthController::class, 'changePassword'], ['auth:staff']);
 $router->get('/admin/dashboard', [AdminDashboardController::class, 'index'], ['auth:staff']);
-$router->get('/admin/staff', [AdminDashboardController::class, 'staffPlaceholder'], ['auth:staff', 'role:owner']);
+$router->get('/admin/staff', [AdminStaffManagementController::class, 'index'], ['auth:staff', 'role:owner']);
+$router->get('/admin/staff/tambah', [AdminStaffManagementController::class, 'create'], ['auth:staff', 'role:owner']);
+$router->post('/admin/staff/tambah', [AdminStaffManagementController::class, 'store'], ['auth:staff', 'role:owner']);
+$router->get('/admin/staff/edit', [AdminStaffManagementController::class, 'edit'], ['auth:staff', 'role:owner']);
+$router->post('/admin/staff/edit', [AdminStaffManagementController::class, 'update'], ['auth:staff', 'role:owner']);
+$router->get('/admin/staff/reset-password', [AdminStaffManagementController::class, 'resetPasswordForm'], ['auth:staff', 'role:owner']);
+$router->post('/admin/staff/reset-password', [AdminStaffManagementController::class, 'resetPassword'], ['auth:staff', 'role:owner']);
+$router->post('/admin/staff/status', [AdminStaffManagementController::class, 'toggleStatus'], ['auth:staff', 'role:owner']);
 $router->get('/admin/laporan', [AdminLaporanController::class, 'index'], ['auth:staff']);
 $router->get('/admin/laporan/grooming', [AdminLaporanController::class, 'grooming'], ['auth:staff']);
 $router->get('/admin/laporan/penitipan', [AdminLaporanController::class, 'penitipan'], ['auth:staff']);
