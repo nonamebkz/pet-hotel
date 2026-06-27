@@ -259,15 +259,15 @@ App --> Pelanggan : Penitipan selesai
 
 ---
 
-## 6. Booking Pet Care (End-to-End)
+## 6. Booking Pet Care (Booking Only)
 
-Hanya antar sendiri; tidak ada opsi antar-jemput.
+Booking-only, auto-confirm, pembayaran di loket; jadwal slot dokter global.
 
 ```plantuml
 @startuml sequence-booking-petcare
 skinparam sequenceMessageAlign center
 
-title Sequence Diagram — Booking Pet Care (Ringkas)
+title Sequence Diagram — Booking Pet Care (Booking Only)
 
 actor Pelanggan
 actor "Staff / Owner" as Staff
@@ -275,20 +275,64 @@ participant "Aplikasi Web" as App
 participant "Backend API" as API
 database "Database" as DB
 
-Pelanggan -> App : Pilih layanan aktif, tanggal & slot
-note over App : Antar sendiri saja\n(tanpa antar-jemput)
+== Ajukan Booking ==
+
+Pelanggan -> App : Buka menu Pet Care
+App -> API : GET /pet-care/layanan?status=AKTIF
+API -> DB : SELECT layanan_pet_care\nWHERE status=AKTIF AND deleted_at IS NULL
+DB --> API : Daftar layanan
+API --> App : Layanan aktif
+App --> Pelanggan : Tampilkan layanan (nama, harga estimasi, durasi)
+
+Pelanggan -> App : Pilih tanggal
+App -> API : GET /pet-care/slot?tanggal
+API -> DB : SELECT kuota_pet_care\nWHERE tanggal = ?\nAND status_slot = TERSEDIA\nAND slot_terisi = 0
+DB --> API : Slot tersedia
+API --> App : Daftar slot kosong
+App --> Pelanggan : Tampilkan slot tersedia
+
+Pelanggan -> App : Pilih slot, layanan, kucing\n+ catatan opsional
+note over App, Pelanggan
+  Pengantaran: antar sendiri saja
+  Pembayaran di loket saat kunjungan
+end note
 App -> API : POST /booking/pet-care
-API -> DB : INSERT booking + transaksi + kuota
+API -> DB : BEGIN TRANSACTION
+API -> DB : Cek slot_terisi = 0\nAND status_slot = TERSEDIA
+API -> DB : INSERT booking_pet_care\nstatus = TERKONFIRMASI
+API -> DB : UPDATE kuota_pet_care.slot_terisi = 1
+API -> DB : INSERT notifikasi BOOKING_DISETUJUI
+API -> DB : COMMIT
+DB --> API : OK
+API --> App : 201 Created
+App --> Pelanggan : Booking terkonfirmasi
 
-Staff -> App : Konfirmasi booking
-App --> Pelanggan : Tagihan menunggu bayar
+== Operasional Staff ==
 
-Pelanggan -> App : Upload bukti transfer
-Staff -> App : Setujui bukti
-API -> DB : TERKONFIRMASI + LUNAS + invoice
+Staff -> App : Buka daftar booking pet care
+Staff -> App : Update status → Sedang Proses → Selesai
+App -> API : PATCH /internal/booking/pet-care/{id}/status
+API -> DB : UPDATE status booking
+API -> DB : INSERT notifikasi LAYANAN_SELESAI
+App --> Pelanggan : Notifikasi layanan selesai
 
-Staff -> App : Sedang Proses → Selesai
-App --> Pelanggan : Notifikasi selesai
+== Pembatalan ==
+
+alt Pelanggan batalkan
+  Pelanggan -> App : Batalkan booking
+  App -> API : PATCH /booking/pet-care/{id}/batalkan
+  API -> DB : UPDATE status = DIBATALKAN\ndibatalkan_oleh = PELANGGAN
+  API -> DB : UPDATE kuota_pet_care.slot_terisi = 0
+  API -> DB : INSERT notifikasi BOOKING_DIBATALKAN
+  App --> Pelanggan : Notifikasi dibatalkan
+else Staff batalkan
+  Staff -> App : Batalkan booking\n(alasan opsional)
+  App -> API : PATCH /internal/booking/pet-care/{id}/batalkan
+  API -> DB : UPDATE status = DIBATALKAN\ndibatalkan_oleh = STAFF
+  API -> DB : UPDATE kuota_pet_care.slot_terisi = 0
+  API -> DB : INSERT notifikasi BOOKING_DIBATALKAN
+  App --> Pelanggan : Notifikasi dibatalkan
+end
 
 @enduml
 ```
@@ -297,7 +341,7 @@ App --> Pelanggan : Notifikasi selesai
 
 ## 7. Pembayaran & Verifikasi Bukti Transfer
 
-Berlaku global untuk grooming, penitipan, dan pet care; termasuk pembatalan otomatis jika lewat batas waktu.
+Berlaku untuk grooming & penitipan (**pet care dikecualikan**); termasuk pembatalan otomatis jika lewat batas waktu.
 
 ```plantuml
 @startuml sequence-pembayaran

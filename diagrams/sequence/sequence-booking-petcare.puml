@@ -1,7 +1,7 @@
 @startuml sequence-booking-petcare
 skinparam sequenceMessageAlign center
 
-title Sequence Diagram — Booking Pet Care (End-to-End)
+title Sequence Diagram — Booking Pet Care (Booking Only)
 
 actor Pelanggan
 actor "Staff / Owner" as Staff
@@ -16,66 +16,56 @@ App -> API : GET /pet-care/layanan?status=AKTIF
 API -> DB : SELECT layanan_pet_care\nWHERE status=AKTIF AND deleted_at IS NULL
 DB --> API : Daftar layanan
 API --> App : Layanan aktif
-App --> Pelanggan : Tampilkan layanan (nama, harga, durasi)
+App --> Pelanggan : Tampilkan layanan (nama, harga estimasi, durasi)
 
-Pelanggan -> App : Pilih kucing, layanan,\ntanggal & slot waktu
-note over App, Pelanggan
-  Pengantaran: antar sendiri saja
-  (tidak ada opsi antar-jemput)
-end note
-App -> API : GET /pet-care/kuota?layanan_id&tanggal
-API -> DB : SELECT kuota_pet_care
+Pelanggan -> App : Pilih tanggal
+App -> API : GET /pet-care/slot?tanggal
+API -> DB : SELECT kuota_pet_care\nWHERE tanggal = ?\nAND status_slot = TERSEDIA\nAND slot_terisi = 0
 DB --> API : Slot tersedia
-API --> App : Sisa kuota per slot
+API --> App : Daftar slot kosong
 App --> Pelanggan : Tampilkan slot tersedia
 
-Pelanggan -> App : Submit booking
+Pelanggan -> App : Pilih slot, layanan, kucing\n+ catatan opsional
+note over App, Pelanggan
+  Pengantaran: antar sendiri saja
+  Pembayaran di loket saat kunjungan
+end note
 App -> API : POST /booking/pet-care
-API -> DB : Cek sisa kuota_pet_care
-API -> DB : INSERT booking_pet_care\nstatus = MENUNGGU_KONFIRMASI
-API -> DB : UPDATE kuota_pet_care.slot_terisi +1
-API -> DB : INSERT transaksi (draft)
+API -> DB : BEGIN TRANSACTION
+API -> DB : Cek slot_terisi = 0\nAND status_slot = TERSEDIA
+API -> DB : INSERT booking_pet_care\nstatus = TERKONFIRMASI
+API -> DB : UPDATE kuota_pet_care.slot_terisi = 1
+API -> DB : INSERT notifikasi BOOKING_DISETUJUI
+API -> DB : COMMIT
 DB --> API : OK
 API --> App : 201 Created
-App --> Pelanggan : Booking diajukan
+App --> Pelanggan : Booking terkonfirmasi
 
-== Konfirmasi Staff ==
+== Operasional Staff ==
 
 Staff -> App : Buka daftar booking pet care
-alt Staff tolak
-  Staff -> App : Tolak booking
-  App -> API : PATCH /internal/booking/pet-care/{id}/tolak
-  API -> DB : UPDATE status = DIBATALKAN
-  API -> DB : UPDATE kuota slot_terisi -1
-  API -> DB : INSERT notifikasi BOOKING_DITOLAK
-  App --> Pelanggan : Notifikasi ditolak
-else Staff konfirmasi
-  Staff -> App : Konfirmasi booking
-  App -> API : PATCH .../konfirmasi
-  API -> DB : UPDATE status = MENUNGGU_PEMBAYARAN
-  API -> DB : UPDATE transaksi.batas_waktu_bayar
-  API -> DB : INSERT notifikasi
-  App --> Pelanggan : Notifikasi tagihan
-end
-
-== Pembayaran & Layanan ==
-
-Pelanggan -> App : Upload bukti transfer
-App -> API : POST /transaksi/{id}/bukti-transfer
-API -> DB : INSERT bukti_transfer
-API -> DB : UPDATE status = MENUNGGU_VERIFIKASI_BUKTI
-
-Staff -> App : Setujui bukti transfer
-App -> API : PATCH /internal/bukti-transfer/{id}/setujui
-API -> DB : UPDATE transaksi = LUNAS
-API -> DB : UPDATE booking = TERKONFIRMASI
-API -> DB : INSERT invoice
-App --> Pelanggan : Notifikasi lunas + invoice
-
 Staff -> App : Update status → Sedang Proses → Selesai
 App -> API : PATCH /internal/booking/pet-care/{id}/status
 API -> DB : UPDATE status booking
 API -> DB : INSERT notifikasi LAYANAN_SELESAI
 App --> Pelanggan : Notifikasi layanan selesai
+
+== Pembatalan ==
+
+alt Pelanggan batalkan
+  Pelanggan -> App : Batalkan booking
+  App -> API : PATCH /booking/pet-care/{id}/batalkan
+  API -> DB : UPDATE status = DIBATALKAN\ndibatalkan_oleh = PELANGGAN
+  API -> DB : UPDATE kuota_pet_care.slot_terisi = 0
+  API -> DB : INSERT notifikasi BOOKING_DIBATALKAN
+  App --> Pelanggan : Notifikasi dibatalkan
+else Staff batalkan
+  Staff -> App : Batalkan booking\n(alasan opsional)
+  App -> API : PATCH /internal/booking/pet-care/{id}/batalkan
+  API -> DB : UPDATE status = DIBATALKAN\ndibatalkan_oleh = STAFF
+  API -> DB : UPDATE kuota_pet_care.slot_terisi = 0
+  API -> DB : INSERT notifikasi BOOKING_DIBATALKAN
+  App --> Pelanggan : Notifikasi dibatalkan
+end
 
 @enduml

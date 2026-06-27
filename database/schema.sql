@@ -45,17 +45,24 @@ CREATE TYPE status_perpanjangan_penitipan AS ENUM (
     'DIBATALKAN'
 );
 
-CREATE TYPE status_booking AS ENUM (
-    'MENUNGGU_KONFIRMASI',
-    'MENUNGGU_PEMBAYARAN',
-    'MENUNGGU_VERIFIKASI_BUKTI',
+CREATE TYPE status_booking_pet_care AS ENUM (
     'TERKONFIRMASI',
     'SEDANG_PROSES',
     'SELESAI',
     'DIBATALKAN'
 );
 
-CREATE TYPE jenis_layanan AS ENUM ('GROOMING', 'PENITIPAN', 'PET_CARE');
+CREATE TYPE status_slot_pet_care AS ENUM (
+    'TERSEDIA',
+    'DITUTUP'
+);
+
+CREATE TYPE dibatalkan_oleh AS ENUM (
+    'PELANGGAN',
+    'STAFF'
+);
+
+CREATE TYPE jenis_layanan AS ENUM ('GROOMING', 'PENITIPAN');
 
 CREATE TYPE status_pembayaran AS ENUM (
     'MENUNGGU_PEMBAYARAN',
@@ -230,15 +237,15 @@ CREATE TABLE layanan_pet_care (
 
 CREATE TABLE kuota_pet_care (
     id                          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    layanan_pet_care_id         UUID NOT NULL REFERENCES layanan_pet_care(id) ON DELETE RESTRICT,
     tanggal                     DATE NOT NULL,
     slot_waktu                  TIME NOT NULL,
-    slot_maksimal               INT NOT NULL CHECK (slot_maksimal >= 0),
-    slot_terisi                 INT NOT NULL DEFAULT 0 CHECK (slot_terisi >= 0),
+    slot_maksimal               INT NOT NULL DEFAULT 1 CHECK (slot_maksimal = 1),
+    slot_terisi                 INT NOT NULL DEFAULT 0 CHECK (slot_terisi >= 0 AND slot_terisi <= 1),
+    status_slot                 status_slot_pet_care NOT NULL DEFAULT 'TERSEDIA',
     created_at                  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at                  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
-    CONSTRAINT uq_kuota_pet_care_layanan_tanggal_slot UNIQUE (layanan_pet_care_id, tanggal, slot_waktu),
+    CONSTRAINT uq_kuota_pet_care_tanggal_slot UNIQUE (tanggal, slot_waktu),
     CONSTRAINT chk_kuota_pet_care_terisi CHECK (slot_terisi <= slot_maksimal)
 );
 
@@ -336,14 +343,22 @@ CREATE TABLE booking_pet_care (
     kucing_id                   UUID NOT NULL REFERENCES kucing(id) ON DELETE RESTRICT,
     layanan_pet_care_id         UUID NOT NULL REFERENCES layanan_pet_care(id) ON DELETE RESTRICT,
     kuota_pet_care_id           UUID NOT NULL REFERENCES kuota_pet_care(id) ON DELETE RESTRICT,
-    dikonfirmasi_oleh_staff_id  UUID REFERENCES staff(id) ON DELETE SET NULL,
     tanggal                     DATE NOT NULL,
     slot_waktu                  TIME NOT NULL,
     harga_layanan               DECIMAL(12, 2) NOT NULL CHECK (harga_layanan >= 0),
-    status                      status_booking NOT NULL DEFAULT 'MENUNGGU_KONFIRMASI',
+    status                      status_booking_pet_care NOT NULL DEFAULT 'TERKONFIRMASI',
     catatan                     TEXT,
+    dibatalkan_oleh             dibatalkan_oleh,
+    dibatalkan_oleh_staff_id    UUID REFERENCES staff(id) ON DELETE SET NULL,
+    alasan_pembatalan           TEXT,
+    waktu_dibatalkan            TIMESTAMPTZ,
     created_at                  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at                  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    updated_at                  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+
+    CONSTRAINT chk_booking_pet_care_pembatalan CHECK (
+        (status = 'DIBATALKAN' AND dibatalkan_oleh IS NOT NULL)
+        OR (status <> 'DIBATALKAN' AND dibatalkan_oleh IS NULL)
+    )
 );
 
 CREATE INDEX idx_booking_pet_care_pelanggan ON booking_pet_care (pelanggan_id);

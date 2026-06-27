@@ -112,7 +112,7 @@ classDiagram
         +UUID id
         +Date tanggal
         +Time slotWaktu
-        +StatusBooking status
+        +StatusBookingPetCare status
         +String catatan
         +ajukan()
         +batalkan()
@@ -155,7 +155,6 @@ classDiagram
     BookingPenitipan "1" --> "*" PerpanjanganPenitipan : memiliki
     BookingGrooming "1" --> "1" Transaksi : menghasilkan
     BookingPenitipan "1" --> "*" Transaksi : menghasilkan
-    BookingPetCare "1" --> "1" Transaksi : menghasilkan
     PerpanjanganPenitipan "1" --> "1" Transaksi : menghasilkan
     Pelanggan "1" --> "*" Notifikasi : menerima
     Staff "1" --> "*" Transaksi : verifikasi
@@ -364,12 +363,18 @@ classDiagram
 
     class KuotaPetCare {
         +UUID id
-        +UUID layananPetCareId
         +Date tanggal
         +Time slotWaktu
         +Int slotMaksimal
         +Int slotTerisi
+        +StatusSlotPetCare statusSlot
         +getSisaKuota()
+    }
+
+    class StatusSlotPetCare {
+        <<enumeration>>
+        TERSEDIA
+        DITUTUP
     }
 
     class StatusLayanan {
@@ -379,10 +384,13 @@ classDiagram
     }
 
     KamarPenitipan "1" --> "*" KuotaPenitipan : memiliki
-    LayananPetCare "1" --> "*" KuotaPetCare : memiliki
+    KuotaPetCare "1" --> "*" BookingPetCare : menggunakan
+    LayananPetCare "1" --> "*" BookingPetCare : dipilih
     LayananPetCare --> StatusLayanan : status
+    KuotaPetCare --> StatusSlotPetCare : statusSlot
 
     note for LayananPetCare "CRUD oleh staff/owner; soft delete — riwayat booking tetap tersimpan"
+    note for KuotaPetCare "Jadwal slot dokter global; 1 dokter = maks 1 booking/slot"
     note for KuotaGrooming "Slot maksimal per tanggal; dikembalikan saat booking dibatalkan"
 ```
 
@@ -603,9 +611,13 @@ classDiagram
         +UUID kuotaPetCareId
         +Date tanggal
         +Time slotWaktu
-        +StatusBooking status
+        +StatusBookingPetCare status
         +String catatan
         +Decimal hargaLayanan
+        +DibatalkanOleh dibatalkanOleh
+        +UUID dibatalkanOlehStaffId
+        +String alasanPembatalan
+        +DateTime waktuDibatalkan
         +DateTime createdAt
         +ajukan()
         +batalkan()
@@ -621,6 +633,11 @@ classDiagram
 
     class KuotaPetCare {
         +UUID id
+        +Date tanggal
+        +Time slotWaktu
+        +Int slotMaksimal
+        +Int slotTerisi
+        +StatusSlotPetCare statusSlot
     }
 
     class Pelanggan {
@@ -631,24 +648,40 @@ classDiagram
         +UUID id
     }
 
-    class StatusBooking {
+    class Staff {
+        +UUID id
+    }
+
+    class StatusBookingPetCare {
         <<enumeration>>
-        MENUNGGU_KONFIRMASI
-        MENUNGGU_PEMBAYARAN
-        MENUNGGU_VERIFIKASI_BUKTI
         TERKONFIRMASI
         SEDANG_PROSES
         SELESAI
         DIBATALKAN
     }
 
+    class DibatalkanOleh {
+        <<enumeration>>
+        PELANGGAN
+        STAFF
+    }
+
+    class StatusSlotPetCare {
+        <<enumeration>>
+        TERSEDIA
+        DITUTUP
+    }
+
     Pelanggan "1" --> "*" BookingPetCare : mengajukan
     Kucing "1" --> "*" BookingPetCare : dilayani
     LayananPetCare "1" --> "*" BookingPetCare : dipilih
     KuotaPetCare "1" --> "*" BookingPetCare : menggunakan
-    BookingPetCare --> StatusBooking : status
+    Staff "1" --> "*" BookingPetCare : batalkan
+    BookingPetCare --> StatusBookingPetCare : status
+    BookingPetCare --> DibatalkanOleh : dibatalkanOleh
 
-    note for BookingPetCare "Hanya antar sendiri — tidak ada opsi antar-jemput"
+    note for BookingPetCare "Booking-only; auto-confirm; bayar di loket; antar sendiri"
+    note for KuotaPetCare "Slot global dokter; maks 1 booking per slot"
     note for LayananPetCare "Hanya layanan berstatus AKTIF yang bisa dipilih pelanggan"
 ```
 
@@ -656,7 +689,7 @@ classDiagram
 
 ## 8. Pembayaran & Transaksi
 
-Metode pembayaran: transfer bank manual; verifikasi bukti oleh staff wajib.
+Metode pembayaran: transfer bank manual (grooming & penitipan); verifikasi bukti oleh staff wajib. **Pet care dikecualikan** — bayar di loket.
 
 ```mermaid
 classDiagram
@@ -735,7 +768,6 @@ classDiagram
         <<enumeration>>
         GROOMING
         PENITIPAN
-        PET_CARE
     }
 
     class StatusPembayaran {
@@ -772,7 +804,6 @@ classDiagram
 
     Transaksi ..> BookingGrooming : bookingId (polymorphic)
     Transaksi ..> BookingPenitipan : bookingId (polymorphic)
-    Transaksi ..> BookingPetCare : bookingId (polymorphic)
     Transaksi ..> PerpanjanganPenitipan : perpanjanganPenitipanId
     PerpanjanganPenitipan "1" --> "1" Transaksi : menghasilkan
 
@@ -906,6 +937,7 @@ classDiagram
     class PaketPenitipan
     class KamarPenitipan
     class LayananPetCare
+    class KuotaPetCare
     class BookingGrooming
     class BookingPenitipan
     class MonitoringPenitipan
@@ -942,10 +974,10 @@ classDiagram
     Staff "1" --> "*" PerpanjanganPenitipan
 
     LayananPetCare "1" --> "*" BookingPetCare
+    KuotaPetCare "1" --> "*" BookingPetCare
 
     BookingGrooming "1" --> "1" Transaksi
     BookingPenitipan "1" --> "*" Transaksi
-    BookingPetCare "1" --> "1" Transaksi
     PerpanjanganPenitipan "1" --> "1" Transaksi
 
     Transaksi "1" --> "0..1" BuktiTransfer
@@ -972,8 +1004,8 @@ classDiagram
 | **BookingGrooming** | tanggal, jam, opsi pengantaran, status | → Transaksi |
 | **BookingPenitipan** | check-in/out, promo, monitoring | 1→* Transaksi, 1→* Monitoring, 1→* PerpanjanganPenitipan |
 | **PerpanjanganPenitipan** | checkOutSebelum/Baru, tambahHari, subtotal | hanya CHECK_IN/SEDANG_DITITIPKAN; → Transaksi |
-| **BookingPetCare** | tanggal, slot waktu, status | antar sendiri saja; → Transaksi |
-| **Transaksi** | subtotal, promo, antar-jemput, total, refund | 1 transaksi booking awal; perpanjangan = transaksi tambahan |
+| **BookingPetCare** | tanggal, slot waktu, status | booking-only; auto-confirm; bayar di loket; antar sendiri |
+| **Transaksi** | subtotal, promo, antar-jemput, total, refund | grooming & penitipan saja; perpanjangan = transaksi tambahan |
 | **BuktiTransfer** | file, status verifikasi, catatan penolakan | wajib upload pelanggan |
 | **Invoice** | nomor, file | setelah pembayaran lunas |
 | **Notifikasi** | jenis, judul, pesan, sudah dibaca | trigger in-app (+ email opsional) |
@@ -1005,8 +1037,9 @@ classDiagram
 | Rekening bank petshop | bank, no rekening, atas nama | Halaman transfer manual |
 
 **Aturan bisnis penting:**
-- Setiap booking awal (grooming, penitipan, pet care) menghasilkan **1 Transaksi**; setiap **perpanjangan penitipan** disetujui = transaksi tambahan terpisah.
+- Setiap booking awal (grooming, penitipan) menghasilkan **1 Transaksi**; **pet care tidak ada transaksi** (bayar di loket).
+- Setiap **perpanjangan penitipan** disetujui = transaksi tambahan terpisah.
 - **Perpanjangan penitipan** hanya saat `CHECK_IN` / `SEDANG_DITITIPKAN`; tanpa promo & biaya antar-jemput tambahan; boleh berkali-kali & paralel per booking.
 - **Antar-jemput** hanya pada grooming & penitipan; pet care **antar sendiri** fixed.
 - **Pembatalan** sebelum konfirmasi: pelanggan batalkan langsung; setelah bayar: via WhatsApp + proses staff.
-- **Kuota** grooming, penitipan, dan pet care dikembalikan otomatis saat booking dibatalkan atau kedaluwarsa.
+- **Kuota** grooming & penitipan dikembalikan otomatis saat booking dibatalkan atau kedaluwarsa; **pet care** slot dokter dikembalikan saat booking dibatalkan (pelanggan/staff).

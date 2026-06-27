@@ -356,9 +356,9 @@ stop
 
 ---
 
-## 5. Booking Pet Care (End-to-End)
+## 5. Booking Pet Care (Booking Only)
 
-Alur booking pet care — hanya antar sendiri, tanpa biaya antar-jemput.
+Alur booking pet care — booking-only, auto-confirm, pembayaran di loket, jadwal slot dokter global.
 
 ```plantuml
 @startuml activity-booking-petcare
@@ -367,7 +367,7 @@ skinparam activity {
   BorderColor #333333
 }
 
-title Alur Booking Pet Care (End-to-End)
+title Alur Booking Pet Care (Booking Only)
 
 |Pelanggan|
 start
@@ -378,49 +378,45 @@ if (Minimal 1 kucing terdaftar?) then (tidak)
   stop
 endif
 
-:Lihat daftar layanan pet care aktif\n(nama, deskripsi, harga, durasi);
-:Isi form booking pet care\n(pilih kucing, layanan, tanggal & slot waktu);
+:Lihat daftar layanan pet care aktif\n(nama, deskripsi, harga estimasi, durasi);
+:Pilih tanggal;
+:Lihat slot waktu tersedia\n(jadwal slot dokter dari admin);
+if (Ada slot kosong?) then (tidak)
+  :Tampilkan pesan "tidak ada jadwal";
+  stop
+endif
+:Isi form booking pet care\n(pilih slot, layanan, kucing);
 note right
   Pengantaran: **antar sendiri** saja
-  (tidak ada opsi antar-jemput)
+  Pembayaran di loket saat kunjungan
 end note
 :Opsional: catatan khusus;
-:Tampilkan ringkasan biaya\n(harga layanan saja);
+:Tampilkan ringkasan estimasi biaya;
 :Submit booking;
-:Status → **Menunggu Konfirmasi**;
+:Status → **Terkonfirmasi** (otomatis);
+:Slot dokter terisi +1;
+:Terima notifikasi booking terkonfirmasi;
 
-|Staff / Owner|
-:Melihat daftar booking masuk;
-if (Konfirmasi booking?) then (tolak)
+if (Pelanggan batalkan booking?) then (ya)
+  :Batalkan booking (kapan saja, termasuk hari-H);
   :Status → **Dibatalkan**;
-  |Pelanggan|
-  :Terima notifikasi booking ditolak;
+  :Slot dokter dikembalikan;
+  :Terima notifikasi booking dibatalkan;
   stop
-else (konfirmasi)
-  :Status → **Menunggu Pembayaran**;
-  :Set batas waktu pembayaran;
-  |Pelanggan|
-  :Terima notifikasi tagihan;
-endif
-
-|Pelanggan|
-:Transfer ke rekening petshop;
-:Upload bukti transfer (wajib);
-:Status → **Menunggu Verifikasi Bukti Transfer**;
-
-|Staff / Owner|
-if (Bukti transfer disetujui?) then (tolak)
-  |Pelanggan|
-  :Upload ulang bukti transfer;
-  detach
-else (setujui)
-  :Status → **Terkonfirmasi**;
-  |Pelanggan|
-  :Terima notifikasi pembayaran diverifikasi;
-  :Unduh invoice / struk;
 endif
 
 |Staff / Owner|
+:Lihat daftar booking pet care;
+
+if (Staff batalkan booking?) then (ya)
+  :Batalkan booking\n(alasan opsional);
+  :Status → **Dibatalkan**;
+  :Slot dokter dikembalikan;
+  |Pelanggan|
+  :Terima notifikasi booking dibatalkan;
+  stop
+endif
+
 :Update status → Sedang Proses;
 :Update status → Selesai;
 |Pelanggan|
@@ -435,7 +431,7 @@ stop
 
 ## 6. Pembayaran & Verifikasi Bukti Transfer (Global)
 
-Alur pembayaran transfer manual yang berlaku untuk grooming, penitipan, dan pet care.
+Alur pembayaran transfer manual yang berlaku untuk grooming & penitipan (**pet care dikecualikan** — bayar di loket).
 
 ```plantuml
 @startuml activity-pembayaran
@@ -506,9 +502,9 @@ stop
 
 ---
 
-## 7. Pembatalan & Refund (Global)
+## 7. Pembatalan & Refund (Global — Grooming & Penitipan)
 
-Dua skenario: batalkan langsung (belum terkonfirmasi) dan refund manual via WhatsApp (sudah bayar).
+Dua skenario: batalkan langsung (belum terkonfirmasi) dan refund manual via WhatsApp (sudah bayar). **Pet care dikecualikan** — pembatalan langsung di app tanpa refund.
 
 ```plantuml
 @startuml activity-pembatalan-refund
@@ -521,7 +517,7 @@ title Alur Pembatalan & Refund (Global)
 
 |Pelanggan|
 start
-:Buka detail booking\n(grooming / penitipan / pet care);
+:Buka detail booking\n(grooming / penitipan saja);
 
 if (Status booking?) then (belum terkonfirmasi\n/ belum bayar)
   :Klik batalkan booking;
@@ -574,7 +570,7 @@ title Operasional Staff — Grooming & Pet Care
 start
 :Login dashboard staff / owner;
 
-:Buka ringkasan home\n(booking hari ini, pembayaran menunggu,\npenitipan aktif, pendapatan ringkas);
+:Buka ringkasan home\n(booking hari ini, pembayaran menunggu grooming/penitipan,\npenitipan aktif, pendapatan ringkas);
 
 partition "Grooming" {
   :Kelola kuota grooming per hari;
@@ -593,15 +589,16 @@ partition "Grooming" {
 
 partition "Pet Care" {
   :Kelola master data layanan pet care (CRUD);
-  :Kelola kuota / slot waktu per layanan;
-  :Lihat daftar booking pet care;
-  if (Konfirmasi / tolak?) then (tolak)
+  :Kelola jadwal slot dokter per tanggal\n(tambah/tutup/hapus slot);
+  :Lihat daftar booking pet care\n(filter tanggal, status);
+  :Lihat detail kucing & layanan;
+  if (Batalkan booking?) then (ya)
     :Update status → Dibatalkan;
-  else (konfirmasi)
+    :Kembalikan slot dokter;
+  else (tidak)
   endif
-  :Verifikasi bukti transfer;
-  :Update status layanan;
-  :Lihat laporan booking & pendapatan pet care;
+  :Update status → Sedang Proses → Selesai;
+  :Lihat laporan jumlah booking pet care;
 }
 
 partition "Pelanggan & Kucing" {
@@ -612,7 +609,7 @@ partition "Pelanggan & Kucing" {
 }
 
 partition "Laporan & Transaksi" {
-  :Verifikasi bukti transfer semua layanan;
+  :Verifikasi bukti transfer\n(grooming, penitipan, perpanjangan);
   :Lihat riwayat transaksi;
   :Lihat laporan pendapatan (filter periode, layanan);
   :Opsional: export data;

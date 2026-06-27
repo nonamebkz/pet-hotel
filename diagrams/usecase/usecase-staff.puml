@@ -41,12 +41,11 @@ rectangle "Dashboard Staff" {
 
   rectangle "Operasional Pet Care" {
     usecase "CRUD Master Data\nLayanan Pet Care" as UC_CRUDPetCare
-    usecase "Kelola Kuota / Slot Waktu" as UC_KuotaPetCare
+    usecase "Kelola Jadwal Slot Dokter" as UC_JadwalSlotDokter
     usecase "Lihat Daftar Booking Pet Care" as UC_DaftarBookingPetCare
-    usecase "Konfirmasi / Tolak Booking" as UC_KonfirmasiPetCare
+    usecase "Batalkan Booking Pet Care" as UC_BatalPetCareStaff
     usecase "Update Status Layanan" as UC_StatusPetCareStaff
-    usecase "Verifikasi Bukti Transfer" as UC_VerifPetCare
-    usecase "Laporan Booking & Pendapatan" as UC_LaporanPetCare
+    usecase "Laporan Jumlah Booking" as UC_LaporanPetCare
   }
 
   rectangle "Manajemen Pelanggan & Kucing" {
@@ -92,11 +91,10 @@ Staff --> UC_VerifPenitipan
 Staff --> UC_KonfirmasiPerpanjangan
 Staff --> UC_LaporanPenitipan
 Staff --> UC_CRUDPetCare
-Staff --> UC_KuotaPetCare
+Staff --> UC_JadwalSlotDokter
 Staff --> UC_DaftarBookingPetCare
-Staff --> UC_KonfirmasiPetCare
+Staff --> UC_BatalPetCareStaff
 Staff --> UC_StatusPetCareStaff
-Staff --> UC_VerifPetCare
 Staff --> UC_LaporanPetCare
 Staff --> UC_DaftarPelanggan
 Staff --> UC_DetailPelanggan

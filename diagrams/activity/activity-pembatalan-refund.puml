@@ -8,7 +8,7 @@ title Alur Pembatalan & Refund (Global)
 
 |Pelanggan|
 start
-:Buka detail booking\n(grooming / penitipan / pet care);
+:Buka detail booking\n(grooming / penitipan saja);
 
 if (Status booking?) then (belum terkonfirmasi\n/ belum bayar)
   :Klik batalkan booking;

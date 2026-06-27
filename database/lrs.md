@@ -4,7 +4,7 @@ Struktur record logis database berdasarkan [schema.sql](./schema.sql) dan [ERD](
 
 **DBMS:** PostgreSQL 14+  
 **Total tabel:** 20  
-**Total tipe enum:** 15
+**Total tipe enum:** 17
 
 ---
 
@@ -124,17 +124,28 @@ Struktur record logis database berdasarkan [schema.sql](./schema.sql) dan [ERD](
 | DITOLAK | Permintaan perpanjangan ditolak staff |
 | DIBATALKAN | Permintaan dibatalkan (lewat batas waktu bayar) |
 
-### status_booking
+### status_booking_pet_care
 
 | Nilai | Deskripsi |
 |-------|-----------|
-| MENUNGGU_KONFIRMASI | Booking pet care baru |
-| MENUNGGU_PEMBAYARAN | Disetujui, menunggu pembayaran |
-| MENUNGGU_VERIFIKASI_BUKTI | Bukti transfer diupload |
-| TERKONFIRMASI | Pembayaran lunas |
+| TERKONFIRMASI | Booking otomatis terkonfirmasi saat slot kosong |
 | SEDANG_PROSES | Layanan pet care berlangsung |
 | SELESAI | Layanan selesai |
-| DIBATALKAN | Booking dibatalkan |
+| DIBATALKAN | Booking dibatalkan (pelanggan atau staff) |
+
+### status_slot_pet_care
+
+| Nilai | Deskripsi |
+|-------|-----------|
+| TERSEDIA | Slot dokter tersedia untuk booking |
+| DITUTUP | Slot ditutup admin (tidak bisa dibooking) |
+
+### dibatalkan_oleh
+
+| Nilai | Deskripsi |
+|-------|-----------|
+| PELANGGAN | Booking dibatalkan oleh pelanggan |
+| STAFF | Booking dibatalkan oleh staff/owner |
 
 ### jenis_layanan
 
@@ -142,7 +153,8 @@ Struktur record logis database berdasarkan [schema.sql](./schema.sql) dan [ERD](
 |-------|-----------|
 | GROOMING | Transaksi dari booking grooming |
 | PENITIPAN | Transaksi dari booking penitipan |
-| PET_CARE | Transaksi dari booking pet care |
+
+> Pet care **tidak** memiliki transaksi di app (pembayaran di loket).
 
 ### status_pembayaran
 
@@ -369,17 +381,17 @@ Master data layanan pet care (CRUD staff/owner).
 
 ## 11. Tabel `kuota_pet_care`
 
-Kuota slot waktu pet care per layanan per tanggal.
+Jadwal slot dokter pet care per tanggal (global — 1 dokter, maks 1 booking per slot).
 
 | No | Nama Field | Tipe Data | Panjang | Null | Keterangan | Deskripsi |
 |----|------------|-----------|---------|------|------------|-----------|
-| 1 | id | UUID | — | Tidak | PK, DF | Identitas unik kuota |
-| 2 | layanan_pet_care_id | UUID | — | Tidak | FK → layanan_pet_care.id | Layanan terkait |
-| 3 | tanggal | DATE | — | Tidak | UQ* | Tanggal slot (*unik per layanan+slot) |
-| 4 | slot_waktu | TIME | — | Tidak | UQ* | Jam slot waktu |
-| 5 | slot_maksimal | INT | — | Tidak | CK ≥ 0 | Kapasitas slot |
-| 6 | slot_terisi | INT | — | Tidak | DF, CK | Slot sudah terbooking |
-| 7 | created_at | TIMESTAMPTZ | — | Tidak | DF | Waktu kuota dibuat |
+| 1 | id | UUID | — | Tidak | PK, DF | Identitas unik slot |
+| 2 | tanggal | DATE | — | Tidak | UQ* | Tanggal slot (*unik per tanggal+slot) |
+| 3 | slot_waktu | TIME | — | Tidak | UQ* | Jam slot waktu dokter |
+| 4 | slot_maksimal | INT | — | Tidak | DF, CK = 1 | Selalu 1 (1 dokter) |
+| 5 | slot_terisi | INT | — | Tidak | DF, CK 0–1 | 0 = kosong, 1 = terbooking |
+| 6 | status_slot | status_slot_pet_care | — | Tidak | DF | TERSEDIA / DITUTUP |
+| 7 | created_at | TIMESTAMPTZ | — | Tidak | DF | Waktu slot dibuat |
 | 8 | updated_at | TIMESTAMPTZ | — | Tidak | DF | Waktu terakhir diubah |
 
 ---
@@ -477,7 +489,7 @@ Permintaan perpanjangan durasi penitipan (setelah booking terkonfirmasi & kucing
 
 ## 16. Tabel `booking_pet_care`
 
-Data booking layanan pet care.
+Data booking layanan pet care (booking-only, tanpa transaksi di app).
 
 | No | Nama Field | Tipe Data | Panjang | Null | Keterangan | Deskripsi |
 |----|------------|-----------|---------|------|------------|-----------|
@@ -485,15 +497,18 @@ Data booking layanan pet care.
 | 2 | pelanggan_id | UUID | — | Tidak | FK → pelanggan.id | Pelanggan pengaju |
 | 3 | kucing_id | UUID | — | Tidak | FK → kucing.id | Kucing yang dilayani |
 | 4 | layanan_pet_care_id | UUID | — | Tidak | FK → layanan_pet_care.id | Layanan dipilih |
-| 5 | kuota_pet_care_id | UUID | — | Tidak | FK → kuota_pet_care.id | Slot waktu dipakai |
-| 6 | dikonfirmasi_oleh_staff_id | UUID | — | Ya | FK → staff.id | Staff yang konfirmasi |
-| 7 | tanggal | DATE | — | Tidak | — | Tanggal layanan |
-| 8 | slot_waktu | TIME | — | Tidak | — | Jam slot layanan |
-| 9 | harga_layanan | DECIMAL | 12,2 | Tidak | CK ≥ 0 | Snapshot harga saat booking |
-| 10 | status | status_booking | — | Tidak | DF | Status alur booking |
-| 11 | catatan | TEXT | — | Ya | — | Catatan khusus pelanggan |
-| 12 | created_at | TIMESTAMPTZ | — | Tidak | DF | Waktu booking diajukan |
-| 13 | updated_at | TIMESTAMPTZ | — | Tidak | DF | Waktu terakhir status diubah |
+| 5 | kuota_pet_care_id | UUID | — | Tidak | FK → kuota_pet_care.id | Slot dokter dipakai |
+| 6 | tanggal | DATE | — | Tidak | — | Tanggal layanan |
+| 7 | slot_waktu | TIME | — | Tidak | — | Jam slot layanan |
+| 8 | harga_layanan | DECIMAL | 12,2 | Tidak | CK ≥ 0 | Snapshot estimasi harga saat booking |
+| 9 | status | status_booking_pet_care | — | Tidak | DF | Status alur booking |
+| 10 | catatan | TEXT | — | Ya | — | Catatan khusus pelanggan |
+| 11 | dibatalkan_oleh | dibatalkan_oleh | — | Ya | CK* | PELANGGAN / STAFF (*wajib jika DIBATALKAN) |
+| 12 | dibatalkan_oleh_staff_id | UUID | — | Ya | FK → staff.id | Staff pembatal (jika dibatalkan_oleh = STAFF) |
+| 13 | alasan_pembatalan | TEXT | — | Ya | — | Alasan pembatalan (opsional) |
+| 14 | waktu_dibatalkan | TIMESTAMPTZ | — | Ya | — | Waktu booking dibatalkan |
+| 15 | created_at | TIMESTAMPTZ | — | Tidak | DF | Waktu booking diajukan |
+| 16 | updated_at | TIMESTAMPTZ | — | Tidak | DF | Waktu terakhir status diubah |
 
 ---
 
@@ -505,7 +520,7 @@ Data pembayaran per booking awal atau per perpanjangan penitipan.
 |----|------------|-----------|---------|------|------------|-----------|
 | 1 | id | UUID | — | Tidak | PK, DF | Identitas unik transaksi |
 | 2 | pelanggan_id | UUID | — | Tidak | FK → pelanggan.id | Pelanggan pemilik transaksi |
-| 3 | jenis_layanan | jenis_layanan | — | Tidak | UQ* | GROOMING / PENITIPAN / PET_CARE |
+| 3 | jenis_layanan | jenis_layanan | — | Tidak | UQ* | GROOMING / PENITIPAN |
 | 4 | booking_id | UUID | — | Tidak | UQ* | ID booking terkait (*unik per jenis jika transaksi awal) |
 | 5 | perpanjangan_penitipan_id | UUID | — | Ya | FK → perpanjangan_penitipan.id, UQ† | Permintaan perpanjangan terkait (†unik jika not null) |
 | 6 | subtotal_layanan | DECIMAL | 12,2 | Tidak | CK ≥ 0 | Subtotal harga layanan |
@@ -587,11 +602,11 @@ Notifikasi in-app untuk pelanggan dan staff.
 | kucing | riwayat_vaksin | 1 : N | Satu kucing banyak riwayat vaksin |
 | kucing | booking_* | 1 : N | Satu kucing bisa banyak booking |
 | kamar_penitipan | kuota_penitipan | 1 : N | Kuota per kamar per tanggal |
-| layanan_pet_care | kuota_pet_care | 1 : N | Slot waktu per layanan |
+| kuota_pet_care | booking_pet_care | 1 : N | Slot dokter dipakai booking |
 | booking_penitipan | monitoring_penitipan | 1 : N | Monitoring harian selama penitipan |
 | booking_penitipan | perpanjangan_penitipan | 1 : N | Permintaan perpanjangan durasi (boleh berkali-kali & paralel) |
 | perpanjangan_penitipan | transaksi | 1 : 1 | Satu transaksi per perpanjangan |
-| booking_* | transaksi | 1 : 1 | Satu transaksi booking awal per booking |
+| booking_grooming / booking_penitipan | transaksi | 1 : 1 | Satu transaksi booking awal per booking |
 | transaksi | bukti_transfer | 1 : 0..1 | Bukti transfer opsional sampai diupload |
 | transaksi | invoice | 1 : 0..1 | Invoice setelah lunas |
 | staff | bukti_transfer | 1 : N | Staff verifikasi bukti |

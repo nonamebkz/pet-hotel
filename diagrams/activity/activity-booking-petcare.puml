@@ -4,7 +4,7 @@ skinparam activity {
   BorderColor #333333
 }
 
-title Alur Booking Pet Care (End-to-End)
+title Alur Booking Pet Care (Booking Only)
 
 |Pelanggan|
 start
@@ -15,49 +15,45 @@ if (Minimal 1 kucing terdaftar?) then (tidak)
   stop
 endif
 
-:Lihat daftar layanan pet care aktif\n(nama, deskripsi, harga, durasi);
-:Isi form booking pet care\n(pilih kucing, layanan, tanggal & slot waktu);
+:Lihat daftar layanan pet care aktif\n(nama, deskripsi, harga estimasi, durasi);
+:Pilih tanggal;
+:Lihat slot waktu tersedia\n(jadwal slot dokter dari admin);
+if (Ada slot kosong?) then (tidak)
+  :Tampilkan pesan "tidak ada jadwal";
+  stop
+endif
+:Isi form booking pet care\n(pilih slot, layanan, kucing);
 note right
   Pengantaran: **antar sendiri** saja
-  (tidak ada opsi antar-jemput)
+  Pembayaran di loket saat kunjungan
 end note
 :Opsional: catatan khusus;
-:Tampilkan ringkasan biaya\n(harga layanan saja);
+:Tampilkan ringkasan estimasi biaya;
 :Submit booking;
-:Status → **Menunggu Konfirmasi**;
+:Status → **Terkonfirmasi** (otomatis);
+:Slot dokter terisi +1;
+:Terima notifikasi booking terkonfirmasi;
 
-|Staff / Owner|
-:Melihat daftar booking masuk;
-if (Konfirmasi booking?) then (tolak)
+if (Pelanggan batalkan booking?) then (ya)
+  :Batalkan booking (kapan saja, termasuk hari-H);
   :Status → **Dibatalkan**;
-  |Pelanggan|
-  :Terima notifikasi booking ditolak;
+  :Slot dokter dikembalikan;
+  :Terima notifikasi booking dibatalkan;
   stop
-else (konfirmasi)
-  :Status → **Menunggu Pembayaran**;
-  :Set batas waktu pembayaran;
-  |Pelanggan|
-  :Terima notifikasi tagihan;
-endif
-
-|Pelanggan|
-:Transfer ke rekening petshop;
-:Upload bukti transfer (wajib);
-:Status → **Menunggu Verifikasi Bukti Transfer**;
-
-|Staff / Owner|
-if (Bukti transfer disetujui?) then (tolak)
-  |Pelanggan|
-  :Upload ulang bukti transfer;
-  detach
-else (setujui)
-  :Status → **Terkonfirmasi**;
-  |Pelanggan|
-  :Terima notifikasi pembayaran diverifikasi;
-  :Unduh invoice / struk;
 endif
 
 |Staff / Owner|
+:Lihat daftar booking pet care;
+
+if (Staff batalkan booking?) then (ya)
+  :Batalkan booking\n(alasan opsional);
+  :Status → **Dibatalkan**;
+  :Slot dokter dikembalikan;
+  |Pelanggan|
+  :Terima notifikasi booking dibatalkan;
+  stop
+endif
+
 :Update status → Sedang Proses;
 :Update status → Selesai;
 |Pelanggan|

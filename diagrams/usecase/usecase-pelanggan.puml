@@ -55,6 +55,7 @@ rectangle "Dashboard Pelanggan" {
 
   rectangle "Pet Care" {
     usecase "Lihat Daftar Layanan Pet Care" as UC_LihatLayananPetCare
+    usecase "Lihat Slot Waktu Tersedia" as UC_LihatSlotPetCare
     usecase "Ajukan Booking Pet Care" as UC_AjukanPetCare
     usecase "Lihat Status Booking Pet Care" as UC_StatusPetCare
     usecase "Riwayat Booking Pet Care" as UC_RiwayatPetCare
@@ -107,6 +108,7 @@ Pelanggan --> UC_BatalPenitipan
 Pelanggan --> UC_AjukanPerpanjangan
 Pelanggan --> UC_StatusPerpanjangan
 Pelanggan --> UC_LihatLayananPetCare
+Pelanggan --> UC_LihatSlotPetCare
 Pelanggan --> UC_AjukanPetCare
 Pelanggan --> UC_StatusPetCare
 Pelanggan --> UC_RiwayatPetCare
@@ -129,13 +131,12 @@ UC_AjukanGrooming ..> UC_DaftarKucing : <<include>>
 UC_AjukanPenitipan ..> UC_DaftarKucing : <<include>>
 UC_AjukanPerpanjangan ..> UC_StatusPenitipan : <<include>>
 UC_AjukanPetCare ..> UC_DaftarKucing : <<include>>
+UC_AjukanPetCare ..> UC_LihatSlotPetCare : <<include>>
 UC_Transfer ..> UC_UploadBukti : <<include>>
 
 UC_BatalLangsung ..> UC_BatalGrooming : <<extend>>
 UC_BatalLangsung ..> UC_BatalPenitipan : <<extend>>
-UC_BatalLangsung ..> UC_BatalPetCare : <<extend>>
 UC_HubungiKami ..> UC_BatalGrooming : <<extend>>
 UC_HubungiKami ..> UC_BatalPenitipan : <<extend>>
-UC_HubungiKami ..> UC_BatalPetCare : <<extend>>
 
 @enduml

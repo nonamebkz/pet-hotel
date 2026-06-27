@@ -146,6 +146,7 @@ rectangle "Dashboard Pelanggan" {
 
   rectangle "Pet Care" {
     usecase "Lihat Daftar Layanan Pet Care" as UC_LihatLayananPetCare
+    usecase "Lihat Slot Waktu Tersedia" as UC_LihatSlotPetCare
     usecase "Ajukan Booking Pet Care" as UC_AjukanPetCare
     usecase "Lihat Status Booking Pet Care" as UC_StatusPetCare
     usecase "Riwayat Booking Pet Care" as UC_RiwayatPetCare
@@ -198,6 +199,7 @@ Pelanggan --> UC_BatalPenitipan
 Pelanggan --> UC_AjukanPerpanjangan
 Pelanggan --> UC_StatusPerpanjangan
 Pelanggan --> UC_LihatLayananPetCare
+Pelanggan --> UC_LihatSlotPetCare
 Pelanggan --> UC_AjukanPetCare
 Pelanggan --> UC_StatusPetCare
 Pelanggan --> UC_RiwayatPetCare
@@ -220,14 +222,13 @@ UC_AjukanGrooming ..> UC_DaftarKucing : <<include>>
 UC_AjukanPenitipan ..> UC_DaftarKucing : <<include>>
 UC_AjukanPerpanjangan ..> UC_StatusPenitipan : <<include>>
 UC_AjukanPetCare ..> UC_DaftarKucing : <<include>>
+UC_AjukanPetCare ..> UC_LihatSlotPetCare : <<include>>
 UC_Transfer ..> UC_UploadBukti : <<include>>
 
 UC_BatalLangsung ..> UC_BatalGrooming : <<extend>>
 UC_BatalLangsung ..> UC_BatalPenitipan : <<extend>>
-UC_BatalLangsung ..> UC_BatalPetCare : <<extend>>
 UC_HubungiKami ..> UC_BatalGrooming : <<extend>>
 UC_HubungiKami ..> UC_BatalPenitipan : <<extend>>
-UC_HubungiKami ..> UC_BatalPetCare : <<extend>>
 
 @enduml
 ```
@@ -280,12 +281,11 @@ rectangle "Dashboard Staff" {
 
   rectangle "Operasional Pet Care" {
     usecase "CRUD Master Data\nLayanan Pet Care" as UC_CRUDPetCare
-    usecase "Kelola Kuota / Slot Waktu" as UC_KuotaPetCare
+    usecase "Kelola Jadwal Slot Dokter" as UC_JadwalSlotDokter
     usecase "Lihat Daftar Booking Pet Care" as UC_DaftarBookingPetCare
-    usecase "Konfirmasi / Tolak Booking" as UC_KonfirmasiPetCare
+    usecase "Batalkan Booking Pet Care" as UC_BatalPetCareStaff
     usecase "Update Status Layanan" as UC_StatusPetCareStaff
-    usecase "Verifikasi Bukti Transfer" as UC_VerifPetCare
-    usecase "Laporan Booking & Pendapatan" as UC_LaporanPetCare
+    usecase "Laporan Jumlah Booking" as UC_LaporanPetCare
   }
 
   rectangle "Manajemen Pelanggan & Kucing" {
@@ -331,11 +331,10 @@ Staff --> UC_VerifPenitipan
 Staff --> UC_KonfirmasiPerpanjangan
 Staff --> UC_LaporanPenitipan
 Staff --> UC_CRUDPetCare
-Staff --> UC_KuotaPetCare
+Staff --> UC_JadwalSlotDokter
 Staff --> UC_DaftarBookingPetCare
-Staff --> UC_KonfirmasiPetCare
+Staff --> UC_BatalPetCareStaff
 Staff --> UC_StatusPetCareStaff
-Staff --> UC_VerifPetCare
 Staff --> UC_LaporanPetCare
 Staff --> UC_DaftarPelanggan
 Staff --> UC_DetailPelanggan
@@ -470,6 +469,7 @@ UC_ProsesRefund ..> UC_TerimaNotif : <<include>>
 
 - **Perpanjangan penitipan** hanya saat check-in / sedang dititipkan; staff konfirmasi ketersediaan → pelanggan bayar → verifikasi bukti (tagihan terpisah); boleh berkali-kali & paralel per booking.
 - **Antar-jemput** hanya berlaku grooming & penitipan booking awal; pet care hanya antar sendiri.
+- **Pet care** booking-only: auto-confirm, jadwal slot dokter global (1 dokter), pembayaran di loket (tidak ada transaksi di app).
 - **Validasi vaksin** wajib saat booking pet hotel (minimal 1 entri jenis + tanggal).
-- **Pembayaran** transfer bank manual; verifikasi bukti oleh staff wajib.
-- **Refund** setelah terkonfirmasi & sudah bayar diproses manual via WhatsApp + dashboard staff/owner.
+- **Pembayaran** transfer bank manual (grooming & penitipan); verifikasi bukti oleh staff wajib.
+- **Refund** setelah terkonfirmasi & sudah bayar diproses manual via WhatsApp + dashboard staff/owner (grooming & penitipan saja).

@@ -93,7 +93,7 @@ Lihat folder [diagrams/](./diagrams/README.md):
 
 - booking aktif & mendatang (grooming, penitipan, pet care)
 - info promo penitipan aktif (jika pelanggan belum pernah pakai & memenuhi syarat)
-- tagihan / pembayaran menunggu
+- tagihan / pembayaran menunggu (grooming, penitipan, perpanjangan penitipan — **bukan pet care**)
 - notifikasi terbaru
 - shortcut: tambah kucing, ajukan grooming, ajukan penitipan
 
@@ -183,31 +183,52 @@ Lihat folder [diagrams/](./diagrams/README.md):
 
 ### pet care (booking system)
 
+- **booking-only**: tidak ada alur pembayaran di app (tidak ada tagihan, upload bukti transfer, atau invoice)
+- **pembayaran di loket** saat kunjungan (tunai/transfer langsung di petshop); harga di app hanya **estimasi**
+- **1 petshop = 1 dokter** → maksimal **1 booking aktif per slot waktu** (jadwal slot global, bukan per layanan)
 - master data layanan (sumber: diinput staff/owner, dipakai berulang di setiap booking)
   - daftar layanan pet care diambil dari master data yang aktif
   - pelanggan hanya bisa pilih layanan yang statusnya **aktif**
-- lihat daftar layanan pet care yang tersedia (nama, deskripsi, harga, estimasi durasi)
+- lihat daftar layanan pet care yang tersedia (nama, deskripsi, harga estimasi, estimasi durasi)
+- lihat slot waktu tersedia per tanggal (dari jadwal slot dokter yang diset admin)
 - ajukan booking pet care (form)
-  - pilih kucing
+  - pilih tanggal
+  - pilih slot waktu tersedia (jika kosong)
   - pilih layanan (dropdown dari master data layanan pet care)
-  - pilih tanggal & slot waktu (jika tersedia)
+  - pilih kucing (dropdown dari "Kucing Saya")
   - opsi pengantaran: **antar sendiri** saja (fixed, tidak ada antar-jemput)
   - catatan khusus (opsional)
-  - ringkasan biaya (harga layanan saja, tanpa biaya antar-jemput)
+  - ringkasan estimasi biaya (harga layanan saja, tanpa biaya antar-jemput)
+  - catatan: "Pembayaran dilakukan langsung di petshop saat kunjungan"
+  - submit → **otomatis terkonfirmasi** jika slot masih kosong (first-come-first-served)
 - melihat status booking pet care
-  - menunggu konfirmasi
-  - menunggu pembayaran
-  - menunggu verifikasi bukti transfer (setelah upload bukti)
   - terkonfirmasi / sedang proses / selesai
   - dibatalkan
 - pembatalan booking pet care
-  - sebelum terkonfirmasi: pelanggan bisa batalkan langsung dari app
-  - setelah terkonfirmasi & sudah bayar: lihat aturan **pembatalan & refund (global)**
+  - pelanggan bisa **batalkan kapan saja** langsung dari app (termasuk hari-H)
+  - slot waktu langsung dikembalikan & bisa dibooking ulang pelanggan lain
+  - **tidak ada refund** (karena tidak ada prepayment di app)
 - riwayat booking pet care
+
+#### edge cases pet care
+
+| Situasi | Aturan |
+|---------|--------|
+| Dua pelanggan book slot sama bersamaan | Transaksi DB + cek slot belum penuh; tolak jika slot sudah terisi |
+| Pelanggan batalkan hari-H | Slot langsung kosong; pelanggan lain bisa book slot tersebut |
+| Staff batalkan booking aktif | Slot dikembalikan; notifikasi ke pelanggan |
+| Slot di masa lalu (hari ini, jam sudah lewat) | Tidak ditampilkan / ditolak saat submit |
+| Kucing yang sama book 2 slot berbeda di hari sama | Diizinkan |
+| Kucing book slot yang sudah terisi | Ditolak (slot sudah penuh) |
+| Admin hapus slot yang masih terbooking | Ditolak — admin harus batalkan booking dulu |
+| Layanan dinonaktifkan setelah booking | Booking tetap jalan; snapshot `harga_layanan` tidak berubah |
+| Durasi layanan > interval slot | Tanggung jawab admin saat set jadwal (jarak antar slot ≥ durasi layanan terpanjang) |
+| Tidak ada slot tersedia di tanggal dipilih | Tampilkan pesan "tidak ada jadwal"; arahkan pilih tanggal lain |
+| Booking `sedang proses` dibatalkan | Diizinkan; slot dikembalikan |
 
 ### pembayaran & transaksi
 
-- daftar tagihan menunggu (grooming, penitipan, pet care, **perpanjangan penitipan**)
+- daftar tagihan menunggu (grooming, penitipan, **perpanjangan penitipan** — **pet care dikecualikan**)
 - rincian tagihan:
   - subtotal layanan
   - potongan promo penitipan 10% (jika applicable — **hanya booking awal**, bukan perpanjangan)
@@ -219,12 +240,12 @@ Lihat folder [diagrams/](./diagrams/README.md):
   - **wajib upload bukti transfer** (form tidak bisa disubmit tanpa bukti)
   - setelah upload → status **menunggu verifikasi staff**
   - booking dianggap belum bayar sampai staff menyetujui bukti transfer
-- batas waktu pembayaran setelah booking disetujui staff (berlaku juga untuk tagihan perpanjangan setelah staff konfirmasi perpanjangan)
+- batas waktu pembayaran setelah booking disetujui staff (berlaku grooming & penitipan; juga tagihan perpanjangan setelah staff konfirmasi perpanjangan — **tidak berlaku pet care**)
 - jika lewat batas waktu → booking / permintaan perpanjangan otomatis dibatalkan & kuota dikembalikan
 - unduh invoice / struk setelah pembayaran diverifikasi staff
-- riwayat transaksi (semua layanan)
+- riwayat transaksi (grooming, penitipan, perpanjangan penitipan)
 
-### pembatalan & refund (global, berlaku grooming, penitipan, pet care)
+### pembatalan & refund (global, berlaku grooming & penitipan saja)
 
 - dua skenario pembatalan:
   - **belum terkonfirmasi / belum bayar** → pelanggan batalkan langsung dari app
@@ -240,19 +261,21 @@ Lihat folder [diagrams/](./diagrams/README.md):
   3. staff batalkan booking dari dashboard internal
   4. staff update status refund pada transaksi (opsional: pending refund / refunded)
   5. notifikasi ke pelanggan: booking dibatalkan & refund sedang/sudah diproses
+- **pet care dikecualikan**: pembatalan langsung di app tanpa refund (tidak ada prepayment)
 
 ### notifikasi
 
 - pusat notifikasi in-app (daftar semua pemberitahuan)
 - trigger notifikasi:
   - jam grooming diupdate staff
-  - booking disetujui / ditolak
-  - reminder pembayaran & pembayaran jatuh tempo
+  - booking disetujui / ditolak (grooming & penitipan)
+  - booking pet care terkonfirmasi (otomatis saat submit)
+  - reminder pembayaran & pembayaran jatuh tempo (grooming, penitipan, perpanjangan — **bukan pet care**)
   - update monitoring penitipan
   - permintaan perpanjangan penitipan masuk (ke staff)
   - perpanjangan penitipan disetujui / ditolak / menunggu pembayaran / pembayaran diverifikasi
   - layanan selesai
-  - booking dibatalkan & status refund (setelah staff proses)
+  - booking dibatalkan (pet care: langsung dari app; grooming/penitipan: & status refund setelah staff proses)
 - notifikasi email (opsional, untuk trigger penting)
 
 ---
@@ -297,7 +320,7 @@ Lihat folder [diagrams/](./diagrams/README.md):
 ### home (ringkasan)
 
 - jumlah booking hari ini (grooming, penitipan, pet care)
-- pembayaran menunggu verifikasi
+- pembayaran menunggu verifikasi (grooming, penitipan, perpanjangan — **bukan pet care**)
 - penitipan aktif
 - pendapatan ringkas (harian / mingguan)
 
@@ -353,18 +376,24 @@ Lihat folder [diagrams/](./diagrams/README.md):
   - tambah layanan (form)
     - nama layanan
     - deskripsi
-    - harga
+    - harga (estimasi — ditampilkan ke pelanggan)
     - estimasi durasi (menit / jam)
     - status (aktif / nonaktif)
   - edit layanan
   - nonaktifkan / hapus layanan (soft delete — layanan lama di riwayat booking tetap tersimpan)
   - layanan aktif otomatis muncul di form booking pelanggan
-- management kuota / slot waktu per layanan
-- melihat daftar booking masuk
-- konfirmasi atau tolak booking
-- update status layanan
-- verifikasi bukti transfer (wajib — setujui / tolak)
-- melihat laporan booking & pendapatan pet care
+- **kelola jadwal slot dokter** (CRUD blok waktu per tanggal — global, tidak terikat layanan spesifik)
+  - tambah slot waktu per hari (contoh: 09:00, 10:00, 11:00)
+  - sistem cegah jadwal bentrok (unique per tanggal + jam)
+  - maksimal 1 booking per slot (1 dokter)
+  - admin bisa tutup slot tanpa hapus (status `DITUTUP`)
+  - hapus slot hanya jika belum ada booking aktif
+  - admin bertanggung jawab jarak antar slot ≥ durasi layanan terpanjang
+- melihat daftar booking masuk (filter: tanggal, status)
+- melihat detail kucing & layanan pada setiap booking (read-only)
+- **batalkan booking pet care** dari dashboard (alasan opsional); slot waktu dikembalikan
+- update status layanan (terkonfirmasi → sedang proses → selesai)
+- melihat laporan **jumlah booking** pet care (pendapatan tidak ditrack di sistem — bayar di loket)
 
 ### manajemen pelanggan & kucing
 
@@ -375,7 +404,7 @@ Lihat folder [diagrams/](./diagrams/README.md):
 
 ### laporan & transaksi
 
-- daftar pembayaran menunggu verifikasi bukti transfer (semua layanan)
+- daftar pembayaran menunggu verifikasi bukti transfer (grooming, penitipan, perpanjangan — **bukan pet care**)
 - verifikasi bukti transfer: setujui / tolak + catatan (jika ditolak)
 - riwayat transaksi semua layanan
 - laporan pendapatan (filter: periode, layanan)
@@ -383,10 +412,11 @@ Lihat folder [diagrams/](./diagrams/README.md):
 
 ### pembatalan & refund
 
-- batalkan booking grooming / penitipan / pet care dari dashboard internal
+- batalkan booking grooming / penitipan dari dashboard internal
   - khusus booking **sudah terkonfirmasi & sudah bayar** (permintaan via WhatsApp pelanggan)
 - update status booking → dibatalkan
 - update status refund pada transaksi (pending refund / refunded)
 - kuota / slot layanan dikembalikan setelah pembatalan
 - notifikasi otomatis ke pelanggan setelah staff memproses pembatalan
+- **pet care**: staff batalkan langsung dari dashboard (tanpa alur WhatsApp/refund); slot dokter dikembalikan
 
