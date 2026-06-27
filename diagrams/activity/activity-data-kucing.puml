@@ -1,0 +1,41 @@
+@startuml activity-data-kucing
+skinparam activity {
+  BackgroundColor #FEFEFE
+  BorderColor #333333
+}
+
+title Kelola Data Kucing (Pelanggan)
+
+|Pelanggan|
+start
+:Buka menu "Kucing Saya";
+
+if (Aksi?) then (tambah)
+  :Isi form kucing\n(nama, jenis kelamin, ras,\numur, berat, foto opsional,\ncatatan kesehatan opsional);
+  :Opsional: tambah riwayat vaksin\n(jenis, tanggal, sertifikat opsional);
+  :Simpan kucing ke akun pelanggan;
+elseif (edit) then
+  :Pilih kucing milik akun;
+  :Edit data kucing;
+  :Simpan perubahan;
+else (hapus)
+  :Pilih kucing milik akun;
+  if (Ada booking aktif pada kucing?) then (ya)
+    :Tolak penghapusan;
+    stop
+  else (tidak)
+    :Hapus data kucing;
+  endif
+endif
+
+:Lihat daftar kucing terdaftar;
+
+note right
+  Data kucing dipakai ulang
+  di grooming, penitipan, pet care.
+  Riwayat vaksin opsional di master data;
+  validasi vaksin hanya saat booking pet hotel.
+end note
+
+stop
+@enduml

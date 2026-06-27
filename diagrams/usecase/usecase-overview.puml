@@ -1,0 +1,66 @@
+@startuml usecase-overview
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+
+actor Pelanggan
+actor Staff
+actor Owner
+
+Owner --|> Staff
+
+rectangle "Aplikasi Petshop" {
+  usecase "Autentikasi Pelanggan" as UC_AuthPelanggan
+  usecase "Kelola Profil & Akun" as UC_Profil
+  usecase "Kelola Data Kucing" as UC_Kucing
+  usecase "Booking Grooming" as UC_Grooming
+  usecase "Booking Penitipan (Pet Hotel)" as UC_Penitipan
+  usecase "Booking Pet Care" as UC_PetCare
+  usecase "Pembayaran & Transaksi" as UC_Pembayaran
+  usecase "Pembatalan & Refund" as UC_Pembatalan
+  usecase "Notifikasi" as UC_Notifikasi
+  usecase "Dashboard Home" as UC_Dashboard
+
+  usecase "Autentikasi Staff/Owner" as UC_AuthInternal
+  usecase "Operasional Grooming" as UC_OpsGrooming
+  usecase "Operasional Penitipan" as UC_OpsPenitipan
+  usecase "Operasional Pet Care" as UC_OpsPetCare
+  usecase "Master Data Pet Care" as UC_MasterPetCare
+  usecase "Manajemen Pelanggan & Kucing" as UC_PelangganKucing
+  usecase "Laporan & Transaksi" as UC_Laporan
+  usecase "Proses Pembatalan & Refund" as UC_RefundInternal
+  usecase "Manajemen Akun Staff" as UC_StaffMgmt
+}
+
+Pelanggan --> UC_AuthPelanggan
+Pelanggan --> UC_Profil
+Pelanggan --> UC_Kucing
+Pelanggan --> UC_Dashboard
+Pelanggan --> UC_Grooming
+Pelanggan --> UC_Penitipan
+Pelanggan --> UC_PetCare
+Pelanggan --> UC_Pembayaran
+Pelanggan --> UC_Pembatalan
+Pelanggan --> UC_Notifikasi
+
+Staff --> UC_AuthInternal
+Staff --> UC_Dashboard
+Staff --> UC_OpsGrooming
+Staff --> UC_OpsPenitipan
+Staff --> UC_OpsPetCare
+Staff --> UC_MasterPetCare
+Staff --> UC_PelangganKucing
+Staff --> UC_Laporan
+Staff --> UC_RefundInternal
+
+Owner --> UC_AuthInternal
+Owner --> UC_OpsGrooming
+Owner --> UC_OpsPenitipan
+Owner --> UC_OpsPetCare
+Owner --> UC_MasterPetCare
+Owner --> UC_PelangganKucing
+Owner --> UC_Laporan
+Owner --> UC_RefundInternal
+Owner --> UC_StaffMgmt
+
+@enduml

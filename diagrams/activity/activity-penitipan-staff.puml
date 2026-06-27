@@ -1,0 +1,57 @@
+@startuml activity-penitipan-staff
+skinparam activity {
+  BackgroundColor #FEFEFE
+  BorderColor #333333
+}
+
+title Operasional Staff — Penitipan (Pet Hotel)
+
+|Staff / Owner|
+start
+:Login dashboard staff / owner;
+:Buka menu Penitipan;
+
+:Kelola ketersediaan kamar / slot penitipan;
+:Kelola paket & harga penitipan;
+:Lihat daftar booking penitipan\n(filter tanggal, status);
+
+repeat
+  :Buka detail booking penitipan;
+  :Lihat rincian biaya\n(subtotal, promo 10%, antar-jemput, total);
+  :Cek riwayat vaksin kucing (read-only);
+
+  if (Vaksin memenuhi syarat?) then (tidak)
+    :Tolak booking;
+  else (ya)
+    if (Konfirmasi?) then (tolak)
+      :Status → Dibatalkan;
+    else (konfirmasi)
+      :Status → Menunggu Pembayaran;
+      :Verifikasi bukti transfer;
+      if (Bukti disetujui?) then (ya)
+        :Status → Terkonfirmasi;
+        :Update status → Check-in;
+        :Update status → Sedang Dititipkan;
+
+        repeat
+          :Input monitoring harian per kucing;
+          note right
+            Upload foto
+            Catatan makan & kondisi
+            Aktivitas harian
+          end note
+          :Kirim notifikasi ke pelanggan;
+        repeat while (Masih dititipkan?) is (ya)
+        ->tidak;
+
+        :Update status → Check-out;
+      endif
+    endif
+  endif
+repeat while (Ada booking lain?) is (ya)
+->tidak;
+
+:Lihat laporan penitipan & pendapatan;
+
+stop
+@enduml

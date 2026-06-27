@@ -1,0 +1,58 @@
+@startuml activity-operasional-staff
+skinparam activity {
+  BackgroundColor #FEFEFE
+  BorderColor #333333
+}
+
+title Operasional Staff — Grooming & Pet Care
+
+|Staff / Owner|
+start
+:Login dashboard staff / owner;
+
+:Buka ringkasan home\n(booking hari ini, pembayaran menunggu,\npenitipan aktif, pendapatan ringkas);
+
+partition "Grooming" {
+  :Kelola kuota grooming per hari;
+  :Kelola jenis grooming & harga;
+  :Lihat daftar booking grooming\n(filter tanggal, status);
+  :Lihat detail kucing & opsi antar-jemput;
+  if (Konfirmasi / tolak?) then (tolak)
+    :Update status → Dibatalkan;
+  else (konfirmasi)
+  endif
+  :Update jam grooming;
+  :Verifikasi bukti transfer;
+  :Update status → Sedang Proses → Selesai;
+  :Lihat laporan booking & pendapatan grooming;
+}
+
+partition "Pet Care" {
+  :Kelola master data layanan pet care (CRUD);
+  :Kelola kuota / slot waktu per layanan;
+  :Lihat daftar booking pet care;
+  if (Konfirmasi / tolak?) then (tolak)
+    :Update status → Dibatalkan;
+  else (konfirmasi)
+  endif
+  :Verifikasi bukti transfer;
+  :Update status layanan;
+  :Lihat laporan booking & pendapatan pet care;
+}
+
+partition "Pelanggan & Kucing" {
+  :Lihat daftar pelanggan terdaftar;
+  :Lihat detail profil pelanggan;
+  :Lihat daftar kucing milik pelanggan (read-only);
+  :Lihat riwayat vaksin per kucing;
+}
+
+partition "Laporan & Transaksi" {
+  :Verifikasi bukti transfer semua layanan;
+  :Lihat riwayat transaksi;
+  :Lihat laporan pendapatan (filter periode, layanan);
+  :Opsional: export data;
+}
+
+stop
+@enduml

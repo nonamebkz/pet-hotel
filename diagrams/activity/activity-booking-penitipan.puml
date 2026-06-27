@@ -1,0 +1,106 @@
+@startuml activity-booking-penitipan
+skinparam activity {
+  BackgroundColor #FEFEFE
+  BorderColor #333333
+}
+
+title Alur Booking Penitipan / Pet Hotel (End-to-End)
+
+|Pelanggan|
+start
+:Login & buka menu Penitipan;
+
+if (Minimal 1 kucing terdaftar?) then (tidak)
+  :Arahkan ke "Kucing Saya";
+  stop
+endif
+
+:Pilih kucing dari "Kucing Saya";
+
+if (Riwayat vaksin ≥ 1 entri\n(jenis & tanggal terisi)?) then (tidak)
+  :Kucing tidak eligible / form ditolak;
+  :Tampilkan pesan: lengkapi riwayat vaksin\ndi menu "Kucing Saya";
+  stop
+else (ya)
+  :Tampilkan ringkasan riwayat vaksin (read-only);
+endif
+
+:Isi tanggal check-in & check-out;
+:Input lama penitipan (hari);
+:Catatan makan & kebiasaan kucing;
+
+if (Durasi > 7 hari?) then (ya)
+  if (Pelanggan belum pernah pakai promo?) then (ya)
+    :Estimasi potongan promo 10%;
+  else (sudah)
+    :Tidak ada potongan promo;
+  endif
+else (≤ 7 hari)
+  :Tidak ada potongan promo;
+endif
+
+if (Opsi pengantaran?) then (antar-jemput)
+  if (Alamat profil lengkap?) then (tidak)
+    :Wajib lengkapi alamat profil;
+    stop
+  else (ya)
+    :Hitung jarak & biaya antar-jemput\n(gratis ≤ 3 km, charge > 3 km);
+  endif
+else (antar sendiri)
+  :Biaya antar-jemput = Rp 0;
+endif
+
+:Tampilkan ringkasan biaya\n(subtotal, potongan promo, antar-jemput, total);
+:Submit penitipan;
+:Status → **Menunggu Konfirmasi**;
+
+|Staff / Owner|
+:Melihat daftar booking penitipan;
+:Cek riwayat vaksin kucing (read-only);
+
+if (Vaksin memenuhi syarat?) then (tidak)
+  :Tolak booking;
+  |Pelanggan|
+  :Terima notifikasi penitipan ditolak;
+  stop
+else (ya)
+  if (Konfirmasi penitipan?) then (tolak)
+    :Status → **Dibatalkan**;
+    stop
+  else (konfirmasi)
+    :Status → **Menunggu Pembayaran**;
+    :Set batas waktu pembayaran;
+  endif
+endif
+
+|Pelanggan|
+:Transfer & upload bukti transfer;
+:Status → **Menunggu Verifikasi Bukti Transfer**;
+
+|Staff / Owner|
+if (Bukti transfer disetujui?) then (tolak)
+  |Pelanggan|
+  :Upload ulang bukti transfer;
+  detach
+else (setujui)
+  :Status → **Terkonfirmasi**;
+endif
+
+|Staff / Owner|
+:Update status → **Check-in**;
+:Update status → **Sedang Dititipkan**;
+
+repeat
+  :Input monitoring harian\n(foto, catatan makan, aktivitas);
+  |Pelanggan|
+  :Terima notifikasi update monitoring;
+  |Staff / Owner|
+repeat while (Masih dalam masa penitipan?) is (ya)
+->tidak;
+
+:Update status → **Check-out**;
+|Pelanggan|
+:Lihat riwayat penitipan per kucing;
+
+stop
+@enduml

@@ -1,0 +1,68 @@
+@startuml activity-booking-petcare
+skinparam activity {
+  BackgroundColor #FEFEFE
+  BorderColor #333333
+}
+
+title Alur Booking Pet Care (End-to-End)
+
+|Pelanggan|
+start
+:Login & buka menu Pet Care;
+
+if (Minimal 1 kucing terdaftar?) then (tidak)
+  :Arahkan ke "Kucing Saya";
+  stop
+endif
+
+:Lihat daftar layanan pet care aktif\n(nama, deskripsi, harga, durasi);
+:Isi form booking pet care\n(pilih kucing, layanan, tanggal & slot waktu);
+note right
+  Pengantaran: **antar sendiri** saja
+  (tidak ada opsi antar-jemput)
+end note
+:Opsional: catatan khusus;
+:Tampilkan ringkasan biaya\n(harga layanan saja);
+:Submit booking;
+:Status → **Menunggu Konfirmasi**;
+
+|Staff / Owner|
+:Melihat daftar booking masuk;
+if (Konfirmasi booking?) then (tolak)
+  :Status → **Dibatalkan**;
+  |Pelanggan|
+  :Terima notifikasi booking ditolak;
+  stop
+else (konfirmasi)
+  :Status → **Menunggu Pembayaran**;
+  :Set batas waktu pembayaran;
+  |Pelanggan|
+  :Terima notifikasi tagihan;
+endif
+
+|Pelanggan|
+:Transfer ke rekening petshop;
+:Upload bukti transfer (wajib);
+:Status → **Menunggu Verifikasi Bukti Transfer**;
+
+|Staff / Owner|
+if (Bukti transfer disetujui?) then (tolak)
+  |Pelanggan|
+  :Upload ulang bukti transfer;
+  detach
+else (setujui)
+  :Status → **Terkonfirmasi**;
+  |Pelanggan|
+  :Terima notifikasi pembayaran diverifikasi;
+  :Unduh invoice / struk;
+endif
+
+|Staff / Owner|
+:Update status → Sedang Proses;
+:Update status → Selesai;
+|Pelanggan|
+:Terima notifikasi layanan selesai;
+:Lihat riwayat booking pet care;
+
+stop
+@enduml

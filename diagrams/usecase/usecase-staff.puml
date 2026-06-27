@@ -1,0 +1,116 @@
+@startuml usecase-staff
+left to right direction
+skinparam packageStyle rectangle
+
+actor Staff
+
+rectangle "Dashboard Staff" {
+  rectangle "Autentikasi" {
+    usecase "Login Staff" as UC_LoginStaff
+    usecase "Logout" as UC_LogoutStaff
+    usecase "Ubah Password" as UC_UbahPwdStaff
+  }
+
+  rectangle "Dashboard Home" {
+    usecase "Lihat Ringkasan Operasional" as UC_RingkasanStaff
+  }
+
+  rectangle "Operasional Grooming" {
+    usecase "Kelola Kuota Grooming" as UC_KuotaGrooming
+    usecase "Kelola Jenis & Harga Grooming" as UC_JenisHargaGrooming
+    usecase "Lihat Daftar Booking Grooming" as UC_DaftarBookingGrooming
+    usecase "Konfirmasi / Tolak Booking" as UC_KonfirmasiGrooming
+    usecase "Update Jam Grooming" as UC_UpdateJamGrooming
+    usecase "Verifikasi Bukti Transfer" as UC_VerifGrooming
+    usecase "Update Status Layanan" as UC_StatusLayananGrooming
+    usecase "Laporan Booking & Pendapatan" as UC_LaporanGrooming
+  }
+
+  rectangle "Operasional Penitipan" {
+    usecase "Lihat Daftar Booking Penitipan" as UC_DaftarBookingPenitipan
+    usecase "Konfirmasi / Tolak Penitipan" as UC_KonfirmasiPenitipan
+    usecase "Cek Riwayat Vaksin Kucing" as UC_CekVaksin
+    usecase "Kelola Kamar / Slot Penitipan" as UC_KamarPenitipan
+    usecase "Kelola Paket & Harga Penitipan" as UC_PaketHargaPenitipan
+    usecase "Update Status\n(Check-in/out)" as UC_StatusPenitipanStaff
+    usecase "Input Monitoring Harian" as UC_InputMonitoring
+    usecase "Verifikasi Bukti Transfer" as UC_VerifPenitipan
+    usecase "Laporan Penitipan & Pendapatan" as UC_LaporanPenitipan
+  }
+
+  rectangle "Operasional Pet Care" {
+    usecase "CRUD Master Data\nLayanan Pet Care" as UC_CRUDPetCare
+    usecase "Kelola Kuota / Slot Waktu" as UC_KuotaPetCare
+    usecase "Lihat Daftar Booking Pet Care" as UC_DaftarBookingPetCare
+    usecase "Konfirmasi / Tolak Booking" as UC_KonfirmasiPetCare
+    usecase "Update Status Layanan" as UC_StatusPetCareStaff
+    usecase "Verifikasi Bukti Transfer" as UC_VerifPetCare
+    usecase "Laporan Booking & Pendapatan" as UC_LaporanPetCare
+  }
+
+  rectangle "Manajemen Pelanggan & Kucing" {
+    usecase "Lihat Daftar Pelanggan" as UC_DaftarPelanggan
+    usecase "Lihat Detail Profil Pelanggan" as UC_DetailPelanggan
+    usecase "Lihat Data Kucing Pelanggan" as UC_LihatKucingPelanggan
+  }
+
+  rectangle "Laporan & Transaksi" {
+    usecase "Daftar Pembayaran\nMenunggu Verifikasi" as UC_DaftarVerif
+    usecase "Verifikasi Bukti Transfer\n(Global)" as UC_VerifTransfer
+    usecase "Riwayat Transaksi\nSemua Layanan" as UC_RiwayatTransaksiStaff
+    usecase "Laporan Pendapatan" as UC_LaporanPendapatan
+    usecase "Export Data (Opsional)" as UC_ExportData
+  }
+
+  rectangle "Pembatalan & Refund" {
+    usecase "Batalkan Booking (Internal)" as UC_BatalInternal
+    usecase "Update Status Refund" as UC_UpdateRefund
+    usecase "Kirim Notifikasi Pembatalan" as UC_NotifBatal
+  }
+}
+
+Staff --> UC_LoginStaff
+Staff --> UC_LogoutStaff
+Staff --> UC_UbahPwdStaff
+Staff --> UC_RingkasanStaff
+Staff --> UC_KuotaGrooming
+Staff --> UC_JenisHargaGrooming
+Staff --> UC_DaftarBookingGrooming
+Staff --> UC_KonfirmasiGrooming
+Staff --> UC_UpdateJamGrooming
+Staff --> UC_VerifGrooming
+Staff --> UC_StatusLayananGrooming
+Staff --> UC_LaporanGrooming
+Staff --> UC_DaftarBookingPenitipan
+Staff --> UC_KonfirmasiPenitipan
+Staff --> UC_KamarPenitipan
+Staff --> UC_PaketHargaPenitipan
+Staff --> UC_StatusPenitipanStaff
+Staff --> UC_InputMonitoring
+Staff --> UC_VerifPenitipan
+Staff --> UC_LaporanPenitipan
+Staff --> UC_CRUDPetCare
+Staff --> UC_KuotaPetCare
+Staff --> UC_DaftarBookingPetCare
+Staff --> UC_KonfirmasiPetCare
+Staff --> UC_StatusPetCareStaff
+Staff --> UC_VerifPetCare
+Staff --> UC_LaporanPetCare
+Staff --> UC_DaftarPelanggan
+Staff --> UC_DetailPelanggan
+Staff --> UC_LihatKucingPelanggan
+Staff --> UC_DaftarVerif
+Staff --> UC_VerifTransfer
+Staff --> UC_RiwayatTransaksiStaff
+Staff --> UC_LaporanPendapatan
+Staff --> UC_ExportData
+Staff --> UC_BatalInternal
+Staff --> UC_UpdateRefund
+Staff --> UC_NotifBatal
+
+UC_KonfirmasiPenitipan ..> UC_CekVaksin : <<include>>
+UC_BatalInternal ..> UC_NotifBatal : <<include>>
+UC_InputMonitoring ..> UC_NotifBatal : <<include>>
+UC_UpdateRefund ..> UC_BatalInternal : <<extend>>
+
+@enduml

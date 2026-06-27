@@ -1,0 +1,44 @@
+@startuml activity-manajemen-staff-owner
+skinparam activity {
+  BackgroundColor #FEFEFE
+  BorderColor #333333
+}
+
+title Manajemen Akun Staff (Owner)
+
+|Owner|
+start
+:Login dashboard owner;
+
+:Buka menu Manajemen Akun Staff;
+:Lihat daftar akun staff (pegawai);
+
+if (Aksi?) then (tambah)
+  :Isi form staff\n(nama, email/username,\npassword awal, status aktif/nonaktif);
+  :Simpan akun staff;
+elseif (edit) then
+  :Pilih akun staff;
+  :Edit data staff;
+  :Simpan perubahan;
+elseif (reset password) then
+  :Pilih akun staff;
+  :Set password baru;
+elseif (aktifkan / nonaktifkan) then
+  :Pilih akun staff;
+  if (Nonaktifkan owner?) then (ya)
+    :Ditolak — owner tidak bisa dinonaktifkan;
+    stop
+  else (tidak)
+    :Update status akun staff;
+  endif
+endif
+
+note right
+  Staff **tidak bisa** mengelola
+  akun staff lain.
+  Owner memiliki semua akses
+  operasional staff.
+end note
+
+stop
+@enduml

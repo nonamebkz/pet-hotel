@@ -1,0 +1,56 @@
+@startuml activity-autentikasi-pelanggan
+skinparam activity {
+  BackgroundColor #FEFEFE
+  BorderColor #333333
+}
+skinparam ArrowColor #333333
+
+title Autentikasi Pelanggan
+
+|Pelanggan|
+start
+:Membuka halaman autentikasi;
+
+if (Sudah punya akun?) then (belum)
+  :Isi form daftar akun\n(nama, email, password);
+  if (Data valid?) then (tidak)
+    :Tampilkan error validasi;
+    stop
+  else (ya)
+    :Simpan akun pelanggan;
+    :Redirect ke login / dashboard;
+  endif
+else (sudah)
+  :Isi email & password;
+  if (Kredensial benar?) then (tidak)
+    :Tampilkan error login;
+    stop
+  else (ya)
+    :Buat sesi login;
+  endif
+endif
+
+if (Lupa password?) then (ya)
+  :Masukkan email;
+  :Kirim link reset password;
+  :Buka link & set password baru;
+  :Password diperbarui;
+endif
+
+:Masuk dashboard pelanggan;
+
+if (Ubah password?) then (ya)
+  :Isi password lama & password baru;
+  if (Password lama benar?) then (tidak)
+  else (ya)
+    :Update password;
+  endif
+endif
+
+if (Logout?) then (ya)
+  :Hapus sesi;
+  stop
+endif
+
+stop
+@enduml

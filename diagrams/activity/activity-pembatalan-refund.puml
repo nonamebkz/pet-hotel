@@ -1,0 +1,42 @@
+@startuml activity-pembatalan-refund
+skinparam activity {
+  BackgroundColor #FEFEFE
+  BorderColor #333333
+}
+
+title Alur Pembatalan & Refund (Global)
+
+|Pelanggan|
+start
+:Buka detail booking\n(grooming / penitipan / pet care);
+
+if (Status booking?) then (belum terkonfirmasi\n/ belum bayar)
+  :Klik batalkan booking;
+  :Status → **Dibatalkan**;
+  |Sistem|
+  :Kuota / slot dikembalikan;
+  |Pelanggan|
+  :Terima notifikasi pembatalan;
+  stop
+else (sudah terkonfirmasi\n& sudah bayar)
+  :Tidak bisa batalkan otomatis dari app;
+  :Klik **Hubungi Kami**;
+  :Redirect ke WhatsApp\n(wa.me/{PETSHOP_WHATSAPP});
+  :Sampaikan ID booking & alasan pembatalan;
+endif
+
+|Staff / Owner|
+:Terima permintaan via WhatsApp;
+:Verifikasi permintaan pembatalan;
+:Batalkan booking dari dashboard internal;
+:Update status booking → **Dibatalkan**;
+:Update status refund pada transaksi\n(pending refund / refunded);
+:Proses refund manual (transfer balik);
+|Sistem|
+:Kuota / slot dikembalikan;
+
+|Pelanggan|
+:Terima notifikasi\nbooking dibatalkan & status refund;
+
+stop
+@enduml

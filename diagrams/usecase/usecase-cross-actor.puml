@@ -1,0 +1,43 @@
+@startuml usecase-cross-actor
+left to right direction
+
+actor Pelanggan
+actor Staff
+
+rectangle "Alur Booking & Pembayaran" {
+  usecase "Ajukan Booking Layanan" as UC_AjukanBooking
+  usecase "Konfirmasi / Tolak Booking" as UC_KonfirmasiBooking
+  usecase "Upload Bukti Transfer" as UC_UploadBukti
+  usecase "Verifikasi Bukti Transfer" as UC_VerifBukti
+  usecase "Hubungi Kami (WhatsApp)" as UC_HubungiWA
+  usecase "Proses Pembatalan & Refund" as UC_ProsesRefund
+  usecase "Terima Notifikasi" as UC_TerimaNotif
+}
+
+Pelanggan --> UC_AjukanBooking
+Pelanggan --> UC_UploadBukti
+Pelanggan --> UC_HubungiWA
+Pelanggan --> UC_TerimaNotif
+
+Staff --> UC_KonfirmasiBooking
+Staff --> UC_VerifBukti
+Staff --> UC_ProsesRefund
+Staff --> UC_TerimaNotif
+
+UC_AjukanBooking ..> UC_KonfirmasiBooking : <<include>>
+note right of UC_KonfirmasiBooking : menunggu konfirmasi staff
+
+UC_KonfirmasiBooking ..> UC_UploadBukti : <<include>>
+note right of UC_UploadBukti : disetujui,\nmenunggu pembayaran
+
+UC_UploadBukti ..> UC_VerifBukti : <<include>>
+note right of UC_VerifBukti : menunggu verifikasi staff
+
+UC_HubungiWA ..> UC_ProsesRefund : <<include>>
+note right of UC_ProsesRefund : permintaan refund manual\nvia WhatsApp
+
+UC_KonfirmasiBooking ..> UC_TerimaNotif : <<include>>
+UC_VerifBukti ..> UC_TerimaNotif : <<include>>
+UC_ProsesRefund ..> UC_TerimaNotif : <<include>>
+
+@enduml

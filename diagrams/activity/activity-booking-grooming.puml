@@ -1,0 +1,84 @@
+@startuml activity-booking-grooming
+skinparam activity {
+  BackgroundColor #FEFEFE
+  BorderColor #333333
+}
+
+title Alur Booking Grooming (End-to-End)
+
+|Pelanggan|
+start
+:Login & buka menu Grooming;
+
+if (Minimal 1 kucing terdaftar?) then (tidak)
+  :Arahkan ke "Kucing Saya";
+  stop
+endif
+
+:Lihat kuota grooming per tanggal;
+:Isi form booking grooming\n(pilih kucing, jenis grooming, tanggal);
+
+if (Opsi pengantaran?) then (antar-jemput)
+  if (Alamat profil lengkap?) then (tidak)
+    :Wajib lengkapi alamat profil;
+    stop
+  else (ya)
+    :Hitung jarak dari petshop ke alamat pelanggan;
+    if (Jarak ≤ 3 km?) then (ya)
+      :Biaya antar-jemput = Rp 0;
+    else (tidak)
+      :Biaya = (jarak - 3) × Rp 5.000/km;
+    endif
+    :Tampilkan estimasi jarak & biaya;
+  endif
+else (antar sendiri)
+  :Biaya antar-jemput = Rp 0;
+endif
+
+:Tampilkan ringkasan biaya\n(harga grooming + antar-jemput);
+:Submit booking;
+:Status → **Menunggu Konfirmasi Jam**;
+
+|Staff / Owner|
+:Melihat daftar booking masuk;
+if (Konfirmasi booking?) then (tolak)
+  :Status → **Dibatalkan**;
+  |Pelanggan|
+  :Terima notifikasi booking ditolak;
+  stop
+else (konfirmasi)
+  :Isi / update jam grooming;
+  :Status → **Menunggu Pembayaran**;
+  :Set batas waktu pembayaran;
+  |Pelanggan|
+  :Terima notifikasi jam grooming & tagihan;
+endif
+
+|Pelanggan|
+:Transfer ke rekening petshop;
+:Upload bukti transfer (wajib);
+:Status → **Menunggu Verifikasi Bukti Transfer**;
+
+|Staff / Owner|
+:Review bukti transfer;
+if (Bukti disetujui?) then (tolak)
+  |Pelanggan|
+  :Diminta upload ulang bukti;
+  detach
+else (setujui)
+  :Status → **Terkonfirmasi**;
+  :Pembayaran lunas;
+  |Pelanggan|
+  :Terima notifikasi pembayaran diverifikasi;
+  :Unduh invoice / struk;
+endif
+
+|Staff / Owner|
+:Update status layanan\n→ Sedang Proses;
+:Update status layanan\n→ Selesai;
+|Pelanggan|
+:Terima notifikasi layanan selesai;
+:Lihat riwayat grooming per kucing;
+
+stop
+@enduml

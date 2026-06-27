@@ -1,0 +1,136 @@
+@startuml usecase-pelanggan
+left to right direction
+skinparam packageStyle rectangle
+
+actor Pelanggan
+
+rectangle "Dashboard Pelanggan" {
+  rectangle "Autentikasi" {
+    usecase "Daftar Akun" as UC_Reg
+    usecase "Login" as UC_Login
+    usecase "Logout" as UC_Logout
+    usecase "Lupa / Reset Password" as UC_ResetPwd
+    usecase "Ubah Password" as UC_UbahPwd
+  }
+
+  rectangle "Profil & Akun" {
+    usecase "Lihat & Edit Profil" as UC_LihatEditProfil
+    usecase "Upload Foto Profil" as UC_UploadFotoProfil
+  }
+
+  rectangle "Data Kucing" {
+    usecase "Tambah Kucing" as UC_TambahKucing
+    usecase "Edit Data Kucing" as UC_EditKucing
+    usecase "Hapus Data Kucing" as UC_HapusKucing
+    usecase "Lihat Daftar Kucing" as UC_DaftarKucing
+    usecase "Kelola Riwayat Vaksin" as UC_RiwayatVaksin
+  }
+
+  rectangle "Dashboard Home" {
+    usecase "Lihat Ringkasan Dashboard" as UC_Ringkasan
+    usecase "Shortcut Layanan" as UC_Shortcut
+  }
+
+  rectangle "Grooming" {
+    usecase "Lihat Kuota Grooming" as UC_LihatKuotaGrooming
+    usecase "Ajukan Booking Grooming" as UC_AjukanGrooming
+    usecase "Lihat Status Booking Grooming" as UC_StatusGrooming
+    usecase "Riwayat Grooming" as UC_RiwayatGrooming
+    usecase "Batalkan Booking Grooming" as UC_BatalGrooming
+    usecase "Pilih Antar-Jemput / Antar Sendiri" as UC_AntarJemputGrooming
+  }
+
+  rectangle "Penitipan (Pet Hotel)" {
+    usecase "Ajukan Penitipan" as UC_AjukanPenitipan
+    usecase "Validasi Syarat Vaksin" as UC_ValidasiVaksin
+    usecase "Estimasi Promo Penitipan" as UC_PromoPenitipan
+    usecase "Lihat Status Penitipan" as UC_StatusPenitipan
+    usecase "Lihat Monitoring Harian" as UC_MonitoringPenitipan
+    usecase "Riwayat Penitipan" as UC_RiwayatPenitipan
+    usecase "Batalkan Penitipan" as UC_BatalPenitipan
+    usecase "Pilih Antar-Jemput / Antar Sendiri" as UC_AntarJemputPenitipan
+  }
+
+  rectangle "Pet Care" {
+    usecase "Lihat Daftar Layanan Pet Care" as UC_LihatLayananPetCare
+    usecase "Ajukan Booking Pet Care" as UC_AjukanPetCare
+    usecase "Lihat Status Booking Pet Care" as UC_StatusPetCare
+    usecase "Riwayat Booking Pet Care" as UC_RiwayatPetCare
+    usecase "Batalkan Booking Pet Care" as UC_BatalPetCare
+  }
+
+  rectangle "Pembayaran & Transaksi" {
+    usecase "Lihat Tagihan Menunggu" as UC_Tagihan
+    usecase "Transfer Bank Manual" as UC_Transfer
+    usecase "Upload Bukti Transfer" as UC_UploadBukti
+    usecase "Unduh Invoice / Struk" as UC_Invoice
+    usecase "Riwayat Transaksi" as UC_RiwayatTransaksi
+  }
+
+  rectangle "Pembatalan & Refund" {
+    usecase "Batalkan Langsung\n(Belum Terkonfirmasi)" as UC_BatalLangsung
+    usecase "Hubungi Kami (WhatsApp)" as UC_HubungiKami
+  }
+
+  rectangle "Notifikasi" {
+    usecase "Pusat Notifikasi In-App" as UC_PusatNotif
+    usecase "Notifikasi Email (Opsional)" as UC_EmailNotif
+  }
+}
+
+Pelanggan --> UC_Reg
+Pelanggan --> UC_Login
+Pelanggan --> UC_Logout
+Pelanggan --> UC_ResetPwd
+Pelanggan --> UC_UbahPwd
+Pelanggan --> UC_LihatEditProfil
+Pelanggan --> UC_UploadFotoProfil
+Pelanggan --> UC_TambahKucing
+Pelanggan --> UC_EditKucing
+Pelanggan --> UC_HapusKucing
+Pelanggan --> UC_DaftarKucing
+Pelanggan --> UC_RiwayatVaksin
+Pelanggan --> UC_Ringkasan
+Pelanggan --> UC_Shortcut
+Pelanggan --> UC_LihatKuotaGrooming
+Pelanggan --> UC_AjukanGrooming
+Pelanggan --> UC_StatusGrooming
+Pelanggan --> UC_RiwayatGrooming
+Pelanggan --> UC_BatalGrooming
+Pelanggan --> UC_AjukanPenitipan
+Pelanggan --> UC_StatusPenitipan
+Pelanggan --> UC_MonitoringPenitipan
+Pelanggan --> UC_RiwayatPenitipan
+Pelanggan --> UC_BatalPenitipan
+Pelanggan --> UC_LihatLayananPetCare
+Pelanggan --> UC_AjukanPetCare
+Pelanggan --> UC_StatusPetCare
+Pelanggan --> UC_RiwayatPetCare
+Pelanggan --> UC_BatalPetCare
+Pelanggan --> UC_Tagihan
+Pelanggan --> UC_Transfer
+Pelanggan --> UC_UploadBukti
+Pelanggan --> UC_Invoice
+Pelanggan --> UC_RiwayatTransaksi
+Pelanggan --> UC_BatalLangsung
+Pelanggan --> UC_HubungiKami
+Pelanggan --> UC_PusatNotif
+Pelanggan --> UC_EmailNotif
+
+UC_AjukanGrooming ..> UC_AntarJemputGrooming : <<include>>
+UC_AjukanPenitipan ..> UC_ValidasiVaksin : <<include>>
+UC_AjukanPenitipan ..> UC_PromoPenitipan : <<include>>
+UC_AjukanPenitipan ..> UC_AntarJemputPenitipan : <<include>>
+UC_AjukanGrooming ..> UC_DaftarKucing : <<include>>
+UC_AjukanPenitipan ..> UC_DaftarKucing : <<include>>
+UC_AjukanPetCare ..> UC_DaftarKucing : <<include>>
+UC_Transfer ..> UC_UploadBukti : <<include>>
+
+UC_BatalLangsung ..> UC_BatalGrooming : <<extend>>
+UC_BatalLangsung ..> UC_BatalPenitipan : <<extend>>
+UC_BatalLangsung ..> UC_BatalPetCare : <<extend>>
+UC_HubungiKami ..> UC_BatalGrooming : <<extend>>
+UC_HubungiKami ..> UC_BatalPenitipan : <<extend>>
+UC_HubungiKami ..> UC_BatalPetCare : <<extend>>
+
+@enduml

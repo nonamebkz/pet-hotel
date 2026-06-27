@@ -1,0 +1,42 @@
+@startuml usecase-owner
+left to right direction
+skinparam packageStyle rectangle
+
+actor Owner
+actor Staff
+
+Owner --|> Staff
+
+rectangle "Dashboard Owner" {
+  rectangle "Autentikasi Owner" {
+    usecase "Login Owner" as UC_LoginOwner
+    usecase "Logout" as UC_LogoutOwner
+    usecase "Ubah Password" as UC_UbahPwdOwner
+  }
+
+  rectangle "Manajemen Akun Staff\n(Khusus Owner)" {
+    usecase "Lihat Daftar Akun Staff" as UC_DaftarStaff
+    usecase "Tambah Akun Staff" as UC_TambahStaff
+    usecase "Edit Data Akun Staff" as UC_EditStaff
+    usecase "Reset Password Staff" as UC_ResetPwdStaff
+    usecase "Aktifkan / Nonaktifkan\nAkun Staff" as UC_AktifStaff
+  }
+
+  rectangle "Akses Operasional\n(Diwarisi dari Staff)" {
+    usecase "Semua Fitur\nDashboard Staff" as UC_OpsAll
+  }
+}
+
+Owner --> UC_LoginOwner
+Owner --> UC_LogoutOwner
+Owner --> UC_UbahPwdOwner
+Owner --> UC_DaftarStaff
+Owner --> UC_TambahStaff
+Owner --> UC_EditStaff
+Owner --> UC_ResetPwdStaff
+Owner --> UC_AktifStaff
+Owner --> UC_OpsAll
+
+Staff --> UC_OpsAll
+
+@enduml

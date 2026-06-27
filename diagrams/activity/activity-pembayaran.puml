@@ -1,0 +1,64 @@
+@startuml activity-pembayaran
+skinparam activity {
+  BackgroundColor #FEFEFE
+  BorderColor #333333
+}
+
+title Alur Pembayaran & Verifikasi Bukti Transfer (Global)
+
+|Staff / Owner|
+start
+:Konfirmasi booking pelanggan;
+:Set status → **Menunggu Pembayaran**;
+:Set batas waktu pembayaran;
+
+|Pelanggan|
+:Buka daftar tagihan menunggu;
+:Lihat rincian tagihan;
+note right
+  Subtotal layanan
+  + potongan promo penitipan 10% (jika ada)
+  + biaya antar-jemput (grooming/penitipan)
+  = Total bayar
+end note
+:Lihat info rekening tujuan petshop\n(bank, no. rekening, atas nama);
+:Transfer sesuai total tagihan;
+
+if (Bukti transfer diupload?) then (tidak)
+  :Form tidak bisa disubmit;
+  stop
+else (ya)
+  :Submit bukti transfer;
+  :Status → **Menunggu Verifikasi Bukti Transfer**;
+endif
+
+|Staff / Owner|
+:Buka daftar pembayaran menunggu verifikasi;
+:Review bukti transfer pelanggan;
+
+if (Bukti disetujui?) then (tolak)
+  :Tambah catatan penolakan;
+  |Pelanggan|
+  :Diminta upload ulang bukti;
+  detach
+else (setujui)
+  :Status booking → **Terkonfirmasi**;
+  :Pembayaran lunas;
+  |Pelanggan|
+  :Terima notifikasi verifikasi berhasil;
+  :Unduh invoice / struk;
+  stop
+endif
+
+|Pelanggan|
+if (Lewat batas waktu pembayaran?) then (ya)
+  |Sistem|
+  :Booking otomatis dibatalkan;
+  :Kuota / slot dikembalikan;
+  |Pelanggan|
+  :Terima notifikasi pembatalan otomatis;
+  stop
+endif
+
+stop
+@enduml
