@@ -41,6 +41,7 @@ $navUnreadCount = (int) ($navUnreadCount ?? 0);
                 <a href="/admin/pet-care/layanan" class="text-sm text-slate-300 hover:text-white">Pet Care</a>
                 <a href="/admin/grooming/layanan" class="text-sm text-slate-300 hover:text-white">Grooming</a>
                 <a href="/admin/penitipan/paket" class="text-sm text-slate-300 hover:text-white">Penitipan</a>
+                <a href="/admin/pelanggan" class="text-sm text-slate-300 hover:text-white">Pelanggan</a>
                 <a href="/admin/laporan" class="text-sm text-slate-300 hover:text-white">Laporan</a>
                 <a href="/admin/transaksi" class="text-sm text-slate-300 hover:text-white">Riwayat Transaksi</a>
                 <a href="/admin/grooming/pembayaran" class="text-sm text-slate-300 hover:text-white">Verifikasi Grooming</a>

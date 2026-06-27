@@ -7,6 +7,7 @@ use App\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Controllers\Admin\GroomingController as AdminGroomingController;
 use App\Controllers\Admin\LaporanController as AdminLaporanController;
 use App\Controllers\Admin\PenitipanController as AdminPenitipanController;
+use App\Controllers\Admin\PelangganController as AdminPelangganController;
 use App\Controllers\Admin\PengaturanController as AdminPengaturanController;
 use App\Controllers\Admin\PetCareController as AdminPetCareController;
 use App\Controllers\Admin\StaffManagementController as AdminStaffManagementController;
@@ -27,6 +28,8 @@ $router->get('/admin/change-password', [StaffAuthController::class, 'showChangeP
 $router->post('/admin/change-password', [StaffAuthController::class, 'changePassword'], ['auth:staff']);
 $router->get('/admin/dashboard', [AdminDashboardController::class, 'index'], ['auth:staff']);
 $router->get('/admin/notifikasi', [AdminNotifikasiController::class, 'index'], ['auth:staff']);
+$router->get('/admin/pelanggan', [AdminPelangganController::class, 'index'], ['auth:staff']);
+$router->get('/admin/pelanggan/detail', [AdminPelangganController::class, 'show'], ['auth:staff']);
 $router->get('/admin/staff', [AdminStaffManagementController::class, 'index'], ['auth:staff', 'role:owner']);
 $router->get('/admin/staff/tambah', [AdminStaffManagementController::class, 'create'], ['auth:staff', 'role:owner']);
 $router->post('/admin/staff/tambah', [AdminStaffManagementController::class, 'store'], ['auth:staff', 'role:owner']);

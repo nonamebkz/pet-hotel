@@ -38,6 +38,22 @@ final class KucingRepository
         return (int) $stmt->fetchColumn();
     }
 
+    public function findById(string $id): ?array
+    {
+        if (!$this->tableExists('kucing')) {
+            return null;
+        }
+
+        $stmt = Database::connection()->prepare(
+            'SELECT * FROM kucing WHERE id = :id LIMIT 1'
+        );
+        $stmt->execute(['id' => $id]);
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $row ?: null;
+    }
+
     public function findByIdAndPelanggan(string $id, string $pelangganId): ?array
     {
         if (!$this->tableExists('kucing')) {
