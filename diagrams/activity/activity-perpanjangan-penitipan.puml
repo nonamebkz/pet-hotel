@@ -1,0 +1,86 @@
+@startuml activity-perpanjangan-penitipan
+skinparam activity {
+  BackgroundColor #FEFEFE
+  BorderColor #333333
+}
+
+title Alur Perpanjangan Penitipan (End-to-End)
+
+|Pelanggan|
+start
+:Buka detail booking penitipan;
+
+if (Status CHECK_IN\natau SEDANG_DITITIPKAN?) then (tidak)
+  :Perpanjangan tidak tersedia;
+  stop
+endif
+
+:Pilih tanggal check-out baru\n(wajib > check-out saat ini);
+|Sistem|
+:Hitung tambah_hari & subtotal\n(harga paket × hari, tanpa promo);
+:Cek kuota kamar hari tambahan;
+
+if (Kuota tersedia?) then (tidak)
+  |Pelanggan|
+  :Tampilkan error kuota penuh;
+  stop
+else (ya)
+  |Pelanggan|
+  :Submit permintaan perpanjangan;
+  :Status → **Menunggu Konfirmasi**;
+endif
+
+|Staff / Owner|
+:Terima notifikasi permintaan perpanjangan;
+:Lihat detail perpanjangan\n(check-out lama/baru, biaya);
+
+if (Konfirmasi perpanjangan?) then (tolak)
+  :Status → **Ditolak**;
+  |Pelanggan|
+  :Terima notifikasi ditolak;
+  stop
+else (konfirmasi)
+  :Status → **Menunggu Pembayaran**;
+  :Reserve kuota hari tambahan;
+  :Set batas waktu pembayaran;
+  |Pelanggan|
+  :Terima notifikasi tagihan perpanjangan;
+endif
+
+|Pelanggan|
+:Transfer & upload bukti transfer;
+:Status → **Menunggu Verifikasi Bukti Transfer**;
+
+|Staff / Owner|
+if (Bukti transfer disetujui?) then (tolak)
+  |Pelanggan|
+  :Upload ulang bukti transfer;
+  detach
+else (setujui)
+  :Status perpanjangan → **Disetujui**;
+  :Pembayaran lunas;
+  |Sistem|
+  :Update booking.check_out & lama_hari;
+  :Terbitkan invoice perpanjangan;
+  |Pelanggan|
+  :Terima notifikasi perpanjangan aktif;
+  :Unduh invoice / struk;
+endif
+
+if (Lewat batas waktu bayar?) then (ya)
+  |Sistem|
+  :Status perpanjangan → **Dibatalkan**;
+  :Kuota hari tambahan dikembalikan;
+  |Pelanggan|
+  :Terima notifikasi pembatalan otomatis;
+  stop
+endif
+
+note right
+  Pelanggan boleh ajukan
+  perpanjangan berkali-kali
+  & paralel selama belum check-out
+end note
+
+stop
+@enduml

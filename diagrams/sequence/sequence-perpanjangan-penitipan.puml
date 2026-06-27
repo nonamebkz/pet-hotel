@@ -1,0 +1,90 @@
+@startuml sequence-perpanjangan-penitipan
+skinparam sequenceMessageAlign center
+
+title Sequence Diagram — Perpanjangan Penitipan (End-to-End)
+
+actor Pelanggan
+actor "Staff / Owner" as Staff
+participant "Aplikasi Web" as App
+participant "Backend API" as API
+database "Database" as DB
+
+== Ajukan Perpanjangan ==
+
+Pelanggan -> App : Buka detail booking penitipan
+App -> API : GET /booking/penitipan/{id}
+API -> DB : SELECT booking_penitipan\nWHERE status IN (CHECK_IN, SEDANG_DITITIPKAN)
+DB --> API : Detail booking
+API --> App : Data booking
+App --> Pelanggan : Tampilkan tombol Perpanjang
+
+Pelanggan -> App : Pilih check-out baru
+App -> API : POST /booking/penitipan/{id}/perpanjangan/estimasi
+API -> API : check_out_sebelum = booking.check_out\nHitung tambah_hari & subtotal\n(tanpa promo, tanpa antar-jemput)
+API -> DB : Cek kuota_penitipan hari tambahan
+DB --> API : Ketersediaan kuota
+API --> App : Ringkasan biaya perpanjangan
+App --> Pelanggan : Tampilkan estimasi
+
+alt Kuota tidak tersedia
+  App --> Pelanggan : Error — kuota penuh
+else Kuota OK
+  Pelanggan -> App : Submit permintaan perpanjangan
+  App -> API : POST /booking/penitipan/{id}/perpanjangan
+  API -> DB : INSERT perpanjangan_penitipan\nstatus = MENUNGGU_KONFIRMASI
+  API -> DB : INSERT notifikasi\nPERPANJANGAN_PENITIPAN_MENUNGGU_KONFIRMASI
+  DB --> API : OK
+  API --> App : 201 Created
+  App --> Pelanggan : Permintaan diajukan
+end
+
+== Konfirmasi Staff ==
+
+Staff -> App : Buka daftar permintaan perpanjangan
+App -> API : GET /internal/perpanjangan-penitipan?status=MENUNGGU_KONFIRMASI
+API -> DB : SELECT perpanjangan + booking
+DB --> API : Daftar permintaan
+API --> App : Data permintaan
+App --> Staff : Tampilkan detail perpanjangan
+
+alt Staff tolak
+  Staff -> App : Tolak perpanjangan
+  App -> API : PATCH /internal/perpanjangan-penitipan/{id}/tolak
+  API -> DB : UPDATE status = DITOLAK
+  API -> DB : INSERT notifikasi PERPANJANGAN_PENITIPAN_DITOLAK
+  App --> Pelanggan : Notifikasi ditolak
+else Staff konfirmasi
+  Staff -> App : Konfirmasi perpanjangan
+  App -> API : PATCH /internal/perpanjangan-penitipan/{id}/konfirmasi
+  API -> DB : UPDATE status = MENUNGGU_PEMBAYARAN
+  API -> DB : INSERT transaksi\n(perpanjangan_penitipan_id, booking_id)
+  API -> DB : UPDATE transaksi.batas_waktu_bayar
+  API -> DB : Reserve kuota hari tambahan
+  API -> DB : INSERT notifikasi\nPERPANJANGAN_PENITIPAN_MENUNGGU_PEMBAYARAN
+  App --> Pelanggan : Notifikasi tagihan perpanjangan
+end
+
+== Pembayaran Perpanjangan ==
+
+Pelanggan -> App : Upload bukti transfer
+App -> API : POST /transaksi/{id}/bukti-transfer
+API -> DB : INSERT bukti_transfer
+API -> DB : UPDATE perpanjangan status\n= MENUNGGU_VERIFIKASI_BUKTI
+App --> Pelanggan : Menunggu verifikasi
+
+Staff -> App : Setujui bukti transfer
+App -> API : PATCH /internal/bukti-transfer/{id}/setujui
+API -> DB : UPDATE transaksi = LUNAS
+API -> DB : UPDATE perpanjangan status = DISETUJUI
+API -> DB : UPDATE booking_penitipan\nSET check_out, lama_hari,\nsubtotal_penitipan += subtotal_tambahan
+API -> DB : INSERT invoice
+API -> DB : INSERT notifikasi PERPANJANGAN_PENITIPAN_DISETUJUI
+App --> Pelanggan : Notifikasi perpanjangan aktif + invoice
+
+note over Pelanggan, DB
+  Pelanggan boleh mengajukan
+  perpanjangan berkali-kali & paralel
+  selama booking belum CHECK_OUT
+end note
+
+@enduml

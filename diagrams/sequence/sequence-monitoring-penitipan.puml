@@ -1,0 +1,40 @@
+@startuml sequence-monitoring-penitipan
+skinparam sequenceMessageAlign center
+
+title Sequence Diagram — Monitoring Harian Penitipan (Staff)
+
+actor "Staff / Owner" as Staff
+actor Pelanggan
+participant "Aplikasi Web\n(Dashboard Internal)" as AppInt
+participant "Aplikasi Web\n(Pelanggan)" as AppPel
+participant "Backend API" as API
+database "Database" as DB
+
+Staff -> AppInt : Buka penitipan aktif
+AppInt -> API : GET /internal/booking/penitipan?status=SEDANG_DITITIPKAN
+API -> DB : SELECT booking_penitipan aktif
+DB --> API : Daftar penitipan
+API --> AppInt : Data penitipan
+AppInt --> Staff : Tampilkan kucing sedang dititipkan
+
+Staff -> AppInt : Pilih booking & input monitoring\n(foto, catatan makan, kondisi, aktivitas)
+AppInt -> API : POST /internal/monitoring-penitipan
+API -> API : Validasi booking status\n= SEDANG_DITITIPKAN
+API -> DB : INSERT monitoring_penitipan\n(booking_id, staff_id, tanggal, ...)
+DB --> API : monitoring_id
+API -> DB : INSERT notifikasi\n(jenis=MONITORING_PENITIPAN,\npenerima=pelanggan_id)
+DB --> API : OK
+API --> AppInt : 201 Created
+AppInt --> Staff : Monitoring tersimpan
+
+API -> AppPel : Push / polling notifikasi baru
+AppPel --> Pelanggan : Notifikasi update monitoring
+
+Pelanggan -> AppPel : Buka detail penitipan
+AppPel -> API : GET /booking/penitipan/{id}/monitoring
+API -> DB : SELECT monitoring_penitipan\nORDER BY tanggal DESC
+DB --> API : Riwayat monitoring
+API --> AppPel : Data monitoring
+AppPel --> Pelanggan : Tampilkan foto & catatan harian
+
+@enduml

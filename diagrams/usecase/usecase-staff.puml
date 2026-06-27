@@ -35,6 +35,7 @@ rectangle "Dashboard Staff" {
     usecase "Update Status\n(Check-in/out)" as UC_StatusPenitipanStaff
     usecase "Input Monitoring Harian" as UC_InputMonitoring
     usecase "Verifikasi Bukti Transfer" as UC_VerifPenitipan
+    usecase "Konfirmasi / Tolak\nPerpanjangan Penitipan" as UC_KonfirmasiPerpanjangan
     usecase "Laporan Penitipan & Pendapatan" as UC_LaporanPenitipan
   }
 
@@ -88,6 +89,7 @@ Staff --> UC_PaketHargaPenitipan
 Staff --> UC_StatusPenitipanStaff
 Staff --> UC_InputMonitoring
 Staff --> UC_VerifPenitipan
+Staff --> UC_KonfirmasiPerpanjangan
 Staff --> UC_LaporanPenitipan
 Staff --> UC_CRUDPetCare
 Staff --> UC_KuotaPetCare

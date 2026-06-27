@@ -41,6 +41,16 @@ repeat
             Aktivitas harian
           end note
           :Kirim notifikasi ke pelanggan;
+
+          if (Ada permintaan perpanjangan?) then (ya)
+            :Konfirmasi / tolak perpanjangan;
+            if (Dikonfirmasi?) then (ya)
+              :Verifikasi bukti transfer perpanjangan;
+              if (Bukti disetujui?) then (ya)
+                :Perbarui check-out & lama penitipan;
+              endif
+            endif
+          endif
         repeat while (Masih dititipkan?) is (ya)
         ->tidak;
 

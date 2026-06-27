@@ -9,7 +9,7 @@ Diagram aktivitas berdasarkan [idea.md](../../idea.md).
 
 > **Preview:** Gunakan ekstensi PlantUML di VS Code/Cursor, atau render di [plantuml.com](https://www.plantuml.com/plantuml/uml).
 >
-> File `.puml` terpisah: `activity-autentikasi-pelanggan.puml`, `activity-data-kucing.puml`, `activity-booking-grooming.puml`, `activity-booking-penitipan.puml`, `activity-booking-petcare.puml`, `activity-pembayaran.puml`, `activity-pembatalan-refund.puml`, `activity-operasional-staff.puml`, `activity-penitipan-staff.puml`, `activity-manajemen-staff-owner.puml`
+> File `.puml` terpisah: `activity-autentikasi-pelanggan.puml`, `activity-data-kucing.puml`, `activity-booking-grooming.puml`, `activity-booking-penitipan.puml`, `activity-booking-petcare.puml`, `activity-pembayaran.puml`, `activity-pembatalan-refund.puml`, `activity-operasional-staff.puml`, `activity-penitipan-staff.puml`, `activity-perpanjangan-penitipan.puml`, `activity-manajemen-staff-owner.puml`
 
 ---
 
@@ -321,7 +321,27 @@ endif
 repeat
   :Input monitoring harian\n(foto, catatan makan, aktivitas);
   |Pelanggan|
-  :Terima notifikasi update monitoring;
+  if (Ajukan perpanjangan penitipan?) then (ya)
+    :Isi tanggal check-out baru\n(> check-out saat ini);
+    :Lihat estimasi biaya hari tambahan;
+    :Submit permintaan perpanjangan;
+    |Staff / Owner|
+    if (Konfirmasi perpanjangan?) then (tolak)
+      |Pelanggan|
+      :Terima notifikasi perpanjangan ditolak;
+    else (konfirmasi)
+      |Pelanggan|
+      :Transfer & upload bukti transfer perpanjangan;
+      |Staff / Owner|
+      if (Bukti perpanjangan disetujui?) then (setujui)
+        :Perbarui check-out & lama penitipan booking;
+        |Pelanggan|
+        :Terima notifikasi perpanjangan aktif;
+      endif
+    endif
+  else (tidak)
+    :Terima notifikasi update monitoring;
+  endif
   |Staff / Owner|
 repeat while (Masih dalam masa penitipan?) is (ya)
 ->tidak;
@@ -652,6 +672,16 @@ repeat
             Aktivitas harian
           end note
           :Kirim notifikasi ke pelanggan;
+
+          if (Ada permintaan perpanjangan?) then (ya)
+            :Konfirmasi / tolak perpanjangan;
+            if (Dikonfirmasi?) then (ya)
+              :Verifikasi bukti transfer perpanjangan;
+              if (Bukti disetujui?) then (ya)
+                :Perbarui check-out & lama penitipan;
+              endif
+            endif
+          endif
         repeat while (Masih dititipkan?) is (ya)
         ->tidak;
 
@@ -670,7 +700,102 @@ stop
 
 ---
 
-## 10. Manajemen Akun Staff (Owner)
+## 10. Perpanjangan Penitipan (End-to-End)
+
+Alur perpanjangan durasi penitipan setelah booking terkonfirmasi & kucing sedang dititipkan (check-in / sedang dititipkan).
+
+```plantuml
+@startuml activity-perpanjangan-penitipan
+skinparam activity {
+  BackgroundColor #FEFEFE
+  BorderColor #333333
+}
+
+title Alur Perpanjangan Penitipan (End-to-End)
+
+|Pelanggan|
+start
+:Buka detail booking penitipan;
+
+if (Status CHECK_IN\natau SEDANG_DITITIPKAN?) then (tidak)
+  :Perpanjangan tidak tersedia;
+  stop
+endif
+
+:Pilih tanggal check-out baru\n(wajib > check-out saat ini);
+|Sistem|
+:Hitung tambah_hari & subtotal\n(harga paket × hari, tanpa promo);
+:Cek kuota kamar hari tambahan;
+
+if (Kuota tersedia?) then (tidak)
+  |Pelanggan|
+  :Tampilkan error kuota penuh;
+  stop
+else (ya)
+  |Pelanggan|
+  :Submit permintaan perpanjangan;
+  :Status → **Menunggu Konfirmasi**;
+endif
+
+|Staff / Owner|
+:Terima notifikasi permintaan perpanjangan;
+:Lihat detail perpanjangan\n(check-out lama/baru, biaya);
+
+if (Konfirmasi perpanjangan?) then (tolak)
+  :Status → **Ditolak**;
+  |Pelanggan|
+  :Terima notifikasi ditolak;
+  stop
+else (konfirmasi)
+  :Status → **Menunggu Pembayaran**;
+  :Reserve kuota hari tambahan;
+  :Set batas waktu pembayaran;
+  |Pelanggan|
+  :Terima notifikasi tagihan perpanjangan;
+endif
+
+|Pelanggan|
+:Transfer & upload bukti transfer;
+:Status → **Menunggu Verifikasi Bukti Transfer**;
+
+|Staff / Owner|
+if (Bukti transfer disetujui?) then (tolak)
+  |Pelanggan|
+  :Upload ulang bukti transfer;
+  detach
+else (setujui)
+  :Status perpanjangan → **Disetujui**;
+  :Pembayaran lunas;
+  |Sistem|
+  :Update booking.check_out & lama_hari;
+  :Terbitkan invoice perpanjangan;
+  |Pelanggan|
+  :Terima notifikasi perpanjangan aktif;
+  :Unduh invoice / struk;
+endif
+
+if (Lewat batas waktu bayar?) then (ya)
+  |Sistem|
+  :Status perpanjangan → **Dibatalkan**;
+  :Kuota hari tambahan dikembalikan;
+  |Pelanggan|
+  :Terima notifikasi pembatalan otomatis;
+  stop
+endif
+
+note right
+  Pelanggan boleh ajukan
+  perpanjangan berkali-kali
+  & paralel selama belum check-out
+end note
+
+stop
+@enduml
+```
+
+---
+
+## 11. Manajemen Akun Staff (Owner)
 
 Alur khusus owner untuk mengelola akun pegawai internal.
 
@@ -736,4 +861,5 @@ stop
 | 7 | Pembatalan & Refund | `activity-pembatalan-refund.puml` | Pelanggan, Staff/Owner, Sistem |
 | 8 | Operasional Grooming & Pet Care | `activity-operasional-staff.puml` | Staff/Owner |
 | 9 | Operasional Penitipan | `activity-penitipan-staff.puml` | Staff/Owner |
-| 10 | Manajemen Akun Staff | `activity-manajemen-staff-owner.puml` | Owner |
+| 10 | Perpanjangan Penitipan | `activity-perpanjangan-penitipan.puml` | Pelanggan, Staff/Owner, Sistem |
+| 11 | Manajemen Akun Staff | `activity-manajemen-staff-owner.puml` | Owner |

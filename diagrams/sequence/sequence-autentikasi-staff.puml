@@ -1,0 +1,47 @@
+@startuml sequence-autentikasi-staff
+skinparam sequenceMessageAlign center
+
+title Sequence Diagram — Autentikasi Staff / Owner
+
+actor "Staff / Owner" as User
+participant "Aplikasi Web\n(Dashboard Internal)" as App
+participant "Backend API" as API
+database "Database" as DB
+
+== Login ==
+
+User -> App : Buka halaman login staff
+User -> App : Isi email/username & password
+App -> API : POST /internal/auth/login
+API -> DB : SELECT staff BY email/username
+DB --> API : Data staff
+alt Akun nonaktif
+  API --> App : 403 Forbidden
+  App --> User : Akun dinonaktifkan
+else Kredensial salah
+  API --> App : 401 Unauthorized
+  App --> User : Tampilkan error login
+else Kredensial benar & akun aktif
+  API -> API : Buat sesi / JWT (role: STAFF/OWNER)
+  API --> App : 200 OK + token + role
+  App --> User : Masuk dashboard internal
+end
+
+== Ubah Password ==
+
+User -> App : Isi password lama & baru
+App -> API : PUT /internal/auth/change-password
+API -> DB : Verifikasi & update password_hash
+DB --> API : OK
+API --> App : 200 OK
+App --> User : Password berhasil diubah
+
+== Logout ==
+
+User -> App : Klik logout
+App -> API : POST /internal/auth/logout
+API -> API : Hapus sesi / invalidate token
+API --> App : 200 OK
+App --> User : Redirect ke login staff
+
+@enduml

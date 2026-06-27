@@ -8,6 +8,7 @@ Dokumentasi diagram berdasarkan [idea.md](../idea.md).
 | Activity | [activity/](./activity/) | [activity-diagram.md](./activity/activity-diagram.md) |
 | Class | [class/](./class/) | [class-diagram.md](./class/class-diagram.md) |
 | ERD | [erd/](./erd/) | [erd-diagram.md](./erd/erd-diagram.md) |
+| Sequence | [sequence/](./sequence/) | [sequence-diagram.md](./sequence/sequence-diagram.md) |
 
 ## Struktur folder
 
@@ -22,8 +23,11 @@ diagrams/
 │   └── activity-*.puml
 ├── class/
 │   └── class-diagram.md
-└── erd/
-    └── erd-diagram.md
+├── erd/
+│   └── erd-diagram.md
+└── sequence/
+    ├── sequence-diagram.md
+    └── sequence-*.puml
 
 database/
 ├── schema.sql          # Skema PostgreSQL

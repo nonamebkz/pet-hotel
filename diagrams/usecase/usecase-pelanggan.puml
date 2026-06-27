@@ -49,6 +49,8 @@ rectangle "Dashboard Pelanggan" {
     usecase "Riwayat Penitipan" as UC_RiwayatPenitipan
     usecase "Batalkan Penitipan" as UC_BatalPenitipan
     usecase "Pilih Antar-Jemput / Antar Sendiri" as UC_AntarJemputPenitipan
+    usecase "Ajukan Perpanjangan Penitipan" as UC_AjukanPerpanjangan
+    usecase "Lihat Status Perpanjangan Penitipan" as UC_StatusPerpanjangan
   }
 
   rectangle "Pet Care" {
@@ -102,6 +104,8 @@ Pelanggan --> UC_StatusPenitipan
 Pelanggan --> UC_MonitoringPenitipan
 Pelanggan --> UC_RiwayatPenitipan
 Pelanggan --> UC_BatalPenitipan
+Pelanggan --> UC_AjukanPerpanjangan
+Pelanggan --> UC_StatusPerpanjangan
 Pelanggan --> UC_LihatLayananPetCare
 Pelanggan --> UC_AjukanPetCare
 Pelanggan --> UC_StatusPetCare
@@ -123,6 +127,7 @@ UC_AjukanPenitipan ..> UC_PromoPenitipan : <<include>>
 UC_AjukanPenitipan ..> UC_AntarJemputPenitipan : <<include>>
 UC_AjukanGrooming ..> UC_DaftarKucing : <<include>>
 UC_AjukanPenitipan ..> UC_DaftarKucing : <<include>>
+UC_AjukanPerpanjangan ..> UC_StatusPenitipan : <<include>>
 UC_AjukanPetCare ..> UC_DaftarKucing : <<include>>
 UC_Transfer ..> UC_UploadBukti : <<include>>
 

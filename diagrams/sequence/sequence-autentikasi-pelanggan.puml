@@ -1,0 +1,82 @@
+@startuml sequence-autentikasi-pelanggan
+skinparam sequenceMessageAlign center
+skinparam responseMessageBelowArrow true
+
+title Sequence Diagram — Autentikasi Pelanggan
+
+actor Pelanggan
+participant "Aplikasi Web" as App
+participant "Backend API" as API
+database "Database" as DB
+
+== Daftar Akun ==
+
+Pelanggan -> App : Buka halaman daftar
+Pelanggan -> App : Isi form (nama, email, password)
+App -> API : POST /auth/register
+API -> API : Validasi input
+alt Data tidak valid
+  API --> App : 422 Error validasi
+  App --> Pelanggan : Tampilkan pesan error
+else Data valid
+  API -> DB : INSERT pelanggan
+  DB --> API : OK
+  API --> App : 201 Created
+  App --> Pelanggan : Redirect ke login / dashboard
+end
+
+== Login ==
+
+Pelanggan -> App : Isi email & password
+App -> API : POST /auth/login
+API -> DB : SELECT pelanggan BY email
+DB --> API : Data pelanggan
+alt Kredensial salah
+  API --> App : 401 Unauthorized
+  App --> Pelanggan : Tampilkan error login
+else Kredensial benar
+  API -> API : Buat sesi / JWT token
+  API --> App : 200 OK + token
+  App --> Pelanggan : Masuk dashboard
+end
+
+== Lupa / Reset Password ==
+
+Pelanggan -> App : Klik "Lupa password"
+Pelanggan -> App : Masukkan email
+App -> API : POST /auth/forgot-password
+API -> DB : SELECT pelanggan BY email
+DB --> API : Data pelanggan
+API -> API : Generate token reset
+API -> Pelanggan : Kirim link reset (email)
+Pelanggan -> App : Buka link & set password baru
+App -> API : POST /auth/reset-password
+API -> DB : UPDATE password_hash
+DB --> API : OK
+API --> App : 200 OK
+App --> Pelanggan : Password diperbarui
+
+== Ubah Password ==
+
+Pelanggan -> App : Isi password lama & baru
+App -> API : PUT /auth/change-password
+API -> DB : SELECT & verifikasi password lama
+alt Password lama salah
+  API --> App : 400 Bad Request
+  App --> Pelanggan : Tampilkan error
+else Password lama benar
+  API -> DB : UPDATE password_hash
+  DB --> API : OK
+  API --> App : 200 OK
+  App --> Pelanggan : Password berhasil diubah
+end
+
+== Logout ==
+
+Pelanggan -> App : Klik logout
+App -> API : POST /auth/logout
+API -> API : Hapus sesi / invalidate token
+API --> App : 200 OK
+App --> Pelanggan : Redirect ke halaman login
+
+@enduml

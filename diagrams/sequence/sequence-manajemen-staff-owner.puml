@@ -1,0 +1,62 @@
+@startuml sequence-manajemen-staff-owner
+skinparam sequenceMessageAlign center
+
+title Sequence Diagram — Manajemen Akun Staff (Owner)
+
+actor Owner
+participant "Aplikasi Web\n(Dashboard Owner)" as App
+participant "Backend API" as API
+database "Database" as DB
+
+== Lihat Daftar Staff ==
+
+Owner -> App : Buka menu Manajemen Staff
+App -> API : GET /internal/staff
+API -> API : Verifikasi role = OWNER
+API -> DB : SELECT staff WHERE role != OWNER\nOR role = STAFF
+DB --> API : Daftar staff
+API --> App : 200 OK + data
+App --> Owner : Tampilkan daftar staff
+
+== Tambah Staff ==
+
+Owner -> App : Isi form staff\n(nama, email, password, status)
+App -> API : POST /internal/staff
+API -> API : Verifikasi role = OWNER
+API -> DB : INSERT staff (role=STAFF, password_hash)
+DB --> API : staff_id
+API --> App : 201 Created
+App --> Owner : Staff berhasil ditambahkan
+
+== Edit & Reset Password ==
+
+Owner -> App : Edit data staff
+App -> API : PUT /internal/staff/{id}
+API -> DB : UPDATE staff (nama, email, status)
+DB --> API : OK
+API --> App : 200 OK
+App --> Owner : Data staff diperbarui
+
+Owner -> App : Reset password staff
+App -> API : PATCH /internal/staff/{id}/reset-password
+API -> DB : UPDATE password_hash
+DB --> API : OK
+API --> App : 200 OK
+App --> Owner : Password staff direset
+
+== Nonaktifkan / Aktifkan ==
+
+Owner -> App : Nonaktifkan akun staff
+App -> API : PATCH /internal/staff/{id}/status\n{ status: NONAKTIF }
+API -> DB : UPDATE staff.status = NONAKTIF
+DB --> API : OK
+API --> App : 200 OK
+App --> Owner : Staff dinonaktifkan
+
+note over Owner, DB
+  Owner tidak bisa dinonaktifkan
+  oleh staff. Hanya owner yang
+  mengelola akun staff.
+end note
+
+@enduml

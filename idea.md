@@ -15,6 +15,7 @@ Lihat folder [diagrams/](./diagrams/README.md):
 - [Activity Diagram](./diagrams/activity/activity-diagram.md)
 - [Class Diagram](./diagrams/class/class-diagram.md)
 - [ERD & Struktur Database](./diagrams/erd/erd-diagram.md) — skema SQL: [database/schema.sql](./database/schema.sql), LRS: [database/lrs.md](./database/lrs.md)
+- [Sequence Diagram](./diagrams/sequence/sequence-diagram.md)
 
 ---
 
@@ -162,6 +163,22 @@ Lihat folder [diagrams/](./diagrams/README.md):
 - pembatalan penitipan
   - sebelum terkonfirmasi: pelanggan bisa batalkan langsung dari app
   - setelah terkonfirmasi & sudah bayar: lihat aturan **pembatalan & refund (global)**
+- perpanjangan penitipan (setelah booking terkonfirmasi & sudah bayar)
+  - hanya saat status **check-in** atau **sedang dititipkan** (belum check-out)
+  - tombol "Perpanjang Penitipan" di halaman detail booking
+  - form: pilih tanggal check-out baru (wajib > check-out saat ini)
+  - tampilkan estimasi hari tambahan & biaya (`harga paket per hari × tambah hari`)
+  - **tidak ada promo** pada hari tambahan; **tidak ada biaya antar-jemput tambahan**
+  - pelanggan **boleh mengajukan perpanjangan berkali-kali** selama masih dalam masa penitipan (setiap ajuan = record terpisah)
+  - `check_out` acuan ajuan baru = check-out booking **saat ini** (termasuk jika sudah pernah diperpanjang)
+  - beberapa ajuan dapat berjalan paralel (masing-masing alur konfirmasi & pembayaran sendiri)
+  - status permintaan perpanjangan:
+    - menunggu konfirmasi staff
+    - menunggu pembayaran
+    - menunggu verifikasi bukti transfer
+    - disetujui / ditolak / dibatalkan (lewat batas waktu bayar)
+  - alur: staff konfirmasi ketersediaan kamar → pelanggan transfer & upload bukti → staff verifikasi bukti → check-out & lama penitipan diperbarui
+  - riwayat perpanjangan per booking (semua ajuan, termasuk ditolak/dibatalkan)
 - riwayat penitipan per kucing
 
 ### pet care (booking system)
@@ -190,11 +207,11 @@ Lihat folder [diagrams/](./diagrams/README.md):
 
 ### pembayaran & transaksi
 
-- daftar tagihan menunggu (grooming, penitipan, pet care)
+- daftar tagihan menunggu (grooming, penitipan, pet care, **perpanjangan penitipan**)
 - rincian tagihan:
   - subtotal layanan
-  - potongan promo penitipan 10% (jika applicable)
-  - biaya antar-jemput (hanya grooming & penitipan; Rp 0 jika ≤ 3 km atau antar sendiri; charge jika > 3 km)
+  - potongan promo penitipan 10% (jika applicable — **hanya booking awal**, bukan perpanjangan)
+  - biaya antar-jemput (hanya grooming & penitipan booking awal; Rp 0 jika ≤ 3 km atau antar sendiri; charge jika > 3 km)
   - total bayar
 - metode pembayaran: **transfer bank manual saja** (tidak ada payment gateway)
   - tampilkan rekening tujuan petshop (hardcode: bank, no. rekening, atas nama)
@@ -202,8 +219,8 @@ Lihat folder [diagrams/](./diagrams/README.md):
   - **wajib upload bukti transfer** (form tidak bisa disubmit tanpa bukti)
   - setelah upload → status **menunggu verifikasi staff**
   - booking dianggap belum bayar sampai staff menyetujui bukti transfer
-- batas waktu pembayaran setelah booking disetujui staff
-- jika lewat batas waktu → booking otomatis dibatalkan & kuota dikembalikan
+- batas waktu pembayaran setelah booking disetujui staff (berlaku juga untuk tagihan perpanjangan setelah staff konfirmasi perpanjangan)
+- jika lewat batas waktu → booking / permintaan perpanjangan otomatis dibatalkan & kuota dikembalikan
 - unduh invoice / struk setelah pembayaran diverifikasi staff
 - riwayat transaksi (semua layanan)
 
@@ -232,6 +249,8 @@ Lihat folder [diagrams/](./diagrams/README.md):
   - booking disetujui / ditolak
   - reminder pembayaran & pembayaran jatuh tempo
   - update monitoring penitipan
+  - permintaan perpanjangan penitipan masuk (ke staff)
+  - perpanjangan penitipan disetujui / ditolak / menunggu pembayaran / pembayaran diverifikasi
   - layanan selesai
   - booking dibatalkan & status refund (setelah staff proses)
 - notifikasi email (opsional, untuk trigger penting)
@@ -318,7 +337,14 @@ Lihat folder [diagrams/](./diagrams/README.md):
   - catatan makan & kondisi
   - aktivitas harian
 - notifikasi ke pelanggan saat monitoring diupdate
-- verifikasi bukti transfer (wajib — setujui / tolak)
+- verifikasi bukti transfer booking awal (wajib — setujui / tolak)
+- perpanjangan penitipan
+  - lihat daftar permintaan perpanjangan masuk (filter status)
+  - konfirmasi atau tolak permintaan perpanjangan (cek ketersediaan kamar / kuota hari tambahan)
+  - setelah konfirmasi → tagihan perpanjangan terpisah menunggu pembayaran pelanggan
+  - verifikasi bukti transfer perpanjangan (reuse alur verifikasi global)
+  - setelah pembayaran diverifikasi → check-out & lama penitipan booking diperbarui otomatis
+  - tidak perlu re-validasi vaksin (booking awal sudah lolos verifikasi)
 - melihat laporan penitipan & pendapatan
 
 ### pet care

@@ -25,6 +25,7 @@ erDiagram
 
     staff ||--o{ bukti_transfer : verifikasi
     staff ||--o{ monitoring_penitipan : input
+    staff ||--o{ perpanjangan_penitipan : konfirmasi
     staff ||--o{ booking_grooming : konfirmasi
     staff ||--o{ booking_penitipan : konfirmasi
     staff ||--o{ booking_pet_care : konfirmasi
@@ -36,14 +37,16 @@ erDiagram
     kamar_penitipan ||--o{ booking_penitipan : menggunakan
     kamar_penitipan ||--o{ kuota_penitipan : memiliki
     booking_penitipan ||--o{ monitoring_penitipan : memiliki
+    booking_penitipan ||--o{ perpanjangan_penitipan : memiliki
 
     layanan_pet_care ||--o{ booking_pet_care : dipilih
     layanan_pet_care ||--o{ kuota_pet_care : memiliki
     kuota_pet_care ||--o{ booking_pet_care : menggunakan
 
-    booking_grooming ||--|| transaksi : "1:1"
-    booking_penitipan ||--|| transaksi : "1:1"
-    booking_pet_care ||--|| transaksi : "1:1"
+    booking_grooming ||--|| transaksi : "1:1 awal"
+    booking_penitipan ||--o{ transaksi : "1:N"
+    booking_pet_care ||--|| transaksi : "1:1 awal"
+    perpanjangan_penitipan ||--|| transaksi : "1:1"
 
     transaksi ||--o| bukti_transfer : bukti
     transaksi ||--o| invoice : invoice
@@ -104,8 +107,18 @@ erDiagram
         uuid pelanggan_id FK
         enum jenis_layanan
         uuid booking_id
+        uuid perpanjangan_penitipan_id FK
         decimal total_bayar
         enum status_pembayaran
+    }
+
+    perpanjangan_penitipan {
+        uuid id PK
+        uuid booking_penitipan_id FK
+        date check_out_sebelum
+        date check_out_baru
+        int tambah_hari
+        enum status
     }
 ```
 
@@ -318,7 +331,10 @@ erDiagram
     paket_penitipan ||--o{ booking_penitipan : dipilih
     kamar_penitipan ||--o{ booking_penitipan : menggunakan
     booking_penitipan ||--o{ monitoring_penitipan : memiliki
+    booking_penitipan ||--o{ perpanjangan_penitipan : memiliki
     staff ||--o{ monitoring_penitipan : input
+    staff ||--o{ perpanjangan_penitipan : konfirmasi
+    perpanjangan_penitipan ||--|| transaksi : "1:1"
 
     booking_penitipan {
         uuid id PK
@@ -353,6 +369,20 @@ erDiagram
         text aktivitas_harian
         timestamptz created_at
     }
+
+    perpanjangan_penitipan {
+        uuid id PK
+        uuid booking_penitipan_id FK
+        uuid dikonfirmasi_oleh_staff_id FK
+        date check_out_sebelum "NOT NULL"
+        date check_out_baru "NOT NULL"
+        int tambah_hari "NOT NULL"
+        decimal subtotal_tambahan
+        status_perpanjangan_penitipan status
+        text catatan_penolakan
+        timestamptz created_at
+        timestamptz updated_at
+    }
 ```
 
 ### 5c. Booking Pet Care
@@ -385,6 +415,7 @@ erDiagram
 - Pet care **tidak** punya `opsi_pengantaran` (selalu antar sendiri)
 - Grooming & penitipan menyimpan snapshot `jarak_km` & `biaya_antar_jemput`
 - Harga layanan di-snapshot saat booking agar perubahan master data tidak mengubah riwayat
+- Perpanjangan penitipan: hanya saat `CHECK_IN` / `SEDANG_DITITIPKAN`; tanpa promo & tanpa biaya antar-jemput tambahan; boleh berkali-kali & paralel per booking
 
 ---
 
@@ -402,6 +433,7 @@ erDiagram
         uuid pelanggan_id FK
         jenis_layanan jenis_layanan "GROOMING | PENITIPAN | PET_CARE"
         uuid booking_id "polymorphic ref"
+        uuid perpanjangan_penitipan_id FK "nullable, transaksi perpanjangan"
         decimal subtotal_layanan
         decimal potongan_promo
         decimal biaya_antar_jemput
@@ -487,12 +519,15 @@ erDiagram
     kuota_pet_care ||--o{ booking_pet_care : "1:N"
 
     booking_penitipan ||--o{ monitoring_penitipan : "1:N"
+    booking_penitipan ||--o{ perpanjangan_penitipan : "1:N"
     staff ||--o{ monitoring_penitipan : "1:N"
+    staff ||--o{ perpanjangan_penitipan : "1:N"
     staff ||--o{ bukti_transfer : "1:N"
 
-    booking_grooming ||--|| transaksi : "1:1"
-    booking_penitipan ||--|| transaksi : "1:1"
-    booking_pet_care ||--|| transaksi : "1:1"
+    booking_grooming ||--|| transaksi : "1:1 awal"
+    booking_penitipan ||--o{ transaksi : "1:N"
+    booking_pet_care ||--|| transaksi : "1:1 awal"
+    perpanjangan_penitipan ||--|| transaksi : "1:1"
 
     transaksi ||--o| bukti_transfer : "1:0..1"
     transaksi ||--o| invoice : "1:0..1"
@@ -519,15 +554,16 @@ erDiagram
 | 10 | `layanan_pet_care` | id | — | 1→N kuota_pet_care, booking_pet_care |
 | 11 | `kuota_pet_care` | id | layanan_pet_care_id | N→1 layanan |
 | 12 | `booking_grooming` | id | pelanggan, kucing, jenis, kuota | 1→1 transaksi |
-| 13 | `booking_penitipan` | id | pelanggan, kucing, paket, kamar | 1→1 transaksi, 1→N monitoring |
+| 13 | `booking_penitipan` | id | pelanggan, kucing, paket, kamar | 1→N transaksi, 1→N monitoring, 1→N perpanjangan |
 | 14 | `monitoring_penitipan` | id | booking_penitipan_id, staff_id | N→1 booking |
-| 15 | `booking_pet_care` | id | pelanggan, kucing, layanan, kuota | 1→1 transaksi |
-| 16 | `transaksi` | id | pelanggan_id | 1→0..1 bukti_transfer, invoice |
-| 17 | `bukti_transfer` | id | transaksi_id, staff_id | N→1 transaksi |
-| 18 | `invoice` | id | transaksi_id | N→1 transaksi |
-| 19 | `notifikasi` | id | penerima_id | N→1 pelanggan/staff |
+| 15 | `perpanjangan_penitipan` | id | booking_penitipan_id, staff_id | N→1 booking, 1→1 transaksi |
+| 16 | `booking_pet_care` | id | pelanggan, kucing, layanan, kuota | 1→1 transaksi |
+| 17 | `transaksi` | id | pelanggan_id, perpanjangan_penitipan_id | 1→0..1 bukti_transfer, invoice |
+| 18 | `bukti_transfer` | id | transaksi_id, staff_id | N→1 transaksi |
+| 19 | `invoice` | id | transaksi_id | N→1 transaksi |
+| 20 | `notifikasi` | id | penerima_id | N→1 pelanggan/staff |
 
-**Total: 19 tabel**
+**Total: 20 tabel**
 
 ---
 
@@ -543,6 +579,7 @@ erDiagram
 | `opsi_pengantaran` | `ANTAR_JEMPUT`, `ANTAR_SENDIRI` |
 | `status_booking_grooming` | `MENUNGGU_KONFIRMASI`, `MENUNGGU_PEMBAYARAN`, `MENUNGGU_VERIFIKASI_BUKTI`, `TERKONFIRMASI`, `SEDANG_PROSES`, `SELESAI`, `DIBATALKAN` |
 | `status_penitipan` | `MENUNGGU_KONFIRMASI`, `MENUNGGU_PEMBAYARAN`, `MENUNGGU_VERIFIKASI_BUKTI`, `CHECK_IN`, `SEDANG_DITITIPKAN`, `CHECK_OUT`, `DIBATALKAN` |
+| `status_perpanjangan_penitipan` | `MENUNGGU_KONFIRMASI`, `MENUNGGU_PEMBAYARAN`, `MENUNGGU_VERIFIKASI_BUKTI`, `DISETUJUI`, `DITOLAK`, `DIBATALKAN` |
 | `status_booking` | `MENUNGGU_KONFIRMASI`, `MENUNGGU_PEMBAYARAN`, `MENUNGGU_VERIFIKASI_BUKTI`, `TERKONFIRMASI`, `SEDANG_PROSES`, `SELESAI`, `DIBATALKAN` |
 | `status_layanan` | `AKTIF`, `NONAKTIF` |
 | `jenis_layanan` | `GROOMING`, `PENITIPAN`, `PET_CARE` |
@@ -550,7 +587,7 @@ erDiagram
 | `status_verifikasi` | `MENUNGGU`, `DISETUJUI`, `DITOLAK` |
 | `status_refund` | `TIDAK_ADA`, `PENDING_REFUND`, `REFUNDED` |
 | `tipe_penerima` | `PELANGGAN`, `STAFF` |
-| `jenis_notifikasi` | `BOOKING_DISETUJUI`, `BOOKING_DITOLAK`, `JAM_GROOMING_DIUPDATE`, `REMINDER_PEMBAYARAN`, `PEMBAYARAN_JATUH_TEMPO`, `MONITORING_PENITIPAN`, `LAYANAN_SELESAI`, `BOOKING_DIBATALKAN`, `STATUS_REFUND` |
+| `jenis_notifikasi` | `BOOKING_DISETUJUI`, `BOOKING_DITOLAK`, `JAM_GROOMING_DIUPDATE`, `REMINDER_PEMBAYARAN`, `PEMBAYARAN_JATUH_TEMPO`, `MONITORING_PENITIPAN`, `LAYANAN_SELESAI`, `BOOKING_DIBATALKAN`, `STATUS_REFUND`, `PERPANJANGAN_PENITIPAN_MENUNGGU_KONFIRMASI`, `PERPANJANGAN_PENITIPAN_DISETUJUI`, `PERPANJANGAN_PENITIPAN_DITOLAK`, `PERPANJANGAN_PENITIPAN_MENUNGGU_PEMBAYARAN` |
 
 ### Konstanta hardcode (bukan tabel)
 

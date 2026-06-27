@@ -3,8 +3,8 @@
 Struktur record logis database berdasarkan [schema.sql](./schema.sql) dan [ERD](../diagrams/erd/erd-diagram.md).
 
 **DBMS:** PostgreSQL 14+  
-**Total tabel:** 19  
-**Total tipe enum:** 14
+**Total tabel:** 20  
+**Total tipe enum:** 15
 
 ---
 
@@ -43,11 +43,12 @@ Struktur record logis database berdasarkan [schema.sql](./schema.sql) dan [ERD](
 | 12 | booking_grooming | Booking |
 | 13 | booking_penitipan | Booking |
 | 14 | monitoring_penitipan | Booking |
-| 15 | booking_pet_care | Booking |
-| 16 | transaksi | Pembayaran |
-| 17 | bukti_transfer | Pembayaran |
-| 18 | invoice | Pembayaran |
-| 19 | notifikasi | Notifikasi |
+| 15 | perpanjangan_penitipan | Booking |
+| 16 | booking_pet_care | Booking |
+| 17 | transaksi | Pembayaran |
+| 18 | bukti_transfer | Pembayaran |
+| 19 | invoice | Pembayaran |
+| 20 | notifikasi | Notifikasi |
 
 ---
 
@@ -111,6 +112,17 @@ Struktur record logis database berdasarkan [schema.sql](./schema.sql) dan [ERD](
 | SEDANG_DITITIPKAN | Kucing sedang dititipkan |
 | CHECK_OUT | Kucing sudah check-out |
 | DIBATALKAN | Penitipan dibatalkan |
+
+### status_perpanjangan_penitipan
+
+| Nilai | Deskripsi |
+|-------|-----------|
+| MENUNGGU_KONFIRMASI | Permintaan perpanjangan baru, menunggu konfirmasi staff |
+| MENUNGGU_PEMBAYARAN | Staff konfirmasi, menunggu pembayaran pelanggan |
+| MENUNGGU_VERIFIKASI_BUKTI | Bukti transfer diupload, menunggu verifikasi staff |
+| DISETUJUI | Pembayaran diverifikasi, check-out booking diperbarui |
+| DITOLAK | Permintaan perpanjangan ditolak staff |
+| DIBATALKAN | Permintaan dibatalkan (lewat batas waktu bayar) |
 
 ### status_booking
 
@@ -178,6 +190,10 @@ Struktur record logis database berdasarkan [schema.sql](./schema.sql) dan [ERD](
 | LAYANAN_SELESAI | Layanan selesai |
 | BOOKING_DIBATALKAN | Booking dibatalkan |
 | STATUS_REFUND | Update status refund |
+| PERPANJANGAN_PENITIPAN_MENUNGGU_KONFIRMASI | Permintaan perpanjangan masuk (ke staff) |
+| PERPANJANGAN_PENITIPAN_DISETUJUI | Perpanjangan disetujui & check-out diperbarui |
+| PERPANJANGAN_PENITIPAN_DITOLAK | Permintaan perpanjangan ditolak staff |
+| PERPANJANGAN_PENITIPAN_MENUNGGU_PEMBAYARAN | Staff konfirmasi perpanjangan, menunggu pembayaran |
 
 ---
 
@@ -439,7 +455,27 @@ Update monitoring harian kucing selama penitipan.
 
 ---
 
-## 15. Tabel `booking_pet_care`
+## 15. Tabel `perpanjangan_penitipan`
+
+Permintaan perpanjangan durasi penitipan (setelah booking terkonfirmasi & kucing sedang dititipkan).
+
+| No | Nama Field | Tipe Data | Panjang | Null | Keterangan | Deskripsi |
+|----|------------|-----------|---------|------|------------|-----------|
+| 1 | id | UUID | — | Tidak | PK, DF | Identitas unik permintaan perpanjangan |
+| 2 | booking_penitipan_id | UUID | — | Tidak | FK → booking_penitipan.id | Booking penitipan terkait |
+| 3 | check_out_sebelum | DATE | — | Tidak | — | Snapshot check-out booking saat ajuan |
+| 4 | check_out_baru | DATE | — | Tidak | CK > check_out_sebelum | Tanggal check-out baru yang diajukan |
+| 5 | tambah_hari | INT | — | Tidak | CK > 0 | Jumlah hari tambahan |
+| 6 | subtotal_tambahan | DECIMAL | 12,2 | Tidak | CK ≥ 0 | Biaya hari tambahan (harga paket × tambah_hari) |
+| 7 | status | status_perpanjangan_penitipan | — | Tidak | DF | Status alur perpanjangan |
+| 8 | dikonfirmasi_oleh_staff_id | UUID | — | Ya | FK → staff.id | Staff yang konfirmasi/tolak |
+| 9 | catatan_penolakan | TEXT | — | Ya | — | Alasan jika ditolak staff |
+| 10 | created_at | TIMESTAMPTZ | — | Tidak | DF | Waktu permintaan diajukan |
+| 11 | updated_at | TIMESTAMPTZ | — | Tidak | DF | Waktu terakhir status diubah |
+
+---
+
+## 16. Tabel `booking_pet_care`
 
 Data booking layanan pet care.
 
@@ -461,30 +497,35 @@ Data booking layanan pet care.
 
 ---
 
-## 16. Tabel `transaksi`
+## 17. Tabel `transaksi`
 
-Data pembayaran per booking (1 booking = 1 transaksi).
+Data pembayaran per booking awal atau per perpanjangan penitipan.
 
 | No | Nama Field | Tipe Data | Panjang | Null | Keterangan | Deskripsi |
 |----|------------|-----------|---------|------|------------|-----------|
 | 1 | id | UUID | — | Tidak | PK, DF | Identitas unik transaksi |
 | 2 | pelanggan_id | UUID | — | Tidak | FK → pelanggan.id | Pelanggan pemilik transaksi |
 | 3 | jenis_layanan | jenis_layanan | — | Tidak | UQ* | GROOMING / PENITIPAN / PET_CARE |
-| 4 | booking_id | UUID | — | Tidak | UQ* | ID booking terkait (*unik per jenis) |
-| 5 | subtotal_layanan | DECIMAL | 12,2 | Tidak | CK ≥ 0 | Subtotal harga layanan |
-| 6 | potongan_promo | DECIMAL | 12,2 | Tidak | DF, CK ≥ 0 | Potongan promo penitipan |
-| 7 | biaya_antar_jemput | DECIMAL | 12,2 | Tidak | DF, CK ≥ 0 | Biaya antar-jemput |
-| 8 | total_bayar | DECIMAL | 12,2 | Tidak | CK ≥ 0 | Total yang harus dibayar |
-| 9 | status_pembayaran | status_pembayaran | — | Tidak | DF | Status alur pembayaran |
-| 10 | status_refund | status_refund | — | Tidak | DF | Status refund |
-| 11 | batas_waktu_bayar | TIMESTAMPTZ | — | Ya | — | Deadline pembayaran |
-| 12 | dibayar_at | TIMESTAMPTZ | — | Ya | — | Waktu pembayaran diverifikasi |
-| 13 | created_at | TIMESTAMPTZ | — | Tidak | DF | Waktu transaksi dibuat |
-| 14 | updated_at | TIMESTAMPTZ | — | Tidak | DF | Waktu terakhir diubah |
+| 4 | booking_id | UUID | — | Tidak | UQ* | ID booking terkait (*unik per jenis jika transaksi awal) |
+| 5 | perpanjangan_penitipan_id | UUID | — | Ya | FK → perpanjangan_penitipan.id, UQ† | Permintaan perpanjangan terkait (†unik jika not null) |
+| 6 | subtotal_layanan | DECIMAL | 12,2 | Tidak | CK ≥ 0 | Subtotal harga layanan |
+| 7 | potongan_promo | DECIMAL | 12,2 | Tidak | DF, CK ≥ 0 | Potongan promo penitipan (hanya booking awal) |
+| 8 | biaya_antar_jemput | DECIMAL | 12,2 | Tidak | DF, CK ≥ 0 | Biaya antar-jemput (hanya booking awal) |
+| 9 | total_bayar | DECIMAL | 12,2 | Tidak | CK ≥ 0 | Total yang harus dibayar |
+| 10 | status_pembayaran | status_pembayaran | — | Tidak | DF | Status alur pembayaran |
+| 11 | status_refund | status_refund | — | Tidak | DF | Status refund |
+| 12 | batas_waktu_bayar | TIMESTAMPTZ | — | Ya | — | Deadline pembayaran |
+| 13 | dibayar_at | TIMESTAMPTZ | — | Ya | — | Waktu pembayaran diverifikasi |
+| 14 | created_at | TIMESTAMPTZ | — | Tidak | DF | Waktu transaksi dibuat |
+| 15 | updated_at | TIMESTAMPTZ | — | Tidak | DF | Waktu terakhir diubah |
+
+**Index unik partial:**
+- `(jenis_layanan, booking_id) WHERE perpanjangan_penitipan_id IS NULL` — satu transaksi booking awal.
+- `(perpanjangan_penitipan_id) WHERE perpanjangan_penitipan_id IS NOT NULL` — satu transaksi per perpanjangan.
 
 ---
 
-## 17. Tabel `bukti_transfer`
+## 18. Tabel `bukti_transfer`
 
 Bukti transfer bank yang diupload pelanggan.
 
@@ -501,7 +542,7 @@ Bukti transfer bank yang diupload pelanggan.
 
 ---
 
-## 18. Tabel `invoice`
+## 19. Tabel `invoice`
 
 Invoice/struk setelah pembayaran lunas.
 
@@ -515,7 +556,7 @@ Invoice/struk setelah pembayaran lunas.
 
 ---
 
-## 19. Tabel `notifikasi`
+## 20. Tabel `notifikasi`
 
 Notifikasi in-app untuk pelanggan dan staff.
 
@@ -548,11 +589,14 @@ Notifikasi in-app untuk pelanggan dan staff.
 | kamar_penitipan | kuota_penitipan | 1 : N | Kuota per kamar per tanggal |
 | layanan_pet_care | kuota_pet_care | 1 : N | Slot waktu per layanan |
 | booking_penitipan | monitoring_penitipan | 1 : N | Monitoring harian selama penitipan |
-| booking_* | transaksi | 1 : 1 | Satu booking satu transaksi |
+| booking_penitipan | perpanjangan_penitipan | 1 : N | Permintaan perpanjangan durasi (boleh berkali-kali & paralel) |
+| perpanjangan_penitipan | transaksi | 1 : 1 | Satu transaksi per perpanjangan |
+| booking_* | transaksi | 1 : 1 | Satu transaksi booking awal per booking |
 | transaksi | bukti_transfer | 1 : 0..1 | Bukti transfer opsional sampai diupload |
 | transaksi | invoice | 1 : 0..1 | Invoice setelah lunas |
 | staff | bukti_transfer | 1 : N | Staff verifikasi bukti |
 | staff | monitoring_penitipan | 1 : N | Staff input monitoring |
+| staff | perpanjangan_penitipan | 1 : N | Staff konfirmasi/tolak perpanjangan |
 
 ---
 

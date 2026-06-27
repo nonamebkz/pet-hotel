@@ -1,0 +1,67 @@
+@startuml sequence-data-kucing
+skinparam sequenceMessageAlign center
+
+title Sequence Diagram — Kelola Data Kucing
+
+actor Pelanggan
+participant "Aplikasi Web" as App
+participant "Backend API" as API
+database "Database" as DB
+
+== Tambah Kucing ==
+
+Pelanggan -> App : Buka menu "Kucing Saya"
+Pelanggan -> App : Isi form kucing\n+ riwayat vaksin (opsional)
+App -> API : POST /kucing
+API -> API : Validasi input
+API -> DB : BEGIN TRANSACTION
+API -> DB : INSERT kucing (pelanggan_id)
+DB --> API : kucing_id
+opt Ada riwayat vaksin
+  API -> DB : INSERT riwayat_vaksin (batch)
+end
+API -> DB : COMMIT
+DB --> API : OK
+API --> App : 201 Created
+App --> Pelanggan : Kucing berhasil ditambahkan
+
+== Edit Kucing ==
+
+Pelanggan -> App : Pilih kucing & edit data
+App -> API : PUT /kucing/{id}
+API -> DB : SELECT kucing WHERE id & pelanggan_id
+alt Bukan milik pelanggan login
+  API --> App : 403 Forbidden
+else Milik pelanggan
+  API -> DB : UPDATE kucing + riwayat_vaksin
+  DB --> API : OK
+  API --> App : 200 OK
+  App --> Pelanggan : Data kucing diperbarui
+end
+
+== Hapus Kucing ==
+
+Pelanggan -> App : Pilih kucing & hapus
+App -> API : DELETE /kucing/{id}
+API -> DB : Cek booking aktif pada kucing
+alt Masih ada booking aktif
+  DB --> API : Booking aktif ditemukan
+  API --> App : 409 Conflict
+  App --> Pelanggan : Penghapusan ditolak
+else Tidak ada booking aktif
+  API -> DB : DELETE kucing (CASCADE riwayat_vaksin)
+  DB --> API : OK
+  API --> App : 200 OK
+  App --> Pelanggan : Kucing berhasil dihapus
+end
+
+== Lihat Daftar ==
+
+Pelanggan -> App : Buka "Kucing Saya"
+App -> API : GET /kucing
+API -> DB : SELECT kucing + riwayat_vaksin\nWHERE pelanggan_id
+DB --> API : Daftar kucing
+API --> App : 200 OK + data
+App --> Pelanggan : Tampilkan daftar kucing
+
+@enduml

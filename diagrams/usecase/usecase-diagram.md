@@ -140,6 +140,8 @@ rectangle "Dashboard Pelanggan" {
     usecase "Riwayat Penitipan" as UC_RiwayatPenitipan
     usecase "Batalkan Penitipan" as UC_BatalPenitipan
     usecase "Pilih Antar-Jemput / Antar Sendiri" as UC_AntarJemputPenitipan
+    usecase "Ajukan Perpanjangan Penitipan" as UC_AjukanPerpanjangan
+    usecase "Lihat Status Perpanjangan Penitipan" as UC_StatusPerpanjangan
   }
 
   rectangle "Pet Care" {
@@ -193,6 +195,8 @@ Pelanggan --> UC_StatusPenitipan
 Pelanggan --> UC_MonitoringPenitipan
 Pelanggan --> UC_RiwayatPenitipan
 Pelanggan --> UC_BatalPenitipan
+Pelanggan --> UC_AjukanPerpanjangan
+Pelanggan --> UC_StatusPerpanjangan
 Pelanggan --> UC_LihatLayananPetCare
 Pelanggan --> UC_AjukanPetCare
 Pelanggan --> UC_StatusPetCare
@@ -214,6 +218,7 @@ UC_AjukanPenitipan ..> UC_PromoPenitipan : <<include>>
 UC_AjukanPenitipan ..> UC_AntarJemputPenitipan : <<include>>
 UC_AjukanGrooming ..> UC_DaftarKucing : <<include>>
 UC_AjukanPenitipan ..> UC_DaftarKucing : <<include>>
+UC_AjukanPerpanjangan ..> UC_StatusPenitipan : <<include>>
 UC_AjukanPetCare ..> UC_DaftarKucing : <<include>>
 UC_Transfer ..> UC_UploadBukti : <<include>>
 
@@ -269,6 +274,7 @@ rectangle "Dashboard Staff" {
     usecase "Update Status\n(Check-in/out)" as UC_StatusPenitipanStaff
     usecase "Input Monitoring Harian" as UC_InputMonitoring
     usecase "Verifikasi Bukti Transfer" as UC_VerifPenitipan
+    usecase "Konfirmasi / Tolak\nPerpanjangan Penitipan" as UC_KonfirmasiPerpanjangan
     usecase "Laporan Penitipan & Pendapatan" as UC_LaporanPenitipan
   }
 
@@ -322,6 +328,7 @@ Staff --> UC_PaketHargaPenitipan
 Staff --> UC_StatusPenitipanStaff
 Staff --> UC_InputMonitoring
 Staff --> UC_VerifPenitipan
+Staff --> UC_KonfirmasiPerpanjangan
 Staff --> UC_LaporanPenitipan
 Staff --> UC_CRUDPetCare
 Staff --> UC_KuotaPetCare
@@ -461,7 +468,8 @@ UC_ProsesRefund ..> UC_TerimaNotif : <<include>>
 | `..> <<extend>>` | Use case opsional / kondisional |
 | `rectangle` | Batas sistem atau paket use case |
 
-- **Antar-jemput** hanya berlaku grooming & penitipan; pet care hanya antar sendiri.
+- **Perpanjangan penitipan** hanya saat check-in / sedang dititipkan; staff konfirmasi ketersediaan → pelanggan bayar → verifikasi bukti (tagihan terpisah); boleh berkali-kali & paralel per booking.
+- **Antar-jemput** hanya berlaku grooming & penitipan booking awal; pet care hanya antar sendiri.
 - **Validasi vaksin** wajib saat booking pet hotel (minimal 1 entri jenis + tanggal).
 - **Pembayaran** transfer bank manual; verifikasi bukti oleh staff wajib.
 - **Refund** setelah terkonfirmasi & sudah bayar diproses manual via WhatsApp + dashboard staff/owner.

@@ -1,0 +1,110 @@
+@startuml sequence-booking-penitipan
+skinparam sequenceMessageAlign center
+
+title Sequence Diagram — Booking Penitipan / Pet Hotel (End-to-End)
+
+actor Pelanggan
+actor "Staff / Owner" as Staff
+participant "Aplikasi Web" as App
+participant "Backend API" as API
+database "Database" as DB
+
+== Ajukan Penitipan ==
+
+Pelanggan -> App : Buka menu Penitipan
+App -> API : GET /kucing?eligible_pet_hotel=true
+API -> DB : SELECT kucing + COUNT riwayat_vaksin\nWHERE jenis & tanggal terisi
+DB --> API : Daftar kucing eligible / belum eligible
+API --> App : Data kucing
+App --> Pelanggan : Dropdown kucing (dengan status eligible)
+
+Pelanggan -> App : Pilih kucing
+App -> API : GET /kucing/{id}/riwayat-vaksin
+API -> DB : SELECT riwayat_vaksin
+DB --> API : Riwayat vaksin
+API --> App : Ringkasan vaksin (read-only)
+App --> Pelanggan : Tampilkan riwayat vaksin
+
+alt Riwayat vaksin < 1 entri lengkap
+  App --> Pelanggan : Form ditolak — lengkapi vaksin di "Kucing Saya"
+else Vaksin memenuhi syarat
+  Pelanggan -> App : Isi check-in, check-out,\ncatatan makan, opsi pengantaran
+  App -> API : POST /penitipan/estimasi-biaya
+  API -> API : Hitung subtotal, promo 10%\n(durasi >7 hari & belum pernah pakai)
+  API -> API : Hitung biaya antar-jemput (jika ada)
+  API --> App : Ringkasan biaya
+  App --> Pelanggan : Tampilkan estimasi harga
+
+  Pelanggan -> App : Submit penitipan
+  App -> API : POST /booking/penitipan
+  API -> DB : INSERT booking_penitipan\nstatus = MENUNGGU_KONFIRMASI
+  API -> DB : INSERT transaksi (draft)
+  DB --> API : OK
+  API --> App : 201 Created
+  App --> Pelanggan : Penitipan diajukan
+end
+
+== Konfirmasi Staff ==
+
+Staff -> App : Buka detail booking penitipan
+App -> API : GET /internal/booking/penitipan/{id}
+API -> DB : SELECT booking + kucing + riwayat_vaksin
+DB --> API : Detail booking
+API --> App : Data lengkap
+App --> Staff : Tampilkan detail + vaksin (read-only)
+
+alt Vaksin tidak memenuhi syarat
+  Staff -> App : Tolak booking
+  App -> API : PATCH .../tolak
+  API -> DB : UPDATE status = DIBATALKAN
+  API -> DB : INSERT notifikasi BOOKING_DITOLAK
+  App --> Pelanggan : Notifikasi ditolak
+else Vaksin OK & staff konfirmasi
+  Staff -> App : Konfirmasi penitipan
+  App -> API : PATCH .../konfirmasi
+  API -> DB : UPDATE status = MENUNGGU_PEMBAYARAN
+  API -> DB : UPDATE transaksi.batas_waktu_bayar
+  API -> DB : INSERT notifikasi
+  App --> Pelanggan : Notifikasi tagihan
+end
+
+== Pembayaran ==
+
+Pelanggan -> App : Upload bukti transfer
+App -> API : POST /transaksi/{id}/bukti-transfer
+API -> DB : INSERT bukti_transfer\nstatus = MENUNGGU_VERIFIKASI_BUKTI
+App --> Pelanggan : Menunggu verifikasi
+
+Staff -> App : Setujui bukti transfer
+App -> API : PATCH /internal/bukti-transfer/{id}/setujui
+API -> DB : UPDATE transaksi = LUNAS
+API -> DB : UPDATE booking = TERKONFIRMASI
+opt Promo dipakai
+  API -> DB : UPDATE pelanggan.pernah_pakai_promo_penitipan = true
+end
+API -> DB : INSERT invoice
+App --> Pelanggan : Notifikasi lunas + invoice
+
+== Check-in → Monitoring → Check-out ==
+
+Staff -> App : Update status → CHECK_IN
+App -> API : PATCH .../status (CHECK_IN)
+API -> DB : UPDATE status
+Staff -> App : Update status → SEDANG_DITITIPKAN
+App -> API : PATCH .../status (SEDANG_DITITIPKAN)
+API -> DB : UPDATE status
+
+loop Setiap hari penitipan
+  Staff -> App : Input monitoring harian\n(foto, makan, kondisi, aktivitas)
+  App -> API : POST /internal/monitoring-penitipan
+  API -> DB : INSERT monitoring_penitipan
+  API -> DB : INSERT notifikasi MONITORING_PENITIPAN
+  App --> Pelanggan : Notifikasi update monitoring
+end
+
+Staff -> App : Update status → CHECK_OUT
+App -> API : PATCH .../status (CHECK_OUT)
+API -> DB : UPDATE status
+App --> Pelanggan : Penitipan selesai
+
+@enduml

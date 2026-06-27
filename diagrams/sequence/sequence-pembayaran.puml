@@ -1,0 +1,84 @@
+@startuml sequence-pembayaran
+skinparam sequenceMessageAlign center
+
+title Sequence Diagram — Pembayaran & Verifikasi Bukti Transfer (Global)
+
+actor Pelanggan
+actor "Staff / Owner" as Staff
+participant "Aplikasi Web" as App
+participant "Backend API" as API
+database "Database" as DB
+participant "Scheduler\n(Sistem)" as Cron
+
+== Staff Set Batas Waktu ==
+
+Staff -> App : Konfirmasi booking
+App -> API : PATCH /internal/booking/{jenis}/{id}/konfirmasi
+API -> DB : UPDATE booking status = MENUNGGU_PEMBAYARAN
+API -> DB : UPDATE transaksi.batas_waktu_bayar
+API -> DB : INSERT notifikasi REMINDER_PEMBAYARAN
+App --> Pelanggan : Notifikasi tagihan & batas waktu
+
+== Pelanggan Bayar ==
+
+Pelanggan -> App : Buka daftar tagihan menunggu
+App -> API : GET /transaksi?status=MENUNGGU_PEMBAYARAN
+API -> DB : SELECT transaksi + rincian booking
+DB --> API : Daftar tagihan
+API --> App : Rincian:\nsubtotal + promo + antar-jemput = total
+App --> Pelanggan : Tampilkan rincian & rekening petshop
+
+Pelanggan -> App : Transfer bank manual
+Pelanggan -> App : Upload bukti transfer (wajib)
+alt Bukti tidak diupload
+  App --> Pelanggan : Form tidak bisa disubmit
+else Bukti diupload
+  App -> API : POST /transaksi/{id}/bukti-transfer
+  API -> DB : INSERT bukti_transfer (file_url)
+  API -> DB : UPDATE transaksi status = MENUNGGU_VERIFIKASI
+  API -> DB : UPDATE booking status = MENUNGGU_VERIFIKASI_BUKTI
+  DB --> API : OK
+  App --> Pelanggan : Menunggu verifikasi staff
+end
+
+== Verifikasi Staff ==
+
+Staff -> App : Buka pembayaran menunggu verifikasi
+App -> API : GET /internal/transaksi?status=MENUNGGU_VERIFIKASI
+API -> DB : SELECT transaksi + bukti_transfer
+DB --> API : Daftar bukti
+App --> Staff : Tampilkan bukti transfer
+
+alt Bukti ditolak
+  Staff -> App : Tolak + catatan penolakan
+  App -> API : PATCH /internal/bukti-transfer/{id}/tolak
+  API -> DB : UPDATE status_verifikasi = DITOLAK
+  API -> DB : UPDATE transaksi = MENUNGGU_PEMBAYARAN
+  App --> Pelanggan : Diminta upload ulang bukti
+else Bukti disetujui
+  Staff -> App : Setujui bukti
+  App -> API : PATCH /internal/bukti-transfer/{id}/setujui
+  API -> DB : UPDATE bukti status = DISETUJUI
+  API -> DB : UPDATE transaksi status = LUNAS, dibayar_at
+  API -> DB : UPDATE booking status = TERKONFIRMASI
+  API -> DB : INSERT invoice
+  API -> DB : INSERT notifikasi
+  App --> Pelanggan : Notifikasi lunas + unduh invoice
+end
+
+== Batas Waktu Lewat (Otomatis) ==
+
+Cron -> API : Cek transaksi lewat batas_waktu_bayar
+API -> DB : SELECT transaksi WHERE batas_waktu_bayar < NOW()\nAND status = MENUNGGU_PEMBAYARAN
+DB --> API : Transaksi kedaluwarsa
+API -> DB : UPDATE transaksi status = KEDALUWARSA
+API -> DB : UPDATE booking status = DIBATALKAN
+API -> DB : Kembalikan kuota (slot_terisi -1)
+API -> DB : INSERT notifikasi PEMBAYARAN_JATUH_TEMPO
+API --> Cron : OK
+note over Cron, Pelanggan
+  Notifikasi dikirim ke pelanggan
+  via pusat notifikasi in-app
+end note
+
+@enduml

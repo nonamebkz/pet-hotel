@@ -96,6 +96,16 @@ classDiagram
         +String catatanMakan
         +ajukan()
         +batalkan()
+        +perpanjangDurasi()
+    }
+
+    class PerpanjanganPenitipan {
+        +UUID id
+        +Date checkOutSebelum
+        +Date checkOutBaru
+        +Int tambahHari
+        +StatusPerpanjanganPenitipan status
+        +ajukan()
     }
 
     class BookingPetCare {
@@ -142,9 +152,11 @@ classDiagram
     Kucing "1" --> "*" BookingGrooming : dilayani
     Kucing "1" --> "*" BookingPenitipan : dititipkan
     Kucing "1" --> "*" BookingPetCare : dilayani
+    BookingPenitipan "1" --> "*" PerpanjanganPenitipan : memiliki
     BookingGrooming "1" --> "1" Transaksi : menghasilkan
-    BookingPenitipan "1" --> "1" Transaksi : menghasilkan
+    BookingPenitipan "1" --> "*" Transaksi : menghasilkan
     BookingPetCare "1" --> "1" Transaksi : menghasilkan
+    PerpanjanganPenitipan "1" --> "1" Transaksi : menghasilkan
     Pelanggan "1" --> "*" Notifikasi : menerima
     Staff "1" --> "*" Transaksi : verifikasi
 ```
@@ -485,6 +497,26 @@ classDiagram
         +hitungSubtotal()
         +hitungPromo()
         +isEligiblePromo()
+        +perpanjangDurasi()
+        +terapkanPerpanjangan()
+    }
+
+    class PerpanjanganPenitipan {
+        +UUID id
+        +UUID bookingPenitipanId
+        +Date checkOutSebelum
+        +Date checkOutBaru
+        +Int tambahHari
+        +Decimal subtotalTambahan
+        +StatusPerpanjanganPenitipan status
+        +UUID dikonfirmasiOlehStaffId
+        +String catatanPenolakan
+        +DateTime createdAt
+        +ajukan()
+        +konfirmasiStaff()
+        +tolakStaff()
+        +verifikasiPembayaran()
+        +hitungSubtotalTambahan()
     }
 
     class MonitoringPenitipan {
@@ -528,15 +560,30 @@ classDiagram
         DIBATALKAN
     }
 
+    class StatusPerpanjanganPenitipan {
+        <<enumeration>>
+        MENUNGGU_KONFIRMASI
+        MENUNGGU_PEMBAYARAN
+        MENUNGGU_VERIFIKASI_BUKTI
+        DISETUJUI
+        DITOLAK
+        DIBATALKAN
+    }
+
     Pelanggan "1" --> "*" BookingPenitipan : mengajukan
     Kucing "1" --> "*" BookingPenitipan : dititipkan
     PaketPenitipan "1" --> "*" BookingPenitipan : dipilih
     BookingPenitipan "1" --> "*" MonitoringPenitipan : memiliki
+    BookingPenitipan "1" --> "*" PerpanjanganPenitipan : memiliki
     Staff "1" --> "*" MonitoringPenitipan : input
+    Staff "1" --> "*" PerpanjanganPenitipan : konfirmasi
     BookingPenitipan --> StatusPenitipan : status
+    PerpanjanganPenitipan --> StatusPerpanjanganPenitipan : status
 
     note for BookingPenitipan "Promo: durasi >7 hari → potongan 10%, 1× per akun (PROMO_MIN_DAYS=7)"
     note for BookingPenitipan "Validasi vaksin kucing wajib saat ajukan & konfirmasi staff"
+    note for PerpanjanganPenitipan "Hanya saat CHECK_IN / SEDANG_DITITIPKAN; tanpa promo & tanpa biaya antar-jemput tambahan"
+    note for PerpanjanganPenitipan "Boleh berkali-kali & paralel per booking; checkOutSebelum = checkOut booking saat ini"
     note for MonitoringPenitipan "Update memicu notifikasi ke pelanggan"
 ```
 
@@ -619,6 +666,7 @@ classDiagram
         +UUID id
         +UUID pelangganId
         +UUID bookingId
+        +UUID perpanjanganPenitipanId
         +JenisLayanan jenisLayanan
         +Decimal subtotalLayanan
         +Decimal potonganPromo
@@ -675,6 +723,10 @@ classDiagram
         +UUID id
     }
 
+    class PerpanjanganPenitipan {
+        +UUID id
+    }
+
     class BookingPetCare {
         +UUID id
     }
@@ -721,8 +773,10 @@ classDiagram
     Transaksi ..> BookingGrooming : bookingId (polymorphic)
     Transaksi ..> BookingPenitipan : bookingId (polymorphic)
     Transaksi ..> BookingPetCare : bookingId (polymorphic)
+    Transaksi ..> PerpanjanganPenitipan : perpanjanganPenitipanId
+    PerpanjanganPenitipan "1" --> "1" Transaksi : menghasilkan
 
-    note for Transaksi "Lewat batasWaktuBayar → booking dibatalkan & kuota dikembalikan"
+    note for Transaksi "Lewat batasWaktuBayar → booking/perpanjangan dibatalkan & kuota dikembalikan"
     note for BuktiTransfer "Upload wajib; booking belum lunas sampai staff setujui"
     note for Transaksi "Refund diproses manual staff setelah permintaan via WhatsApp"
 ```
@@ -815,6 +869,10 @@ classDiagram
         LAYANAN_SELESAI
         BOOKING_DIBATALKAN
         STATUS_REFUND
+        PERPANJANGAN_PENITIPAN_MENUNGGU_KONFIRMASI
+        PERPANJANGAN_PENITIPAN_DISETUJUI
+        PERPANJANGAN_PENITIPAN_DITOLAK
+        PERPANJANGAN_PENITIPAN_MENUNGGU_PEMBAYARAN
     }
 
     class TipePenerima {
@@ -851,6 +909,7 @@ classDiagram
     class BookingGrooming
     class BookingPenitipan
     class MonitoringPenitipan
+    class PerpanjanganPenitipan
     class BookingPetCare
     class Transaksi
     class BuktiTransfer
@@ -878,13 +937,16 @@ classDiagram
     PaketPenitipan "1" --> "*" BookingPenitipan
     KamarPenitipan "1" --> "*" BookingPenitipan
     BookingPenitipan "1" --> "*" MonitoringPenitipan
+    BookingPenitipan "1" --> "*" PerpanjanganPenitipan
     Staff "1" --> "*" MonitoringPenitipan
+    Staff "1" --> "*" PerpanjanganPenitipan
 
     LayananPetCare "1" --> "*" BookingPetCare
 
     BookingGrooming "1" --> "1" Transaksi
-    BookingPenitipan "1" --> "1" Transaksi
+    BookingPenitipan "1" --> "*" Transaksi
     BookingPetCare "1" --> "1" Transaksi
+    PerpanjanganPenitipan "1" --> "1" Transaksi
 
     Transaksi "1" --> "0..1" BuktiTransfer
     Transaksi "1" --> "0..1" Invoice
@@ -908,9 +970,10 @@ classDiagram
 | **KamarPenitipan** | nama, kapasitas | 1→* KuotaPenitipan |
 | **LayananPetCare** | nama, harga, durasi, status | soft delete; CRUD staff/owner |
 | **BookingGrooming** | tanggal, jam, opsi pengantaran, status | → Transaksi |
-| **BookingPenitipan** | check-in/out, promo, monitoring | → Transaksi; 1→* Monitoring |
+| **BookingPenitipan** | check-in/out, promo, monitoring | 1→* Transaksi, 1→* Monitoring, 1→* PerpanjanganPenitipan |
+| **PerpanjanganPenitipan** | checkOutSebelum/Baru, tambahHari, subtotal | hanya CHECK_IN/SEDANG_DITITIPKAN; → Transaksi |
 | **BookingPetCare** | tanggal, slot waktu, status | antar sendiri saja; → Transaksi |
-| **Transaksi** | subtotal, promo, antar-jemput, total, refund | 1→1 Booking (polymorphic) |
+| **Transaksi** | subtotal, promo, antar-jemput, total, refund | 1 transaksi booking awal; perpanjangan = transaksi tambahan |
 | **BuktiTransfer** | file, status verifikasi, catatan penolakan | wajib upload pelanggan |
 | **Invoice** | nomor, file | setelah pembayaran lunas |
 | **Notifikasi** | jenis, judul, pesan, sudah dibaca | trigger in-app (+ email opsional) |
@@ -942,7 +1005,8 @@ classDiagram
 | Rekening bank petshop | bank, no rekening, atas nama | Halaman transfer manual |
 
 **Aturan bisnis penting:**
-- Setiap booking (grooming, penitipan, pet care) menghasilkan **1 Transaksi**.
+- Setiap booking awal (grooming, penitipan, pet care) menghasilkan **1 Transaksi**; setiap **perpanjangan penitipan** disetujui = transaksi tambahan terpisah.
+- **Perpanjangan penitipan** hanya saat `CHECK_IN` / `SEDANG_DITITIPKAN`; tanpa promo & biaya antar-jemput tambahan; boleh berkali-kali & paralel per booking.
 - **Antar-jemput** hanya pada grooming & penitipan; pet care **antar sendiri** fixed.
 - **Pembatalan** sebelum konfirmasi: pelanggan batalkan langsung; setelah bayar: via WhatsApp + proses staff.
 - **Kuota** grooming, penitipan, dan pet care dikembalikan otomatis saat booking dibatalkan atau kedaluwarsa.

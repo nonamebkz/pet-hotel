@@ -36,6 +36,15 @@ CREATE TYPE status_penitipan AS ENUM (
     'DIBATALKAN'
 );
 
+CREATE TYPE status_perpanjangan_penitipan AS ENUM (
+    'MENUNGGU_KONFIRMASI',
+    'MENUNGGU_PEMBAYARAN',
+    'MENUNGGU_VERIFIKASI_BUKTI',
+    'DISETUJUI',
+    'DITOLAK',
+    'DIBATALKAN'
+);
+
 CREATE TYPE status_booking AS ENUM (
     'MENUNGGU_KONFIRMASI',
     'MENUNGGU_PEMBAYARAN',
@@ -69,7 +78,11 @@ CREATE TYPE jenis_notifikasi AS ENUM (
     'MONITORING_PENITIPAN',
     'LAYANAN_SELESAI',
     'BOOKING_DIBATALKAN',
-    'STATUS_REFUND'
+    'STATUS_REFUND',
+    'PERPANJANGAN_PENITIPAN_MENUNGGU_KONFIRMASI',
+    'PERPANJANGAN_PENITIPAN_DISETUJUI',
+    'PERPANJANGAN_PENITIPAN_DITOLAK',
+    'PERPANJANGAN_PENITIPAN_MENUNGGU_PEMBAYARAN'
 );
 
 -- =============================================================================
@@ -298,6 +311,25 @@ CREATE TABLE monitoring_penitipan (
 
 CREATE INDEX idx_monitoring_penitipan_booking ON monitoring_penitipan (booking_penitipan_id);
 
+CREATE TABLE perpanjangan_penitipan (
+    id                          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    booking_penitipan_id        UUID NOT NULL REFERENCES booking_penitipan(id) ON DELETE RESTRICT,
+    check_out_sebelum           DATE NOT NULL,
+    check_out_baru              DATE NOT NULL,
+    tambah_hari                 INT NOT NULL CHECK (tambah_hari > 0),
+    subtotal_tambahan           DECIMAL(12, 2) NOT NULL CHECK (subtotal_tambahan >= 0),
+    status                      status_perpanjangan_penitipan NOT NULL DEFAULT 'MENUNGGU_KONFIRMASI',
+    dikonfirmasi_oleh_staff_id  UUID REFERENCES staff(id) ON DELETE SET NULL,
+    catatan_penolakan           TEXT,
+    created_at                  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at                  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+
+    CONSTRAINT chk_perpanjangan_penitipan_tanggal CHECK (check_out_baru > check_out_sebelum)
+);
+
+CREATE INDEX idx_perpanjangan_penitipan_booking ON perpanjangan_penitipan (booking_penitipan_id);
+CREATE INDEX idx_perpanjangan_penitipan_status ON perpanjangan_penitipan (status);
+
 CREATE TABLE booking_pet_care (
     id                          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     pelanggan_id                UUID NOT NULL REFERENCES pelanggan(id) ON DELETE RESTRICT,
@@ -327,6 +359,7 @@ CREATE TABLE transaksi (
     pelanggan_id                UUID NOT NULL REFERENCES pelanggan(id) ON DELETE RESTRICT,
     jenis_layanan               jenis_layanan NOT NULL,
     booking_id                  UUID NOT NULL,
+    perpanjangan_penitipan_id   UUID REFERENCES perpanjangan_penitipan(id) ON DELETE RESTRICT,
     subtotal_layanan            DECIMAL(12, 2) NOT NULL CHECK (subtotal_layanan >= 0),
     potongan_promo              DECIMAL(12, 2) NOT NULL DEFAULT 0 CHECK (potongan_promo >= 0),
     biaya_antar_jemput          DECIMAL(12, 2) NOT NULL DEFAULT 0 CHECK (biaya_antar_jemput >= 0),
@@ -336,10 +369,16 @@ CREATE TABLE transaksi (
     batas_waktu_bayar           TIMESTAMPTZ,
     dibayar_at                  TIMESTAMPTZ,
     created_at                  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at                  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-
-    CONSTRAINT uq_transaksi_booking UNIQUE (jenis_layanan, booking_id)
+    updated_at                  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+CREATE UNIQUE INDEX uq_transaksi_booking_awal
+    ON transaksi (jenis_layanan, booking_id)
+    WHERE perpanjangan_penitipan_id IS NULL;
+
+CREATE UNIQUE INDEX uq_transaksi_perpanjangan
+    ON transaksi (perpanjangan_penitipan_id)
+    WHERE perpanjangan_penitipan_id IS NOT NULL;
 
 CREATE INDEX idx_transaksi_pelanggan ON transaksi (pelanggan_id);
 CREATE INDEX idx_transaksi_status_pembayaran ON transaksi (status_pembayaran);
@@ -446,6 +485,10 @@ CREATE TRIGGER trg_booking_grooming_updated_at
 
 CREATE TRIGGER trg_booking_penitipan_updated_at
     BEFORE UPDATE ON booking_penitipan
+    FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+
+CREATE TRIGGER trg_perpanjangan_penitipan_updated_at
+    BEFORE UPDATE ON perpanjangan_penitipan
     FOR EACH ROW EXECUTE FUNCTION set_updated_at();
 
 CREATE TRIGGER trg_booking_pet_care_updated_at

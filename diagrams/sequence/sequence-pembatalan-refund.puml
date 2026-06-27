@@ -1,0 +1,60 @@
+@startuml sequence-pembatalan-refund
+skinparam sequenceMessageAlign center
+
+title Sequence Diagram — Pembatalan & Refund (Global)
+
+actor Pelanggan
+actor "Staff / Owner" as Staff
+participant "Aplikasi Web" as App
+participant "Backend API" as API
+database "Database" as DB
+
+== Skenario 1: Belum Terkonfirmasi / Belum Bayar ==
+
+Pelanggan -> App : Buka detail booking
+App -> API : GET /booking/{jenis}/{id}
+API -> DB : SELECT booking + transaksi
+DB --> API : status = MENUNGGU_KONFIRMASI / MENUNGGU_PEMBAYARAN
+API --> App : Detail booking
+App --> Pelanggan : Tampilkan tombol "Batalkan"
+
+Pelanggan -> App : Klik batalkan booking
+App -> API : PATCH /booking/{jenis}/{id}/batalkan
+API -> DB : UPDATE booking status = DIBATALKAN
+API -> DB : UPDATE transaksi status = DIBATALKAN
+API -> DB : Kembalikan kuota (slot_terisi -1)
+API -> DB : INSERT notifikasi BOOKING_DIBATALKAN
+DB --> API : OK
+API --> App : 200 OK
+App --> Pelanggan : Notifikasi pembatalan berhasil
+
+== Skenario 2: Sudah Terkonfirmasi & Sudah Bayar ==
+
+Pelanggan -> App : Buka detail booking (status TERKONFIRMASI)
+App --> Pelanggan : Tombol batalkan otomatis tidak tersedia\nTampilkan "Hubungi Kami"
+
+Pelanggan -> App : Klik Hubungi Kami
+App --> Pelanggan : Redirect ke wa.me/{PETSHOP_WHATSAPP}
+note over Pelanggan, Staff
+  Pelanggan sampaikan ID booking
+  & alasan via WhatsApp (di luar sistem)
+end note
+
+Staff -> App : Buka dashboard internal
+Staff -> App : Batalkan booking (permintaan WA)
+App -> API : PATCH /internal/booking/{jenis}/{id}/batalkan
+API -> DB : UPDATE booking status = DIBATALKAN
+API -> DB : UPDATE transaksi status_refund = PENDING_REFUND
+API -> DB : Kembalikan kuota
+API -> DB : INSERT notifikasi BOOKING_DIBATALKAN
+DB --> API : OK
+App --> Pelanggan : Notifikasi booking dibatalkan\n& refund sedang diproses
+
+Staff -> Staff : Proses refund manual\n(transfer balik ke pelanggan)
+Staff -> App : Update status refund → REFUNDED
+App -> API : PATCH /internal/transaksi/{id}/refund
+API -> DB : UPDATE transaksi status_refund = REFUNDED
+API -> DB : INSERT notifikasi STATUS_REFUND
+App --> Pelanggan : Notifikasi refund selesai
+
+@enduml

@@ -1,0 +1,111 @@
+@startuml sequence-booking-grooming
+skinparam sequenceMessageAlign center
+
+title Sequence Diagram — Booking Grooming (End-to-End)
+
+actor Pelanggan
+actor "Staff / Owner" as Staff
+participant "Aplikasi Web" as App
+participant "Backend API" as API
+database "Database" as DB
+
+== Ajukan Booking ==
+
+Pelanggan -> App : Buka menu Grooming
+App -> API : GET /grooming/kuota?tanggal=...
+API -> DB : SELECT kuota_grooming
+DB --> API : Kuota tersedia
+API --> App : Daftar tanggal & sisa kuota
+App --> Pelanggan : Tampilkan kuota per tanggal
+
+Pelanggan -> App : Isi form booking\n(kucing, jenis, tanggal, opsi pengantaran)
+alt Antar-jemput & alamat belum lengkap
+  App --> Pelanggan : Wajib lengkapi alamat profil
+else Antar-jemput & alamat lengkap
+  App -> API : POST /grooming/estimasi-pickup
+  API -> API : Hitung jarak & biaya\n(gratis ≤3km, charge >3km)
+  API --> App : jarak_km, biaya_antar_jemput
+  App --> Pelanggan : Tampilkan estimasi biaya
+else Antar sendiri
+  App --> Pelanggan : biaya antar-jemput = Rp 0
+end
+
+Pelanggan -> App : Submit booking
+App -> API : POST /booking/grooming
+API -> DB : Cek sisa kuota_grooming
+API -> DB : INSERT booking_grooming\nstatus = MENUNGGU_KONFIRMASI
+API -> DB : UPDATE kuota_grooming.slot_terisi +1
+API -> DB : INSERT transaksi (draft)
+DB --> API : OK
+API --> App : 201 Created
+App --> Pelanggan : Booking diajukan
+
+== Konfirmasi & Set Jam (Staff) ==
+
+Staff -> App : Buka daftar booking masuk
+App -> API : GET /internal/booking/grooming
+API -> DB : SELECT booking_grooming
+DB --> API : Daftar booking
+API --> App : Data booking
+App --> Staff : Tampilkan daftar
+
+alt Staff tolak booking
+  Staff -> App : Tolak booking
+  App -> API : PATCH /internal/booking/grooming/{id}/tolak
+  API -> DB : UPDATE status = DIBATALKAN
+  API -> DB : UPDATE kuota slot_terisi -1
+  API -> DB : INSERT notifikasi BOOKING_DITOLAK
+  DB --> API : OK
+  API --> App : OK
+  App --> Pelanggan : Notifikasi booking ditolak
+else Staff konfirmasi
+  Staff -> App : Konfirmasi & isi jam grooming
+  App -> API : PATCH /internal/booking/grooming/{id}/konfirmasi
+  API -> DB : UPDATE jam_grooming, status = MENUNGGU_PEMBAYARAN
+  API -> DB : UPDATE transaksi.batas_waktu_bayar
+  API -> DB : INSERT notifikasi JAM_GROOMING_DIUPDATE
+  DB --> API : OK
+  API --> App : OK
+  App --> Pelanggan : Notifikasi jam & tagihan
+end
+
+== Pembayaran & Verifikasi ==
+
+Pelanggan -> App : Transfer & upload bukti transfer
+App -> API : POST /transaksi/{id}/bukti-transfer
+API -> DB : INSERT bukti_transfer
+API -> DB : UPDATE status = MENUNGGU_VERIFIKASI_BUKTI
+DB --> API : OK
+API --> App : OK
+App --> Pelanggan : Menunggu verifikasi staff
+
+Staff -> App : Review bukti transfer
+alt Bukti ditolak
+  Staff -> App : Tolak bukti + catatan
+  App -> API : PATCH /internal/bukti-transfer/{id}/tolak
+  API -> DB : UPDATE status_verifikasi = DITOLAK
+  API --> App : OK
+  App --> Pelanggan : Diminta upload ulang
+else Bukti disetujui
+  Staff -> App : Setujui bukti
+  App -> API : PATCH /internal/bukti-transfer/{id}/setujui
+  API -> DB : UPDATE transaksi status = LUNAS
+  API -> DB : UPDATE booking status = TERKONFIRMASI
+  API -> DB : INSERT invoice
+  API -> DB : INSERT notifikasi
+  DB --> API : OK
+  API --> App : OK
+  App --> Pelanggan : Notifikasi lunas + unduh invoice
+end
+
+== Proses Layanan ==
+
+Staff -> App : Update status → Sedang Proses → Selesai
+App -> API : PATCH /internal/booking/grooming/{id}/status
+API -> DB : UPDATE status booking
+API -> DB : INSERT notifikasi LAYANAN_SELESAI
+DB --> API : OK
+API --> App : OK
+App --> Pelanggan : Notifikasi layanan selesai
+
+@enduml

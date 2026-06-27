@@ -93,7 +93,27 @@ endif
 repeat
   :Input monitoring harian\n(foto, catatan makan, aktivitas);
   |Pelanggan|
-  :Terima notifikasi update monitoring;
+  if (Ajukan perpanjangan penitipan?) then (ya)
+    :Isi tanggal check-out baru\n(> check-out saat ini);
+    :Lihat estimasi biaya hari tambahan;
+    :Submit permintaan perpanjangan;
+    |Staff / Owner|
+    if (Konfirmasi perpanjangan?) then (tolak)
+      |Pelanggan|
+      :Terima notifikasi perpanjangan ditolak;
+    else (konfirmasi)
+      |Pelanggan|
+      :Transfer & upload bukti transfer perpanjangan;
+      |Staff / Owner|
+      if (Bukti perpanjangan disetujui?) then (setujui)
+        :Perbarui check-out & lama penitipan booking;
+        |Pelanggan|
+        :Terima notifikasi perpanjangan aktif;
+      endif
+    endif
+  else (tidak)
+    :Terima notifikasi update monitoring;
+  endif
   |Staff / Owner|
 repeat while (Masih dalam masa penitipan?) is (ya)
 ->tidak;
