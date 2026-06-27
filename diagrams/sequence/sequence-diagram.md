@@ -14,7 +14,7 @@ Diagram urutan interaksi berdasarkan [idea.md](../../idea.md) dan [activity diag
 
 > **Preview:** Gunakan ekstensi PlantUML di VS Code/Cursor, atau render di [plantuml.com](https://www.plantuml.com/plantuml/uml).
 >
-> File `.puml` terpisah: `sequence-autentikasi-pelanggan.puml`, `sequence-autentikasi-staff.puml`, `sequence-data-kucing.puml`, `sequence-booking-grooming.puml`, `sequence-booking-penitipan.puml`, `sequence-booking-petcare.puml`, `sequence-pembayaran.puml`, `sequence-pembatalan-refund.puml`, `sequence-monitoring-penitipan.puml`, `sequence-perpanjangan-penitipan.puml`, `sequence-manajemen-staff-owner.puml`
+> File `.puml` terpisah: `sequence-autentikasi-pelanggan.puml`, `sequence-autentikasi-staff.puml`, `sequence-data-kucing.puml`, `sequence-booking-grooming.puml`, `sequence-booking-penitipan.puml`, `sequence-booking-petcare.puml`, `sequence-pembayaran.puml`, `sequence-pembatalan-refund.puml`, `sequence-monitoring-penitipan.puml`, `sequence-perpanjangan-penitipan.puml`, `sequence-manajemen-staff-owner.puml`, `sequence-laporan.puml`
 
 ---
 
@@ -33,6 +33,7 @@ Diagram urutan interaksi berdasarkan [idea.md](../../idea.md) dan [activity diag
 | 9 | Monitoring Penitipan | Staff, Pelanggan | [sequence-monitoring-penitipan.puml](./sequence-monitoring-penitipan.puml) |
 | 10 | Perpanjangan Penitipan | Pelanggan, Staff | [sequence-perpanjangan-penitipan.puml](./sequence-perpanjangan-penitipan.puml) |
 | 11 | Manajemen Staff (Owner) | Owner | [sequence-manajemen-staff-owner.puml](./sequence-manajemen-staff-owner.puml) |
+| 12 | Laporan (Dashboard Admin) | Staff, Owner | [sequence-laporan.puml](./sequence-laporan.puml) |
 
 ---
 
@@ -529,6 +530,82 @@ App --> Owner : Staff dinonaktifkan
 
 note over Owner, DB
   Owner tidak bisa dinonaktifkan oleh staff
+end note
+
+@enduml
+```
+
+---
+
+## 12. Laporan (Dashboard Admin)
+
+Staff/Owner membuka menu Laporan terpisah, memfilter data per layanan, dan melihat agregat booking (serta pendapatan untuk grooming & pet hotel).
+
+```plantuml
+@startuml sequence-laporan
+skinparam sequenceMessageAlign center
+
+title Sequence Diagram — Laporan (Dashboard Admin)
+
+actor "Staff / Owner" as User
+participant "Aplikasi Web\n(Dashboard Admin)" as App
+participant "Backend API" as API
+database "Database" as DB
+
+== Lihat Ringkasan Laporan ==
+
+User -> App : Buka menu Laporan
+App -> API : GET /internal/laporan/ringkasan?periode=...
+API -> API : Verifikasi role = STAFF / OWNER
+API -> DB : Aggregate booking_grooming,\nbooking_penitipan, booking_pet_care
+DB --> API : Total booking per layanan
+API --> App : 200 OK + ringkasan kartu
+App --> User : Tampilkan halaman indeks Laporan
+
+== Laporan Data Grooming ==
+
+User -> App : Buka Laporan Data Grooming\n+ set filter periode & status
+App -> API : GET /internal/laporan/grooming?mulai=...&akhir=...&status=...
+API -> API : Verifikasi role = STAFF / OWNER
+API -> DB : SELECT booking_grooming\nJOIN transaksi, jenis_grooming\n(aggregate + detail)
+DB --> API : Data laporan grooming
+API --> App : 200 OK + metrik & tabel
+App --> User : Tampilkan laporan grooming
+
+== Laporan Data Pet Hotel ==
+
+User -> App : Buka Laporan Data Pet Hotel\n+ set filter periode & status
+App -> API : GET /internal/laporan/penitipan?mulai=...&akhir=...&status=...
+API -> API : Verifikasi role = STAFF / OWNER
+API -> DB : SELECT booking_penitipan\nJOIN transaksi, perpanjangan_penitipan\n(aggregate + detail)
+DB --> API : Data laporan pet hotel
+API --> App : 200 OK + metrik & tabel
+App --> User : Tampilkan laporan pet hotel
+
+== Laporan Data Booking Pet Care ==
+
+User -> App : Buka Laporan Data Booking Pet Care\n+ set filter periode, status, layanan
+App -> API : GET /internal/laporan/pet-care?mulai=...&akhir=...&layanan=...
+API -> API : Verifikasi role = STAFF / OWNER
+API -> DB : SELECT booking_pet_care\nJOIN layanan_pet_care, slot_dokter\n(aggregate jumlah — tanpa pendapatan)
+DB --> API : Data laporan pet care
+API --> App : 200 OK + metrik & tabel
+App --> User : Tampilkan laporan pet care
+
+== Export (Opsional) ==
+
+User -> App : Klik Export CSV / PDF
+App -> API : GET /internal/laporan/{jenis}/export?format=...
+API -> API : Verifikasi role = STAFF / OWNER
+API -> DB : Query data laporan (sama seperti di atas)
+DB --> API : Data
+API --> App : 200 OK + file export
+App --> User : Unduh file
+
+note over User, DB
+  Menu Laporan hanya tersedia
+  di dashboard admin (Staff/Owner).
+  Pelanggan tidak memiliki akses.
 end note
 
 @enduml

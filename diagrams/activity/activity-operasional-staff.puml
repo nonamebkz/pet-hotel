@@ -24,7 +24,6 @@ partition "Grooming" {
   :Update jam grooming;
   :Verifikasi bukti transfer;
   :Update status → Sedang Proses → Selesai;
-  :Lihat laporan booking & pendapatan grooming;
 }
 
 partition "Pet Care" {
@@ -38,7 +37,6 @@ partition "Pet Care" {
   else (tidak)
   endif
   :Update status → Sedang Proses → Selesai;
-  :Lihat laporan jumlah booking pet care;
 }
 
 partition "Pelanggan & Kucing" {
@@ -46,13 +44,6 @@ partition "Pelanggan & Kucing" {
   :Lihat detail profil pelanggan;
   :Lihat daftar kucing milik pelanggan (read-only);
   :Lihat riwayat vaksin per kucing;
-}
-
-partition "Laporan & Transaksi" {
-  :Verifikasi bukti transfer\n(grooming, penitipan, perpanjangan);
-  :Lihat riwayat transaksi;
-  :Lihat laporan pendapatan (filter periode, layanan);
-  :Opsional: export data;
 }
 
 stop

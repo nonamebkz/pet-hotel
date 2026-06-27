@@ -45,7 +45,8 @@ rectangle "Aplikasi Petshop" {
   usecase "Operasional Pet Care" as UC_OpsPetCare
   usecase "Master Data Pet Care" as UC_MasterPetCare
   usecase "Manajemen Pelanggan & Kucing" as UC_PelangganKucing
-  usecase "Laporan & Transaksi" as UC_Laporan
+  usecase "Laporan" as UC_Laporan
+  usecase "Transaksi" as UC_Transaksi
   usecase "Proses Pembatalan & Refund" as UC_RefundInternal
   usecase "Manajemen Akun Staff" as UC_StaffMgmt
 }
@@ -69,6 +70,7 @@ Staff --> UC_OpsPetCare
 Staff --> UC_MasterPetCare
 Staff --> UC_PelangganKucing
 Staff --> UC_Laporan
+Staff --> UC_Transaksi
 Staff --> UC_RefundInternal
 
 Owner --> UC_AuthInternal
@@ -78,6 +80,7 @@ Owner --> UC_OpsPetCare
 Owner --> UC_MasterPetCare
 Owner --> UC_PelangganKucing
 Owner --> UC_Laporan
+Owner --> UC_Transaksi
 Owner --> UC_RefundInternal
 Owner --> UC_StaffMgmt
 
@@ -263,7 +266,6 @@ rectangle "Dashboard Staff" {
     usecase "Update Jam Grooming" as UC_UpdateJamGrooming
     usecase "Verifikasi Bukti Transfer" as UC_VerifGrooming
     usecase "Update Status Layanan" as UC_StatusLayananGrooming
-    usecase "Laporan Booking & Pendapatan" as UC_LaporanGrooming
   }
 
   rectangle "Operasional Penitipan" {
@@ -276,7 +278,6 @@ rectangle "Dashboard Staff" {
     usecase "Input Monitoring Harian" as UC_InputMonitoring
     usecase "Verifikasi Bukti Transfer" as UC_VerifPenitipan
     usecase "Konfirmasi / Tolak\nPerpanjangan Penitipan" as UC_KonfirmasiPerpanjangan
-    usecase "Laporan Penitipan & Pendapatan" as UC_LaporanPenitipan
   }
 
   rectangle "Operasional Pet Care" {
@@ -285,7 +286,6 @@ rectangle "Dashboard Staff" {
     usecase "Lihat Daftar Booking Pet Care" as UC_DaftarBookingPetCare
     usecase "Batalkan Booking Pet Care" as UC_BatalPetCareStaff
     usecase "Update Status Layanan" as UC_StatusPetCareStaff
-    usecase "Laporan Jumlah Booking" as UC_LaporanPetCare
   }
 
   rectangle "Manajemen Pelanggan & Kucing" {
@@ -294,12 +294,17 @@ rectangle "Dashboard Staff" {
     usecase "Lihat Data Kucing Pelanggan" as UC_LihatKucingPelanggan
   }
 
-  rectangle "Laporan & Transaksi" {
+  rectangle "Laporan" {
+    usecase "Laporan Data Grooming" as UC_LaporanGrooming
+    usecase "Laporan Data Pet Hotel" as UC_LaporanPetHotel
+    usecase "Laporan Data Booking Pet Care" as UC_LaporanPetCare
+    usecase "Export Laporan (Opsional)" as UC_ExportLaporan
+  }
+
+  rectangle "Transaksi" {
     usecase "Daftar Pembayaran\nMenunggu Verifikasi" as UC_DaftarVerif
     usecase "Verifikasi Bukti Transfer\n(Global)" as UC_VerifTransfer
     usecase "Riwayat Transaksi\nSemua Layanan" as UC_RiwayatTransaksiStaff
-    usecase "Laporan Pendapatan" as UC_LaporanPendapatan
-    usecase "Export Data (Opsional)" as UC_ExportData
   }
 
   rectangle "Pembatalan & Refund" {
@@ -320,7 +325,6 @@ Staff --> UC_KonfirmasiGrooming
 Staff --> UC_UpdateJamGrooming
 Staff --> UC_VerifGrooming
 Staff --> UC_StatusLayananGrooming
-Staff --> UC_LaporanGrooming
 Staff --> UC_DaftarBookingPenitipan
 Staff --> UC_KonfirmasiPenitipan
 Staff --> UC_KamarPenitipan
@@ -329,21 +333,21 @@ Staff --> UC_StatusPenitipanStaff
 Staff --> UC_InputMonitoring
 Staff --> UC_VerifPenitipan
 Staff --> UC_KonfirmasiPerpanjangan
-Staff --> UC_LaporanPenitipan
 Staff --> UC_CRUDPetCare
 Staff --> UC_JadwalSlotDokter
 Staff --> UC_DaftarBookingPetCare
 Staff --> UC_BatalPetCareStaff
 Staff --> UC_StatusPetCareStaff
-Staff --> UC_LaporanPetCare
 Staff --> UC_DaftarPelanggan
 Staff --> UC_DetailPelanggan
 Staff --> UC_LihatKucingPelanggan
+Staff --> UC_LaporanGrooming
+Staff --> UC_LaporanPetHotel
+Staff --> UC_LaporanPetCare
+Staff --> UC_ExportLaporan
 Staff --> UC_DaftarVerif
 Staff --> UC_VerifTransfer
 Staff --> UC_RiwayatTransaksiStaff
-Staff --> UC_LaporanPendapatan
-Staff --> UC_ExportData
 Staff --> UC_BatalInternal
 Staff --> UC_UpdateRefund
 Staff --> UC_NotifBatal
@@ -352,6 +356,9 @@ UC_KonfirmasiPenitipan ..> UC_CekVaksin : <<include>>
 UC_BatalInternal ..> UC_NotifBatal : <<include>>
 UC_InputMonitoring ..> UC_NotifBatal : <<include>>
 UC_UpdateRefund ..> UC_BatalInternal : <<extend>>
+UC_LaporanGrooming ..> UC_ExportLaporan : <<extend>>
+UC_LaporanPetHotel ..> UC_ExportLaporan : <<extend>>
+UC_LaporanPetCare ..> UC_ExportLaporan : <<extend>>
 
 @enduml
 ```
@@ -473,3 +480,4 @@ UC_ProsesRefund ..> UC_TerimaNotif : <<include>>
 - **Validasi vaksin** wajib saat booking pet hotel (minimal 1 entri jenis + tanggal).
 - **Pembayaran** transfer bank manual (grooming & penitipan); verifikasi bukti oleh staff wajib.
 - **Refund** setelah terkonfirmasi & sudah bayar diproses manual via WhatsApp + dashboard staff/owner (grooming & penitipan saja).
+- **Laporan** menu terpisah di dashboard admin (Staff/Owner); pelanggan tidak memiliki akses. Sub-laporan: grooming, pet hotel, pet care.

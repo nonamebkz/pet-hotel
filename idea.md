@@ -29,6 +29,7 @@ Lihat folder [diagrams/](./diagrams/README.md):
 
 - istilah **staff** = pegawai internal petshop (bukan pelanggan)
 - istilah **owner** = pemilik bisnis, role tertinggi di sisi internal
+- istilah **admin / dashboard admin** = sisi internal Staff & Owner (bukan akun pelanggan)
 - di dokumen ini, aksi operasional (konfirmasi booking, verifikasi transfer, dll.) dilakukan oleh **staff**; owner bisa melakukan hal yang sama **dan** mengelola akun staff
 
 ---
@@ -339,7 +340,6 @@ Lihat folder [diagrams/](./diagrams/README.md):
   - jika disetujui → status booking terkonfirmasi & pembayaran lunas
   - jika ditolak → pelanggan diminta upload ulang bukti transfer
 - update status layanan (sedang proses → selesai)
-- melihat laporan booking & pendapatan grooming
 
 ### penitipan kucing (pet hotel)
 
@@ -368,7 +368,6 @@ Lihat folder [diagrams/](./diagrams/README.md):
   - verifikasi bukti transfer perpanjangan (reuse alur verifikasi global)
   - setelah pembayaran diverifikasi → check-out & lama penitipan booking diperbarui otomatis
   - tidak perlu re-validasi vaksin (booking awal sudah lolos verifikasi)
-- melihat laporan penitipan & pendapatan
 
 ### pet care
 
@@ -393,7 +392,6 @@ Lihat folder [diagrams/](./diagrams/README.md):
 - melihat detail kucing & layanan pada setiap booking (read-only)
 - **batalkan booking pet care** dari dashboard (alasan opsional); slot waktu dikembalikan
 - update status layanan (terkonfirmasi → sedang proses → selesai)
-- melihat laporan **jumlah booking** pet care (pendapatan tidak ditrack di sistem — bayar di loket)
 
 ### manajemen pelanggan & kucing
 
@@ -402,13 +400,44 @@ Lihat folder [diagrams/](./diagrams/README.md):
 - lihat daftar kucing milik pelanggan (read-only)
   - lihat riwayat vaksin per kucing (untuk verifikasi pet hotel — cek jenis & tanggal, bukan sertifikat)
 
-### laporan & transaksi
+### laporan
+
+> Menu **Laporan** hanya tersedia di dashboard admin (Staff/Owner). Pelanggan tidak memiliki akses.
+
+Struktur menu:
+
+```
+Laporan
+├── Laporan Data Grooming
+├── Laporan Data Pet Hotel
+└── Laporan Data Booking Pet Care
+```
+
+Halaman indeks menampilkan ringkasan kartu (total booking per layanan untuk periode terpilih).
+
+#### laporan data grooming
+
+- filter: periode (tanggal mulai–akhir), status booking (opsional)
+- metrik: jumlah booking, total pendapatan, rincian per jenis grooming, opsi antar-jemput
+- export CSV/PDF (opsional, untuk keperluan skripsi / operasional)
+
+#### laporan data pet hotel
+
+- filter: periode (tanggal mulai–akhir), status booking (opsional)
+- metrik: jumlah booking penitipan, total hari dititipkan, pendapatan (booking awal + perpanjangan), breakdown promo & antar-jemput
+- export CSV/PDF (opsional)
+
+#### laporan data booking pet care
+
+- filter: periode (tanggal mulai–akhir), status booking (opsional), layanan (opsional)
+- metrik: jumlah booking per layanan & per slot; **tanpa pendapatan** (bayar di loket)
+- export CSV/PDF (opsional)
+
+### transaksi
 
 - daftar pembayaran menunggu verifikasi bukti transfer (grooming, penitipan, perpanjangan — **bukan pet care**)
 - verifikasi bukti transfer: setujui / tolak + catatan (jika ditolak)
 - riwayat transaksi semua layanan
-- laporan pendapatan (filter: periode, layanan)
-- export data (opsional, untuk keperluan skripsi / operasional)
 
 ### pembatalan & refund
 

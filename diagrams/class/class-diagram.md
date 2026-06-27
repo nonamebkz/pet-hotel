@@ -40,6 +40,10 @@ classDiagram
         +DateTime createdAt
         +login()
         +ubahPassword()
+        +lihatLaporanGrooming()
+        +lihatLaporanPetHotel()
+        +lihatLaporanPetCare()
+        +exportLaporan()
     }
 
     class Owner {
@@ -204,6 +208,10 @@ classDiagram
         +login()
         +logout()
         +ubahPassword()
+        +lihatLaporanGrooming(periode, filter)
+        +lihatLaporanPetHotel(periode, filter)
+        +lihatLaporanPetCare(periode, filter)
+        +exportLaporan(jenis, format)
     }
 
     class Owner {
@@ -231,7 +239,7 @@ classDiagram
 | Kelas | Keterangan |
 |-------|------------|
 | **Pelanggan** | Pemilik kucing; alamat wajib lengkap jika memilih antar-jemput |
-| **Staff** | Pegawai operasional; tidak bisa kelola akun staff lain |
+| **Staff** | Pegawai operasional; tidak bisa kelola akun staff lain; akses menu Laporan (grooming, pet hotel, pet care) |
 | **Owner** | Pemilik bisnis; mewarisi semua akses staff + manajemen akun staff |
 | **StatusAkun** | Staff nonaktif tidak bisa login |
 
@@ -992,7 +1000,7 @@ classDiagram
 | Kelas | Atribut utama | Relasi |
 |-------|---------------|--------|
 | **Pelanggan** | nama, email, alamat, koordinat, foto profil | 1→* Kucing, Booking, Transaksi, Notifikasi |
-| **Staff** | nama, email, status akun | verifikasi BuktiTransfer, input Monitoring |
+| **Staff** | nama, email, status akun | verifikasi BuktiTransfer, input Monitoring, lihat Laporan |
 | **Owner** | — | generalisasi Staff; kelola akun Staff |
 | **Kucing** | nama, ras, berat, catatan kesehatan | milik Pelanggan; 1→* RiwayatVaksin |
 | **RiwayatVaksin** | jenis vaksin, tanggal, sertifikat (opsional) | milik Kucing |

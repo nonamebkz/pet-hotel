@@ -27,7 +27,8 @@ rectangle "Aplikasi Petshop" {
   usecase "Operasional Pet Care" as UC_OpsPetCare
   usecase "Master Data Pet Care" as UC_MasterPetCare
   usecase "Manajemen Pelanggan & Kucing" as UC_PelangganKucing
-  usecase "Laporan & Transaksi" as UC_Laporan
+  usecase "Laporan" as UC_Laporan
+  usecase "Transaksi" as UC_Transaksi
   usecase "Proses Pembatalan & Refund" as UC_RefundInternal
   usecase "Manajemen Akun Staff" as UC_StaffMgmt
 }
@@ -51,6 +52,7 @@ Staff --> UC_OpsPetCare
 Staff --> UC_MasterPetCare
 Staff --> UC_PelangganKucing
 Staff --> UC_Laporan
+Staff --> UC_Transaksi
 Staff --> UC_RefundInternal
 
 Owner --> UC_AuthInternal
@@ -60,6 +62,7 @@ Owner --> UC_OpsPetCare
 Owner --> UC_MasterPetCare
 Owner --> UC_PelangganKucing
 Owner --> UC_Laporan
+Owner --> UC_Transaksi
 Owner --> UC_RefundInternal
 Owner --> UC_StaffMgmt
 

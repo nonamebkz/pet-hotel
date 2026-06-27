@@ -1,0 +1,37 @@
+@startuml activity-laporan
+skinparam activity {
+  BackgroundColor #FEFEFE
+  BorderColor #333333
+}
+
+title Laporan — Dashboard Admin (Staff / Owner)
+
+|Staff / Owner|
+start
+:Login dashboard admin\n(Staff / Owner);
+
+:Buka menu **Laporan**;
+
+:Lihat ringkasan kartu\n(total booking per layanan, periode default);
+
+if (Pilih sub-laporan?) then (Grooming)
+  :Buka **Laporan Data Grooming**;
+  :Set filter periode\n& status booking (opsional);
+  :Sistem tampilkan tabel booking\n+ metrik (jumlah, pendapatan,\nrincian jenis grooming, antar-jemput);
+elseif (Pet Hotel) then
+  :Buka **Laporan Data Pet Hotel**;
+  :Set filter periode\n& status booking (opsional);
+  :Sistem tampilkan tabel penitipan\n+ metrik (jumlah booking, total hari,\npendapatan awal + perpanjangan,\nbreakdown promo & antar-jemput);
+else (Pet Care)
+  :Buka **Laporan Data Booking Pet Care**;
+  :Set filter periode, status,\n& layanan (opsional);
+  :Sistem tampilkan tabel booking\n+ metrik (jumlah per layanan & slot;\ntanpa pendapatan — bayar di loket);
+endif
+
+if (Export data?) then (ya)
+  :Export CSV / PDF (opsional);
+else (tidak)
+endif
+
+stop
+@enduml

@@ -23,7 +23,6 @@ rectangle "Dashboard Staff" {
     usecase "Update Jam Grooming" as UC_UpdateJamGrooming
     usecase "Verifikasi Bukti Transfer" as UC_VerifGrooming
     usecase "Update Status Layanan" as UC_StatusLayananGrooming
-    usecase "Laporan Booking & Pendapatan" as UC_LaporanGrooming
   }
 
   rectangle "Operasional Penitipan" {
@@ -36,7 +35,6 @@ rectangle "Dashboard Staff" {
     usecase "Input Monitoring Harian" as UC_InputMonitoring
     usecase "Verifikasi Bukti Transfer" as UC_VerifPenitipan
     usecase "Konfirmasi / Tolak\nPerpanjangan Penitipan" as UC_KonfirmasiPerpanjangan
-    usecase "Laporan Penitipan & Pendapatan" as UC_LaporanPenitipan
   }
 
   rectangle "Operasional Pet Care" {
@@ -45,7 +43,6 @@ rectangle "Dashboard Staff" {
     usecase "Lihat Daftar Booking Pet Care" as UC_DaftarBookingPetCare
     usecase "Batalkan Booking Pet Care" as UC_BatalPetCareStaff
     usecase "Update Status Layanan" as UC_StatusPetCareStaff
-    usecase "Laporan Jumlah Booking" as UC_LaporanPetCare
   }
 
   rectangle "Manajemen Pelanggan & Kucing" {
@@ -54,12 +51,17 @@ rectangle "Dashboard Staff" {
     usecase "Lihat Data Kucing Pelanggan" as UC_LihatKucingPelanggan
   }
 
-  rectangle "Laporan & Transaksi" {
+  rectangle "Laporan" {
+    usecase "Laporan Data Grooming" as UC_LaporanGrooming
+    usecase "Laporan Data Pet Hotel" as UC_LaporanPetHotel
+    usecase "Laporan Data Booking Pet Care" as UC_LaporanPetCare
+    usecase "Export Laporan (Opsional)" as UC_ExportLaporan
+  }
+
+  rectangle "Transaksi" {
     usecase "Daftar Pembayaran\nMenunggu Verifikasi" as UC_DaftarVerif
     usecase "Verifikasi Bukti Transfer\n(Global)" as UC_VerifTransfer
     usecase "Riwayat Transaksi\nSemua Layanan" as UC_RiwayatTransaksiStaff
-    usecase "Laporan Pendapatan" as UC_LaporanPendapatan
-    usecase "Export Data (Opsional)" as UC_ExportData
   }
 
   rectangle "Pembatalan & Refund" {
@@ -80,7 +82,6 @@ Staff --> UC_KonfirmasiGrooming
 Staff --> UC_UpdateJamGrooming
 Staff --> UC_VerifGrooming
 Staff --> UC_StatusLayananGrooming
-Staff --> UC_LaporanGrooming
 Staff --> UC_DaftarBookingPenitipan
 Staff --> UC_KonfirmasiPenitipan
 Staff --> UC_KamarPenitipan
@@ -89,21 +90,21 @@ Staff --> UC_StatusPenitipanStaff
 Staff --> UC_InputMonitoring
 Staff --> UC_VerifPenitipan
 Staff --> UC_KonfirmasiPerpanjangan
-Staff --> UC_LaporanPenitipan
 Staff --> UC_CRUDPetCare
 Staff --> UC_JadwalSlotDokter
 Staff --> UC_DaftarBookingPetCare
 Staff --> UC_BatalPetCareStaff
 Staff --> UC_StatusPetCareStaff
-Staff --> UC_LaporanPetCare
 Staff --> UC_DaftarPelanggan
 Staff --> UC_DetailPelanggan
 Staff --> UC_LihatKucingPelanggan
+Staff --> UC_LaporanGrooming
+Staff --> UC_LaporanPetHotel
+Staff --> UC_LaporanPetCare
+Staff --> UC_ExportLaporan
 Staff --> UC_DaftarVerif
 Staff --> UC_VerifTransfer
 Staff --> UC_RiwayatTransaksiStaff
-Staff --> UC_LaporanPendapatan
-Staff --> UC_ExportData
 Staff --> UC_BatalInternal
 Staff --> UC_UpdateRefund
 Staff --> UC_NotifBatal
@@ -112,5 +113,8 @@ UC_KonfirmasiPenitipan ..> UC_CekVaksin : <<include>>
 UC_BatalInternal ..> UC_NotifBatal : <<include>>
 UC_InputMonitoring ..> UC_NotifBatal : <<include>>
 UC_UpdateRefund ..> UC_BatalInternal : <<extend>>
+UC_LaporanGrooming ..> UC_ExportLaporan : <<extend>>
+UC_LaporanPetHotel ..> UC_ExportLaporan : <<extend>>
+UC_LaporanPetCare ..> UC_ExportLaporan : <<extend>>
 
 @enduml

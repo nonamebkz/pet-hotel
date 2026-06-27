@@ -61,7 +61,5 @@ repeat
 repeat while (Ada booking lain?) is (ya)
 ->tidak;
 
-:Lihat laporan penitipan & pendapatan;
-
 stop
 @enduml

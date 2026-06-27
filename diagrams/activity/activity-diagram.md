@@ -9,7 +9,7 @@ Diagram aktivitas berdasarkan [idea.md](../../idea.md).
 
 > **Preview:** Gunakan ekstensi PlantUML di VS Code/Cursor, atau render di [plantuml.com](https://www.plantuml.com/plantuml/uml).
 >
-> File `.puml` terpisah: `activity-autentikasi-pelanggan.puml`, `activity-data-kucing.puml`, `activity-booking-grooming.puml`, `activity-booking-penitipan.puml`, `activity-booking-petcare.puml`, `activity-pembayaran.puml`, `activity-pembatalan-refund.puml`, `activity-operasional-staff.puml`, `activity-penitipan-staff.puml`, `activity-perpanjangan-penitipan.puml`, `activity-manajemen-staff-owner.puml`
+> File `.puml` terpisah: `activity-autentikasi-pelanggan.puml`, `activity-data-kucing.puml`, `activity-booking-grooming.puml`, `activity-booking-penitipan.puml`, `activity-booking-petcare.puml`, `activity-pembayaran.puml`, `activity-pembatalan-refund.puml`, `activity-operasional-staff.puml`, `activity-penitipan-staff.puml`, `activity-perpanjangan-penitipan.puml`, `activity-manajemen-staff-owner.puml`, `activity-laporan.puml`
 
 ---
 
@@ -584,7 +584,6 @@ partition "Grooming" {
   :Update jam grooming;
   :Verifikasi bukti transfer;
   :Update status → Sedang Proses → Selesai;
-  :Lihat laporan booking & pendapatan grooming;
 }
 
 partition "Pet Care" {
@@ -598,7 +597,6 @@ partition "Pet Care" {
   else (tidak)
   endif
   :Update status → Sedang Proses → Selesai;
-  :Lihat laporan jumlah booking pet care;
 }
 
 partition "Pelanggan & Kucing" {
@@ -606,13 +604,6 @@ partition "Pelanggan & Kucing" {
   :Lihat detail profil pelanggan;
   :Lihat daftar kucing milik pelanggan (read-only);
   :Lihat riwayat vaksin per kucing;
-}
-
-partition "Laporan & Transaksi" {
-  :Verifikasi bukti transfer\n(grooming, penitipan, perpanjangan);
-  :Lihat riwayat transaksi;
-  :Lihat laporan pendapatan (filter periode, layanan);
-  :Opsional: export data;
 }
 
 stop
@@ -688,8 +679,6 @@ repeat
   endif
 repeat while (Ada booking lain?) is (ya)
 ->tidak;
-
-:Lihat laporan penitipan & pendapatan;
 
 stop
 @enduml
@@ -845,6 +834,52 @@ stop
 
 ---
 
+## 12. Laporan (Dashboard Admin)
+
+Menu laporan terpisah — hanya dapat diakses Staff/Owner (dashboard admin). Pelanggan tidak memiliki akses.
+
+```plantuml
+@startuml activity-laporan
+skinparam activity {
+  BackgroundColor #FEFEFE
+  BorderColor #333333
+}
+
+title Laporan — Dashboard Admin (Staff / Owner)
+
+|Staff / Owner|
+start
+:Login dashboard admin\n(Staff / Owner);
+
+:Buka menu **Laporan**;
+
+:Lihat ringkasan kartu\n(total booking per layanan, periode default);
+
+if (Pilih sub-laporan?) then (Grooming)
+  :Buka **Laporan Data Grooming**;
+  :Set filter periode\n& status booking (opsional);
+  :Sistem tampilkan tabel booking\n+ metrik (jumlah, pendapatan,\nrincian jenis grooming, antar-jemput);
+elseif (Pet Hotel) then
+  :Buka **Laporan Data Pet Hotel**;
+  :Set filter periode\n& status booking (opsional);
+  :Sistem tampilkan tabel penitipan\n+ metrik (jumlah booking, total hari,\npendapatan awal + perpanjangan,\nbreakdown promo & antar-jemput);
+else (Pet Care)
+  :Buka **Laporan Data Booking Pet Care**;
+  :Set filter periode, status,\n& layanan (opsional);
+  :Sistem tampilkan tabel booking\n+ metrik (jumlah per layanan & slot;\ntanpa pendapatan — bayar di loket);
+endif
+
+if (Export data?) then (ya)
+  :Export CSV / PDF (opsional);
+else (tidak)
+endif
+
+stop
+@enduml
+```
+
+---
+
 ## Ringkasan Diagram
 
 | No | Diagram | File `.puml` | Aktor / Swimlane |
@@ -860,3 +895,4 @@ stop
 | 9 | Operasional Penitipan | `activity-penitipan-staff.puml` | Staff/Owner |
 | 10 | Perpanjangan Penitipan | `activity-perpanjangan-penitipan.puml` | Pelanggan, Staff/Owner, Sistem |
 | 11 | Manajemen Akun Staff | `activity-manajemen-staff-owner.puml` | Owner |
+| 12 | Laporan (Dashboard Admin) | `activity-laporan.puml` | Staff/Owner |
