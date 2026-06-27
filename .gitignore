@@ -1,1 +1,7 @@
-.cursor
+.cursor/
+vendor/
+.env
+storage/logs/*
+!storage/logs/.gitkeep
+public/uploads/**/*
+!public/uploads/**/.gitkeep
