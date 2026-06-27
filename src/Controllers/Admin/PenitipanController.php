@@ -327,6 +327,7 @@ final class PenitipanController
                 ? $statusEnum->displayLabel((bool) $booking['transaksi_lunas'])
                 : (string) $booking['status'];
             $booking['vaksin_count'] = $this->vaksinRepo->countLengkapByKucingId((string) $booking['kucing_id']);
+            $booking['vaksin_list'] = $this->vaksinRepo->findByKucingId((string) $booking['kucing_id']);
             $booking['can_staff_cancel_refund'] = $this->refundService->canStaffCancelPenitipanWithRefund(
                 $booking,
                 $transaksi,

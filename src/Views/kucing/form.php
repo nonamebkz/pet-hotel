@@ -154,9 +154,72 @@ $isEdit = $kucing !== null && !empty($kucing['id']);
         if (e.target.classList.contains('remove-vaksin-row')) {
             const rows = container.querySelectorAll('.vaksin-row');
             if (rows.length > 1) {
-                e.target.closest('.vaksin-row').remove();
+                const row = e.target.closest('.vaksin-row');
+                revokePreviewUrl(row);
+                row.remove();
             }
         }
     });
+
+    container.addEventListener('change', function (e) {
+        if (!e.target.classList.contains('vaksin-sertifikat-input')) {
+            return;
+        }
+
+        const row = e.target.closest('.vaksin-row');
+        const previewEl = row?.querySelector('.sertifikat-preview-new');
+
+        if (!previewEl) {
+            return;
+        }
+
+        revokePreviewUrl(row);
+        previewEl.innerHTML = '';
+        previewEl.classList.add('hidden');
+
+        const file = e.target.files?.[0];
+
+        if (!file) {
+            return;
+        }
+
+        const objectUrl = URL.createObjectURL(file);
+        row.dataset.previewObjectUrl = objectUrl;
+
+        if (file.type === 'application/pdf') {
+            previewEl.innerHTML =
+                '<p class="text-xs font-medium text-gray-600 mb-1">Preview file baru</p>' +
+                '<div class="flex items-center gap-2 border rounded-lg px-3 py-2 bg-white">' +
+                '<span class="text-xs text-gray-700 truncate">' + escapeHtml(file.name) + '</span>' +
+                '<a href="' + objectUrl + '" target="_blank" rel="noopener noreferrer" ' +
+                'class="text-xs text-blue-600 hover:underline shrink-0">Buka PDF</a>' +
+                '</div>';
+        } else {
+            previewEl.innerHTML =
+                '<p class="text-xs font-medium text-gray-600 mb-1">Preview file baru</p>' +
+                '<a href="' + objectUrl + '" target="_blank" rel="noopener noreferrer">' +
+                '<img src="' + objectUrl + '" alt="Preview sertifikat" ' +
+                'class="max-h-32 max-w-full rounded-lg border object-contain">' +
+                '</a>';
+        }
+
+        previewEl.classList.remove('hidden');
+    });
+
+    function revokePreviewUrl(row) {
+        const url = row?.dataset.previewObjectUrl;
+
+        if (url) {
+            URL.revokeObjectURL(url);
+            delete row.dataset.previewObjectUrl;
+        }
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+
+        return div.innerHTML;
+    }
 })();
 </script>

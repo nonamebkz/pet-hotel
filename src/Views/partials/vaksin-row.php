@@ -27,13 +27,19 @@ $row = $vaksinList[$index] ?? [];
         <label class="block text-xs font-medium text-gray-600 mb-1">Sertifikat (opsional)</label>
         <?php if (!empty($row['sertifikat_url'])): ?>
             <input type="hidden" name="vaksin_sertifikat_existing[]" value="<?= e((string) $row['sertifikat_url']) ?>">
-            <a href="<?= e((string) $row['sertifikat_url']) ?>" target="_blank"
-               class="text-xs text-orange-600 hover:underline block mb-1">Lihat sertifikat</a>
+            <div class="sertifikat-preview-existing mb-2">
+                <?php
+                $fileUrl = (string) $row['sertifikat_url'];
+                $label = 'Sertifikat saat ini';
+                require __DIR__ . '/uploaded-file-preview.php';
+                ?>
+            </div>
         <?php else: ?>
             <input type="hidden" name="vaksin_sertifikat_existing[]" value="">
         <?php endif; ?>
         <input type="file" name="vaksin_sertifikat[]" accept="image/jpeg,image/png,image/webp,application/pdf"
-               class="w-full text-xs text-gray-600">
+               class="vaksin-sertifikat-input w-full text-xs text-gray-600">
+        <div class="sertifikat-preview-new hidden mt-2"></div>
     </div>
     <div class="pt-5">
         <button type="button"
