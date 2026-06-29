@@ -149,22 +149,3 @@ CREATE TABLE IF NOT EXISTS perpanjangan_penitipan (
     INDEX idx_perpanjangan_penitipan_booking (booking_penitipan_id),
     INDEX idx_perpanjangan_penitipan_status (status)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- FK transaksi → perpanjangan_penitipan (kolom sudah ada di schema-mariadb-transaksi.sql)
-SET @fk_exists = (
-    SELECT COUNT(*) FROM information_schema.TABLE_CONSTRAINTS
-    WHERE CONSTRAINT_SCHEMA = DATABASE()
-      AND TABLE_NAME = 'transaksi'
-      AND CONSTRAINT_NAME = 'fk_transaksi_perpanjangan'
-);
-
-SET @sql = IF(
-    @fk_exists = 0,
-    'ALTER TABLE transaksi ADD CONSTRAINT fk_transaksi_perpanjangan
-        FOREIGN KEY (perpanjangan_penitipan_id) REFERENCES perpanjangan_penitipan(id) ON DELETE RESTRICT',
-    'SELECT 1'
-);
-
-PREPARE stmt FROM @sql;
-EXECUTE stmt;
-DEALLOCATE PREPARE stmt;
