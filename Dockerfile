@@ -23,7 +23,8 @@ WORKDIR /var/www/html
 COPY --from=vendor /app/vendor ./vendor
 COPY . .
 
-RUN mkdir -p public/uploads/profil public/uploads/kucing public/uploads/vaksin public/uploads/bukti_transfer storage/logs \
+RUN mkdir -p public/uploads storage/logs \
+    && php scripts/ensure-upload-dirs.php \
     && chown -R www-data:www-data public/uploads storage/logs \
     && chmod -R 775 public/uploads storage/logs
 

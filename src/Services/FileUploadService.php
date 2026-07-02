@@ -6,7 +6,19 @@ namespace App\Services;
 
 final class FileUploadService
 {
-    /** @var array<string, list<string>> */
+    /**
+     * Kategori upload — sinkronkan dengan scripts/ensure-upload-dirs.php & docker/entrypoint.sh.
+     *
+     * | Kategori         | Fitur                                              |
+     * |------------------|----------------------------------------------------|
+     * | profil           | Foto profil pelanggan (/profil)                    |
+     * | kucing           | Foto kucing (tambah/edit kucing)                   |
+     * | vaksin           | Sertifikat vaksin kucing                           |
+     * | bukti_transfer   | Bukti bayar grooming & penitipan (+ perpanjangan)  |
+     * | monitoring       | Foto monitoring harian penitipan (staff)             |
+     *
+     * @var array<string, list<string>>
+     */
     private const MIME_BY_CATEGORY = [
         'profil' => ['image/jpeg', 'image/png', 'image/webp'],
         'kucing' => ['image/jpeg', 'image/png', 'image/webp'],
@@ -14,6 +26,12 @@ final class FileUploadService
         'bukti_transfer' => ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'],
         'monitoring' => ['image/jpeg', 'image/png', 'image/webp'],
     ];
+
+    /** @return list<string> */
+    public static function categories(): array
+    {
+        return array_keys(self::MIME_BY_CATEGORY);
+    }
 
     /**
      * @param array<string, mixed> $file
