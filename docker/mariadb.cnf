@@ -1,0 +1,6 @@
+[mysqld]
+max_allowed_packet=64M
+net_buffer_length=1M
+
+[mariadb-client]
+max_allowed_packet=64M

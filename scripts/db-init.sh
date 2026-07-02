@@ -134,10 +134,10 @@ wait_for_db() {
 run_sql_inline() {
     local sql="$1"
     if [[ "$MODE" == "docker" ]]; then
-        docker exec -i "$CONTAINER" mariadb \
+        docker exec -e MYSQL_PWD="${DB_PASSWORD:-root}" "$CONTAINER" mariadb \
             -u"${DB_USERNAME:-root}" \
-            -p"${DB_PASSWORD:-root}" \
             "${DB_DATABASE:-petshop}" \
+            --max_allowed_packet=67108864 \
             -e "$sql"
     else
         local client=""
@@ -167,10 +167,14 @@ run_sql_file() {
     fi
     echo ">> Import: $file"
     if [[ "$MODE" == "docker" ]]; then
-        docker exec -i "$CONTAINER" mariadb \
+        local remote="/tmp/petshop-$(basename "$file")"
+        docker cp "$file" "$CONTAINER:$remote"
+        docker exec -e MYSQL_PWD="${DB_PASSWORD:-root}" "$CONTAINER" mariadb \
             -u"${DB_USERNAME:-root}" \
-            -p"${DB_PASSWORD:-root}" \
-            "${DB_DATABASE:-petshop}" < "$file"
+            "${DB_DATABASE:-petshop}" \
+            --max_allowed_packet=67108864 \
+            -e "source ${remote}"
+        docker exec "$CONTAINER" rm -f "$remote"
     else
         local client=""
         if command -v mariadb >/dev/null 2>&1; then
@@ -212,6 +216,10 @@ main() {
 
     if [[ "$WAIT_DB" -eq 1 ]]; then
         wait_for_db
+    fi
+
+    if [[ "$MODE" == "docker" ]]; then
+        run_sql_inline "SET GLOBAL max_allowed_packet = 67108864"
     fi
 
     case "$COMMAND" in
