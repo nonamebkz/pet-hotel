@@ -69,7 +69,7 @@ if ($kategori !== '') {
             <?php $isActive = $kategori === $key; ?>
             <a href="/admin/notifikasi<?= $key !== '' ? '?kategori=' . urlencode($key) : '' ?>"
                class="text-sm rounded-full px-4 py-1.5 border transition <?= $isActive
-                   ? 'bg-slate-800 text-white border-slate-800'
+                   ? 'bg-admin text-white border-admin'
                    : 'bg-white text-gray-600 border-gray-200 hover:border-slate-400' ?>">
                 <?= e($label) ?>
             </a>
@@ -116,7 +116,7 @@ if ($kategori !== '') {
                         <div>
                             <div class="flex items-center gap-2">
                                 <?php if (empty($notif['sudah_dibaca'])): ?>
-                                    <span class="w-2 h-2 rounded-full bg-slate-800 shrink-0" aria-hidden="true"></span>
+                                    <span class="w-2 h-2 rounded-full bg-admin shrink-0" aria-hidden="true"></span>
                                 <?php endif; ?>
                                 <div class="font-medium text-gray-800"><?= e((string) $notif['judul']) ?></div>
                             </div>

@@ -14,9 +14,9 @@ $filterTanggal = $filterTanggal ?? '';
     <h1 class="text-2xl font-bold text-gray-800 mb-6">Booking Pet Care</h1>
 
     <div class="flex gap-4 mb-6 text-sm">
-        <a href="/admin/pet-care/layanan" class="text-gray-500 hover:text-slate-800">Layanan</a>
-        <a href="/admin/pet-care/slot" class="text-gray-500 hover:text-slate-800">Slot Dokter</a>
-        <a href="/admin/pet-care/booking" class="text-slate-800 font-medium border-b-2 border-slate-800 pb-1">Booking</a>
+        <a href="/admin/pet-care/layanan" class="text-gray-500 hover:text-admin">Layanan</a>
+        <a href="/admin/pet-care/slot" class="text-gray-500 hover:text-admin">Slot Dokter</a>
+        <a href="/admin/pet-care/booking" class="text-admin font-medium border-b-2 border-admin pb-1">Booking</a>
     </div>
 
     <form method="GET" action="/admin/pet-care/booking" class="mb-6 flex flex-wrap items-end gap-3">

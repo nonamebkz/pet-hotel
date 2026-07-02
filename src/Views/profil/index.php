@@ -59,7 +59,7 @@ $addressComplete = $addressComplete ?? false;
             <label for="nama" class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
             <input type="text" id="nama" name="nama" required
                    value="<?= e((string) old('nama', $pelanggan['nama'] ?? '')) ?>"
-                   class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500">
+                   class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
             <?php if (!empty($errors['nama'])): ?>
                 <p class="text-red-600 text-xs mt-1"><?= e($errors['nama']) ?></p>
             <?php endif; ?>
@@ -75,13 +75,13 @@ $addressComplete = $addressComplete ?? false;
             <label for="no_telepon" class="block text-sm font-medium text-gray-700 mb-1">No. Telepon</label>
             <input type="text" id="no_telepon" name="no_telepon"
                    value="<?= e((string) old('no_telepon', $pelanggan['no_telepon'] ?? '')) ?>"
-                   class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500">
+                   class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
         </div>
 
         <div>
             <label for="alamat_lengkap" class="block text-sm font-medium text-gray-700 mb-1">Alamat Lengkap</label>
             <textarea id="alamat_lengkap" name="alamat_lengkap" rows="3"
-                      class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
                       placeholder="Contoh: Jl. Merdeka No. 10, Jakarta Pusat"><?= e((string) old('alamat_lengkap', $pelanggan['alamat_lengkap'] ?? '')) ?></textarea>
             <?php if (!empty($errors['alamat_lengkap'])): ?>
                 <p class="text-red-600 text-xs mt-1"><?= e($errors['alamat_lengkap']) ?></p>
@@ -94,7 +94,7 @@ $addressComplete = $addressComplete ?? false;
         require __DIR__ . '/../partials/address-map.php';
         ?>
 
-        <button type="submit" class="bg-orange-600 text-white rounded-lg px-6 py-2 font-medium hover:bg-orange-700">
+        <button type="submit" class="bg-primary text-white rounded-lg px-6 py-2 font-medium hover:bg-primary-hover">
             Simpan Profil
         </button>
     </form>

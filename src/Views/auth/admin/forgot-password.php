@@ -13,7 +13,7 @@ use App\Core\Csrf;
         <input type="email" id="email" name="email" value="<?= e((string) old('email')) ?>" required
                class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-500">
     </div>
-    <button type="submit" class="w-full bg-slate-800 text-white rounded-lg py-2 font-medium hover:bg-slate-900">
+    <button type="submit" class="w-full bg-admin text-white rounded-lg py-2 font-medium hover:bg-admin-hover">
         Kirim Link Reset
     </button>
 </form>

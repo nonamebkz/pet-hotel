@@ -53,7 +53,7 @@ use App\Core\Csrf;
         <p data-match-hint class="text-xs mt-1"></p>
     </div>
     <button type="submit"
-            class="bg-slate-800 text-white rounded-lg px-4 py-2 font-medium hover:bg-slate-900 disabled:opacity-60">
+            class="bg-admin text-white rounded-lg px-4 py-2 font-medium hover:bg-admin-hover disabled:opacity-60">
         Simpan Password
     </button>
 </form>

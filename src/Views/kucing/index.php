@@ -10,7 +10,7 @@ $kucingList = $kucingList ?? [];
     <div class="flex items-center justify-between mb-6">
         <h1 class="text-2xl font-bold text-gray-800">Kucing Saya</h1>
         <a href="/kucing/tambah"
-           class="bg-orange-600 text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-orange-700">
+           class="bg-primary text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-primary-hover">
             + Tambah Kucing
         </a>
     </div>
@@ -19,7 +19,7 @@ $kucingList = $kucingList ?? [];
         <div class="bg-white rounded-xl border p-8 text-center">
             <p class="text-gray-600 mb-4">Belum ada kucing terdaftar.</p>
             <p class="text-sm text-gray-500 mb-4">Minimal 1 kucing diperlukan sebelum booking layanan.</p>
-            <a href="/kucing/tambah" class="text-orange-600 hover:underline font-medium">Tambah kucing pertama</a>
+            <a href="/kucing/tambah" class="text-primary hover:underline font-medium">Tambah kucing pertama</a>
         </div>
     <?php else: ?>
         <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -30,7 +30,7 @@ $kucingList = $kucingList ?? [];
                             <img src="<?= e((string) $kucing['foto_url']) ?>" alt="<?= e((string) $kucing['nama']) ?>"
                                  class="w-14 h-14 rounded-lg object-cover border">
                         <?php else: ?>
-                            <div class="w-14 h-14 rounded-lg bg-orange-100 flex items-center justify-center text-orange-600 text-sm font-bold">
+                            <div class="w-14 h-14 rounded-lg bg-primary-soft flex items-center justify-center text-primary text-sm font-bold">
                                 <?= e(mb_substr((string) $kucing['nama'], 0, 1)) ?>
                             </div>
                         <?php endif; ?>

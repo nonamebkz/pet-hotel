@@ -26,7 +26,7 @@ $errors = $errors ?? [];
             <textarea name="kondisi" rows="2" class="w-full border rounded-lg px-3 py-2 text-sm mt-1"></textarea></div>
         <div><label class="text-sm font-medium">Aktivitas harian</label>
             <textarea name="aktivitas_harian" rows="2" class="w-full border rounded-lg px-3 py-2 text-sm mt-1"></textarea></div>
-        <button type="submit" class="bg-slate-800 text-white rounded-lg px-4 py-2 text-sm">Simpan Monitoring</button>
+        <button type="submit" class="bg-admin text-white rounded-lg px-4 py-2 text-sm">Simpan Monitoring</button>
     </form>
 
     <?php if ($monitoringList !== []): ?>

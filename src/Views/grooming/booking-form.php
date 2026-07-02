@@ -30,7 +30,7 @@ foreach ($jenisList as $jenis) {
 ?>
 <div>
     <div class="mb-6">
-        <a href="/grooming" class="text-sm text-gray-500 hover:text-orange-600">&larr; Kembali</a>
+        <a href="/grooming" class="text-sm text-gray-500 hover:text-primary">&larr; Kembali</a>
         <h1 class="text-2xl font-bold text-gray-800 mt-2">Booking Grooming</h1>
         <p class="text-sm text-gray-500 mt-1">Pilih tanggal, jenis grooming, kucing, dan opsi pengantaran.</p>
     </div>
@@ -113,7 +113,7 @@ foreach ($jenisList as $jenis) {
                         <?php foreach ($opsiLabels as $value => $label): ?>
                             <label class="flex items-center gap-2 cursor-pointer">
                                 <input type="radio" name="opsi_pengantaran" value="<?= e($value) ?>"
-                                       class="text-orange-600 opsi-radio"
+                                       class="text-primary opsi-radio"
                                        <?= $selectedOpsi === $value ? 'checked' : '' ?>
                                        required>
                                 <span class="text-sm text-gray-700"><?= e($label) ?></span>
@@ -153,7 +153,7 @@ foreach ($jenisList as $jenis) {
                 </div>
 
                 <button type="submit"
-                        class="w-full bg-orange-600 text-white rounded-lg py-2.5 text-sm font-medium hover:bg-orange-700">
+                        class="w-full bg-primary text-white rounded-lg py-2.5 text-sm font-medium hover:bg-primary-hover">
                     Ajukan Booking
                 </button>
             </form>

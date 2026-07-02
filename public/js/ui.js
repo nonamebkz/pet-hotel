@@ -134,7 +134,7 @@
             }
             var score = scorePassword(input.value);
             var widths = ['0%', '20%', '40%', '60%', '80%', '100%'];
-            var colors = ['bg-gray-200', 'bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-lime-500', 'bg-green-600'];
+            var colors = ['bg-gray-200', 'bg-red-500', 'bg-primary', 'bg-yellow-500', 'bg-lime-500', 'bg-green-600'];
             var labels = ['', 'Lemah', 'Cukup', 'Sedang', 'Kuat', 'Sangat kuat'];
             bar.style.width = widths[score] || '0%';
             bar.className = 'h-1.5 rounded-full transition-all ' + (colors[score] || 'bg-gray-200');
@@ -211,7 +211,7 @@
                 panel.classList.toggle('hidden', i !== index);
             });
             indicators.forEach(function (indicator, i) {
-                indicator.classList.toggle('text-orange-600', i <= index);
+                indicator.classList.toggle('text-primary', i <= index);
                 indicator.classList.toggle('font-semibold', i === index);
                 indicator.classList.toggle('text-gray-400', i > index);
             });

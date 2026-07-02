@@ -18,14 +18,14 @@ use App\Core\Csrf;
     <div>
         <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password Baru</label>
         <input type="password" id="password" name="password" required minlength="8"
-               class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500">
+               class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
     </div>
     <div>
         <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-1">Konfirmasi Password</label>
         <input type="password" id="password_confirmation" name="password_confirmation" required minlength="8"
-               class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500">
+               class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
     </div>
-    <button type="submit" class="w-full bg-orange-600 text-white rounded-lg py-2 font-medium hover:bg-orange-700">
+    <button type="submit" class="w-full bg-primary text-white rounded-lg py-2 font-medium hover:bg-primary-hover">
         Reset Password
     </button>
 </form>

@@ -9,7 +9,7 @@ $opsiLabels = $opsiLabels ?? [];
 ?>
 <div>
     <div class="mb-6">
-        <a href="/penitipan/detail?id=<?= e((string) $booking['id']) ?>" class="text-sm text-gray-500 hover:text-orange-600">&larr; Detail</a>
+        <a href="/penitipan/detail?id=<?= e((string) $booking['id']) ?>" class="text-sm text-gray-500 hover:text-primary">&larr; Detail</a>
         <h1 class="text-2xl font-bold text-gray-800 mt-2">Invoice Penitipan</h1>
     </div>
 

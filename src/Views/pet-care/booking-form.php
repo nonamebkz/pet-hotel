@@ -27,7 +27,7 @@ foreach ($layananList as $layanan) {
 ?>
 <div>
     <div class="mb-6">
-        <a href="/pet-care" class="text-sm text-gray-500 hover:text-orange-600">&larr; Kembali</a>
+        <a href="/pet-care" class="text-sm text-gray-500 hover:text-primary">&larr; Kembali</a>
         <h1 class="text-2xl font-bold text-gray-800 mt-2">Booking Pet Care</h1>
         <p class="text-sm text-gray-500 mt-1">Pilih tanggal, slot waktu, layanan, dan kucing Anda.</p>
     </div>
@@ -74,7 +74,7 @@ foreach ($layananList as $layanan) {
                                        class="peer sr-only"
                                        <?= $selectedKuota === (string) $slot['id'] ? 'checked' : '' ?>
                                        required>
-                                <span class="block text-center border rounded-lg py-2 text-sm peer-checked:border-orange-600 peer-checked:bg-orange-50 peer-checked:text-orange-700 hover:border-orange-300">
+                                <span class="block text-center border rounded-lg py-2 text-sm peer-checked:border-primary peer-checked:bg-primary-soft peer-checked:text-primary-hover hover:border-primary/30">
                                     <?= e(substr((string) $slot['slot_waktu'], 0, 5)) ?>
                                 </span>
                             </label>
@@ -145,7 +145,7 @@ foreach ($layananList as $layanan) {
                 </div>
 
                 <button type="submit"
-                        class="w-full bg-orange-600 text-white rounded-lg py-2.5 text-sm font-medium hover:bg-orange-700">
+                        class="w-full bg-primary text-white rounded-lg py-2.5 text-sm font-medium hover:bg-primary-hover">
                     Konfirmasi Booking
                 </button>
             </form>

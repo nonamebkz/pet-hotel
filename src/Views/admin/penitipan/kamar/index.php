@@ -9,7 +9,7 @@ $kamarList = $kamarList ?? [];
 <div>
     <div class="flex justify-between mb-6">
         <h1 class="text-2xl font-bold text-gray-800">Kamar Penitipan</h1>
-        <a href="/admin/penitipan/kamar/tambah" class="bg-slate-800 text-white rounded-lg px-4 py-2 text-sm">+ Tambah</a>
+        <a href="/admin/penitipan/kamar/tambah" class="bg-admin text-white rounded-lg px-4 py-2 text-sm">+ Tambah</a>
     </div>
     <?php require __DIR__ . '/../_nav.php'; ?>
     <div class="bg-white rounded-xl border overflow-hidden">

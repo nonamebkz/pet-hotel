@@ -11,7 +11,7 @@ $filterKamarId = $filterKamarId ?? '';
 <div>
     <div class="flex justify-between mb-6">
         <h1 class="text-2xl font-bold text-gray-800">Kuota Penitipan</h1>
-        <a href="/admin/penitipan/kuota/tambah" class="bg-slate-800 text-white rounded-lg px-4 py-2 text-sm">+ Tambah</a>
+        <a href="/admin/penitipan/kuota/tambah" class="bg-admin text-white rounded-lg px-4 py-2 text-sm">+ Tambah</a>
     </div>
     <?php require __DIR__ . '/../_nav.php'; ?>
     <form method="GET" class="mb-4 flex gap-2 items-end">

@@ -30,7 +30,7 @@ $statusRefund = $transaksi ? StatusRefund::tryFrom((string) ($transaksi['status_
 ?>
 <div>
     <div class="mb-6">
-        <a href="/penitipan/riwayat" class="text-sm text-gray-500 hover:text-orange-600">&larr; Riwayat</a>
+        <a href="/penitipan/riwayat" class="text-sm text-gray-500 hover:text-primary">&larr; Riwayat</a>
         <h1 class="text-2xl font-bold text-gray-800 mt-2">Detail Penitipan</h1>
     </div>
 
@@ -99,7 +99,7 @@ $statusRefund = $transaksi ? StatusRefund::tryFrom((string) ($transaksi['status_
             <div class="flex flex-wrap gap-3">
                 <?php if ((string) ($booking['status'] ?? '') === StatusPenitipan::MENUNGGU_PEMBAYARAN->value): ?>
                     <a href="/penitipan/pembayaran?id=<?= e((string) $booking['id']) ?>"
-                       class="bg-orange-600 text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-orange-700">
+                       class="bg-primary text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-primary-hover">
                         Upload Bukti Transfer
                     </a>
                 <?php endif; ?>
@@ -138,7 +138,7 @@ $statusRefund = $transaksi ? StatusRefund::tryFrom((string) ($transaksi['status_
                         </div>
                         <div id="estimasi-perpanjangan" class="text-sm text-gray-600 hidden"></div>
                         <button type="submit"
-                                class="bg-orange-600 text-white rounded-lg px-4 py-2 text-sm hover:bg-orange-700">
+                                class="bg-primary text-white rounded-lg px-4 py-2 text-sm hover:bg-primary-hover">
                             Ajukan Perpanjangan
                         </button>
                     </form>
@@ -164,7 +164,7 @@ $statusRefund = $transaksi ? StatusRefund::tryFrom((string) ($transaksi['status_
                                 </div>
                                 <?php if ((string) $pp['status'] === StatusPerpanjanganPenitipan::MENUNGGU_PEMBAYARAN->value): ?>
                                     <a href="/penitipan/perpanjangan/pembayaran?id=<?= e((string) $pp['id']) ?>"
-                                       class="inline-block mt-2 text-orange-600 underline text-xs">Bayar perpanjangan</a>
+                                       class="inline-block mt-2 text-primary underline text-xs">Bayar perpanjangan</a>
                                 <?php endif; ?>
                             </div>
                         <?php endforeach; ?>

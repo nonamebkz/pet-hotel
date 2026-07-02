@@ -66,7 +66,7 @@ $opsiLabels = $opsiLabels ?? [];
 
     <div class="flex gap-3 mt-6 print:hidden">
         <button onclick="window.print()"
-                class="flex-1 bg-orange-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-orange-700">
+                class="flex-1 bg-primary text-white rounded-lg py-2 text-sm font-medium hover:bg-primary-hover">
             Cetak / Simpan PDF
         </button>
         <a href="/grooming/detail?id=<?= e((string) $booking['id']) ?>"

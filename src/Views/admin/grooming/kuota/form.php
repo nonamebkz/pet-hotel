@@ -15,7 +15,7 @@ $isEdit = $kuota !== null;
 ?>
 <div>
     <div class="mb-6">
-        <a href="/admin/grooming/kuota" class="text-sm text-gray-500 hover:text-slate-800">&larr; Kembali</a>
+        <a href="/admin/grooming/kuota" class="text-sm text-gray-500 hover:text-admin">&larr; Kembali</a>
         <h1 class="text-2xl font-bold text-gray-800 mt-2"><?= $isEdit ? 'Edit Kuota' : 'Tambah Kuota Grooming' ?></h1>
         <?php if (!$isEdit): ?>
             <p class="text-sm text-gray-500 mt-1">Pilih mode penjadwalan: satu hari, rentang tanggal, atau pola berulang.</p>
@@ -40,7 +40,7 @@ $isEdit = $kuota !== null;
                     $isActive = $mode === $key;
                 ?>
                     <button type="button"
-                            class="kuota-mode-tab flex-1 rounded-md px-3 py-2 text-sm font-medium transition <?= $isActive ? 'bg-white text-slate-800 shadow-sm' : 'text-gray-500 hover:text-slate-800' ?>"
+                            class="kuota-mode-tab flex-1 rounded-md px-3 py-2 text-sm font-medium transition <?= $isActive ? 'bg-white text-admin shadow-sm' : 'text-gray-500 hover:text-admin' ?>"
                             data-mode="<?= e($key) ?>"
                             role="tab"
                             aria-selected="<?= $isActive ? 'true' : 'false' ?>">
@@ -142,7 +142,7 @@ $isEdit = $kuota !== null;
             <p class="text-sm text-red-600"><?= e((string) $errors['general']) ?></p>
         <?php endif; ?>
 
-        <button type="submit" class="bg-slate-800 text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-slate-700">
+        <button type="submit" class="bg-admin text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-admin-hover">
             <?= e($submitLabel) ?>
         </button>
     </form>
@@ -175,7 +175,7 @@ $isEdit = $kuota !== null;
             tabs.forEach(function (t) {
                 var active = t === tab;
                 t.classList.toggle('bg-white', active);
-                t.classList.toggle('text-slate-800', active);
+                t.classList.toggle('text-admin', active);
                 t.classList.toggle('shadow-sm', active);
                 t.classList.toggle('text-gray-500', !active);
                 t.setAttribute('aria-selected', active ? 'true' : 'false');

@@ -14,7 +14,7 @@ $isEdit = $kucing !== null && !empty($kucing['id']);
 ?>
 <div class="max-w-3xl">
     <div class="mb-6">
-        <a href="/kucing" class="text-sm text-gray-600 hover:text-orange-600">&larr; Kembali ke daftar</a>
+        <a href="/kucing" class="text-sm text-gray-600 hover:text-primary">&larr; Kembali ke daftar</a>
         <h1 class="text-2xl font-bold text-gray-800 mt-2"><?= $isEdit ? 'Edit Kucing' : 'Tambah Kucing' ?></h1>
     </div>
 
@@ -29,7 +29,7 @@ $isEdit = $kucing !== null && !empty($kucing['id']);
         <?php endif; ?>
 
         <div class="flex items-center gap-2 mb-6 text-sm">
-            <span data-step-indicator class="text-orange-600 font-semibold">1. Identitas</span>
+            <span data-step-indicator class="text-primary font-semibold">1. Identitas</span>
             <span class="text-gray-300">→</span>
             <span data-step-indicator class="text-gray-400">2. Kesehatan</span>
             <span class="text-gray-300">→</span>
@@ -59,7 +59,7 @@ $isEdit = $kucing !== null && !empty($kucing['id']);
                     <label for="nama" class="block text-sm font-medium text-gray-700 mb-1">Nama Kucing</label>
                     <input type="text" id="nama" name="nama" required
                            value="<?= e((string) old('nama', $kucing['nama'] ?? '')) ?>"
-                           class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500">
+                           class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
                     <?php if (!empty($errors['nama'])): ?>
                         <p class="text-red-600 text-xs mt-1"><?= e($errors['nama']) ?></p>
                     <?php endif; ?>
@@ -67,7 +67,7 @@ $isEdit = $kucing !== null && !empty($kucing['id']);
                 <div>
                     <label for="jenis_kelamin" class="block text-sm font-medium text-gray-700 mb-1">Jenis Kelamin</label>
                     <select id="jenis_kelamin" name="jenis_kelamin" required
-                            class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500">
+                            class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
                         <option value="">— Pilih —</option>
                         <?php foreach ($jenisKelaminLabels as $value => $label): ?>
                             <option value="<?= e($value) ?>"
@@ -87,13 +87,13 @@ $isEdit = $kucing !== null && !empty($kucing['id']);
                     <label for="ras" class="block text-sm font-medium text-gray-700 mb-1">Ras</label>
                     <input type="text" id="ras" name="ras"
                            value="<?= e((string) old('ras', $kucing['ras'] ?? '')) ?>"
-                           class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500">
+                           class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
                 </div>
                 <div>
                     <label for="tanggal_lahir" class="block text-sm font-medium text-gray-700 mb-1">Tanggal Lahir</label>
                     <input type="date" id="tanggal_lahir" name="tanggal_lahir"
                            value="<?= e((string) old('tanggal_lahir', $kucing['tanggal_lahir'] ?? '')) ?>"
-                           class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500">
+                           class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
                     <?php if (!empty($errors['tanggal_lahir'])): ?>
                         <p class="text-red-600 text-xs mt-1"><?= e($errors['tanggal_lahir']) ?></p>
                     <?php endif; ?>
@@ -102,7 +102,7 @@ $isEdit = $kucing !== null && !empty($kucing['id']);
 
             <div class="flex justify-end pt-2">
                 <button type="button" data-step-next
-                        class="bg-orange-600 text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-orange-700">
+                        class="bg-primary text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-primary-hover">
                     Lanjut →
                 </button>
             </div>
@@ -115,7 +115,7 @@ $isEdit = $kucing !== null && !empty($kucing['id']);
                 <label for="berat_badan" class="block text-sm font-medium text-gray-700 mb-1">Berat Badan (kg)</label>
                 <input type="number" id="berat_badan" name="berat_badan" step="0.01" min="0"
                        value="<?= e((string) old('berat_badan', $kucing['berat_badan'] ?? '')) ?>"
-                       class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500">
+                       class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
                 <?php if (!empty($errors['berat_badan'])): ?>
                     <p class="text-red-600 text-xs mt-1"><?= e($errors['berat_badan']) ?></p>
                 <?php endif; ?>
@@ -124,7 +124,7 @@ $isEdit = $kucing !== null && !empty($kucing['id']);
             <div>
                 <label for="catatan_kesehatan" class="block text-sm font-medium text-gray-700 mb-1">Catatan Kesehatan / Alergi</label>
                 <textarea id="catatan_kesehatan" name="catatan_kesehatan" rows="3"
-                          class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                          class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
                           placeholder="Alergi makanan, kondisi khusus, dll."><?= e((string) old('catatan_kesehatan', $kucing['catatan_kesehatan'] ?? '')) ?></textarea>
             </div>
 
@@ -134,7 +134,7 @@ $isEdit = $kucing !== null && !empty($kucing['id']);
                     ← Kembali
                 </button>
                 <button type="button" data-step-next
-                        class="bg-orange-600 text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-orange-700">
+                        class="bg-primary text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-primary-hover">
                     Lanjut →
                 </button>
             </div>
@@ -148,13 +148,13 @@ $isEdit = $kucing !== null && !empty($kucing['id']);
                     <h2 class="text-base font-semibold text-gray-800">Riwayat Vaksin (opsional)</h2>
                     <p class="text-xs text-gray-500 mt-0.5">Syarat vaksin hanya divalidasi saat booking pet hotel.</p>
                 </div>
-                <span class="text-sm text-orange-600 shrink-0 ml-4">Tampilkan/Sembunyikan</span>
+                <span class="text-sm text-primary shrink-0 ml-4">Tampilkan/Sembunyikan</span>
             </button>
 
             <div id="vaksin-section">
                 <div class="flex items-center justify-end mb-3">
                     <button type="button" id="add-vaksin-row"
-                            class="text-sm text-orange-600 hover:text-orange-700 font-medium">
+                            class="text-sm text-primary hover:text-primary-hover font-medium">
                         + Tambah baris
                     </button>
                 </div>
@@ -174,7 +174,7 @@ $isEdit = $kucing !== null && !empty($kucing['id']);
                         class="border border-gray-300 text-gray-700 rounded-lg px-4 py-2 text-sm hover:bg-gray-50">
                     ← Kembali
                 </button>
-                <button type="submit" class="bg-orange-600 text-white rounded-lg px-6 py-2 font-medium hover:bg-orange-700">
+                <button type="submit" class="bg-primary text-white rounded-lg px-6 py-2 font-medium hover:bg-primary-hover">
                     <?= e($submitLabel) ?>
                 </button>
             </div>

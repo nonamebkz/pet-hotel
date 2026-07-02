@@ -143,7 +143,7 @@ $field = static function (string $key) use ($settings): string {
         <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
             <p class="text-sm text-gray-500 hidden sm:block">Perubahan hanya berlaku untuk booking baru setelah disimpan.</p>
             <button type="submit" form="pengaturan-form"
-                    class="bg-slate-800 text-white rounded-lg px-6 py-2 text-sm font-medium hover:bg-slate-700 ml-auto">
+                    class="bg-admin text-white rounded-lg px-6 py-2 text-sm font-medium hover:bg-admin-hover ml-auto">
                 Simpan Pengaturan
             </button>
         </div>

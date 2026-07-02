@@ -28,6 +28,6 @@ $action = $action ?? '';
         <?php endif; ?>
         <div><label class="text-sm font-medium">Slot maksimal</label>
             <input type="number" name="slot_maksimal" min="0" value="<?= e((string) ($kuota['slot_maksimal'] ?? '')) ?>" class="w-full border rounded-lg px-3 py-2 text-sm mt-1" required></div>
-        <button type="submit" class="bg-slate-800 text-white rounded-lg px-4 py-2 text-sm">Simpan</button>
+        <button type="submit" class="bg-admin text-white rounded-lg px-4 py-2 text-sm">Simpan</button>
     </form>
 </div>

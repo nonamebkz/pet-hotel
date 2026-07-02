@@ -28,11 +28,11 @@ $recentNotifications = $recentNotifications ?? [];
                 <p class="text-sm text-gray-500 mb-4">Belum ada booking aktif.</p>
                 <?php if ($kucingCount >= 1): ?>
                     <div class="flex flex-wrap gap-2 text-sm">
-                        <a href="/grooming/booking" class="text-orange-600 hover:underline">Ajukan grooming</a>
+                        <a href="/grooming/booking" class="text-primary hover:underline">Ajukan grooming</a>
                         <span class="text-gray-300">·</span>
-                        <a href="/penitipan/booking" class="text-orange-600 hover:underline">Ajukan penitipan</a>
+                        <a href="/penitipan/booking" class="text-primary hover:underline">Ajukan penitipan</a>
                         <span class="text-gray-300">·</span>
-                        <a href="/pet-care/booking" class="text-orange-600 hover:underline">Ajukan pet care</a>
+                        <a href="/pet-care/booking" class="text-primary hover:underline">Ajukan pet care</a>
                     </div>
                 <?php endif; ?>
             <?php else: ?>
@@ -40,7 +40,7 @@ $recentNotifications = $recentNotifications ?? [];
                     <?php foreach ($activeBookings as $booking): ?>
                         <?php $status = $booking['status'] ?? null; ?>
                         <a href="<?= e((string) $booking['url']) ?>"
-                           class="block p-3 rounded-lg border hover:border-orange-300 transition">
+                           class="block p-3 rounded-lg border hover:border-primary/30 transition">
                             <div class="flex items-start justify-between gap-3">
                                 <div>
                                     <div class="text-xs text-gray-500 uppercase tracking-wide">
@@ -65,7 +65,7 @@ $recentNotifications = $recentNotifications ?? [];
         <div class="bg-white rounded-xl border p-6">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-lg font-semibold text-gray-800">Tagihan Menunggu</h2>
-                <a href="/transaksi" class="text-sm text-orange-600 hover:underline">Lihat riwayat transaksi →</a>
+                <a href="/transaksi" class="text-sm text-primary hover:underline">Lihat riwayat transaksi →</a>
             </div>
 
             <?php if ($pendingPayments === []): ?>
@@ -79,7 +79,7 @@ $recentNotifications = $recentNotifications ?? [];
                                     <div class="font-medium text-gray-800"><?= e((string) $payment['tagihan_jenis']) ?></div>
                                     <div class="text-sm text-gray-600"><?= e((string) ($payment['layanan_label'] ?? '')) ?></div>
                                 </div>
-                                <div class="text-sm font-semibold text-orange-700 shrink-0">
+                                <div class="text-sm font-semibold text-primary-hover shrink-0">
                                     Rp <?= e(number_format((float) $payment['total_bayar'], 0, ',', '.')) ?>
                                 </div>
                             </div>
@@ -89,7 +89,7 @@ $recentNotifications = $recentNotifications ?? [];
                                 </p>
                             <?php endif; ?>
                             <a href="<?= e((string) $payment['payment_url']) ?>"
-                               class="text-sm text-orange-600 hover:underline font-medium">
+                               class="text-sm text-primary hover:underline font-medium">
                                 Bayar & upload bukti →
                             </a>
                         </div>
@@ -116,7 +116,7 @@ $recentNotifications = $recentNotifications ?? [];
     <div class="bg-white rounded-xl border p-6">
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-lg font-semibold text-gray-800">Notifikasi Terbaru</h2>
-            <a href="/notifikasi" class="text-sm text-orange-600 hover:underline">Lihat semua</a>
+            <a href="/notifikasi" class="text-sm text-primary hover:underline">Lihat semua</a>
         </div>
 
         <?php if ($recentNotifications === []): ?>
@@ -124,7 +124,7 @@ $recentNotifications = $recentNotifications ?? [];
         <?php else: ?>
             <div class="space-y-3">
                 <?php foreach ($recentNotifications as $notif): ?>
-                    <div class="p-3 rounded-lg border <?= empty($notif['sudah_dibaca']) ? 'border-orange-200 bg-orange-50/30' : '' ?>">
+                    <div class="p-3 rounded-lg border <?= empty($notif['sudah_dibaca']) ? 'border-primary-muted bg-primary-soft/30' : '' ?>">
                         <div class="flex items-start justify-between gap-3">
                             <div>
                                 <div class="font-medium text-gray-800 text-sm"><?= e((string) $notif['judul']) ?></div>
@@ -154,7 +154,7 @@ $recentNotifications = $recentNotifications ?? [];
                             : 'Alamat belum lengkap — wajib jika pilih antar-jemput' ?>
                     </p>
                 </div>
-                <a href="/profil" class="text-sm text-orange-600 hover:underline font-medium shrink-0 ml-4">
+                <a href="/profil" class="text-sm text-primary hover:underline font-medium shrink-0 ml-4">
                     <?= $addressComplete ? 'Lihat' : 'Lengkapi' ?>
                 </a>
             </div>
@@ -168,7 +168,7 @@ $recentNotifications = $recentNotifications ?? [];
                             : 'Belum ada kucing — minimal 1 kucing diperlukan' ?>
                     </p>
                 </div>
-                <a href="/kucing" class="text-sm text-orange-600 hover:underline font-medium shrink-0 ml-4">
+                <a href="/kucing" class="text-sm text-primary hover:underline font-medium shrink-0 ml-4">
                     <?= $kucingCount >= 1 ? 'Kelola' : 'Tambah' ?>
                 </a>
             </div>
@@ -188,15 +188,15 @@ $recentNotifications = $recentNotifications ?? [];
             </a>
             <?php if ($kucingCount >= 1): ?>
                 <a href="/pet-care/booking"
-                   class="inline-flex items-center px-4 py-2 rounded-lg bg-orange-600 text-white text-sm hover:bg-orange-700">
+                   class="inline-flex items-center px-4 py-2 rounded-lg bg-primary text-white text-sm hover:bg-primary-hover">
                     Booking Pet Care
                 </a>
                 <a href="/grooming/booking"
-                   class="inline-flex items-center px-4 py-2 rounded-lg bg-orange-600 text-white text-sm hover:bg-orange-700">
+                   class="inline-flex items-center px-4 py-2 rounded-lg bg-primary text-white text-sm hover:bg-primary-hover">
                     Booking Grooming
                 </a>
                 <a href="/penitipan/booking"
-                   class="inline-flex items-center px-4 py-2 rounded-lg bg-orange-600 text-white text-sm hover:bg-orange-700">
+                   class="inline-flex items-center px-4 py-2 rounded-lg bg-primary text-white text-sm hover:bg-primary-hover">
                     Booking Penitipan
                 </a>
             <?php endif; ?>

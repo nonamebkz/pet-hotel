@@ -12,7 +12,7 @@ $statusLabels = $statusLabels ?? [];
     <div class="flex items-center justify-between mb-6">
         <h1 class="text-2xl font-bold text-gray-800">Riwayat Pet Care</h1>
         <a href="/pet-care/booking"
-           class="bg-orange-600 text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-orange-700">
+           class="bg-primary text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-primary-hover">
             + Booking Baru
         </a>
     </div>
@@ -20,7 +20,7 @@ $statusLabels = $statusLabels ?? [];
     <?php if ($bookingList === []): ?>
         <div class="bg-white rounded-xl border p-8 text-center">
             <p class="text-gray-600 mb-4">Belum ada booking pet care.</p>
-            <a href="/pet-care/booking" class="text-orange-600 hover:underline font-medium">Ajukan booking pertama</a>
+            <a href="/pet-care/booking" class="text-primary hover:underline font-medium">Ajukan booking pertama</a>
         </div>
     <?php else: ?>
         <div class="space-y-4">

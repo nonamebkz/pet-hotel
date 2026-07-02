@@ -22,7 +22,7 @@ $selectedCatatan = (string) old('catatan_makan', '');
 ?>
 <div>
     <div class="mb-6">
-        <a href="/penitipan" class="text-sm text-gray-500 hover:text-orange-600">&larr; Kembali</a>
+        <a href="/penitipan" class="text-sm text-gray-500 hover:text-primary">&larr; Kembali</a>
         <h1 class="text-2xl font-bold text-gray-800 mt-2">Booking Penitipan</h1>
         <p class="text-sm text-gray-500 mt-1">Pilih kucing eligible, tanggal, paket, dan opsi pengantaran.</p>
     </div>
@@ -73,7 +73,7 @@ $selectedCatatan = (string) old('catatan_makan', '');
                 <p class="text-xs text-red-600 mt-1"><?= e((string) $errors['kucing_id']) ?></p>
             <?php endif; ?>
             <p class="text-xs text-gray-500 mt-1">
-                Kucing belum eligible? <a href="/kucing" class="text-orange-600 underline">Lengkapi riwayat vaksin</a>
+                Kucing belum eligible? <a href="/kucing" class="text-primary underline">Lengkapi riwayat vaksin</a>
             </p>
         </div>
 
@@ -118,7 +118,7 @@ $selectedCatatan = (string) old('catatan_makan', '');
                 <?php foreach ($opsiLabels as $value => $label): ?>
                     <label class="flex items-center gap-2 cursor-pointer">
                         <input type="radio" name="opsi_pengantaran" value="<?= e($value) ?>"
-                               class="text-orange-600 opsi-radio"
+                               class="text-primary opsi-radio"
                                <?= $selectedOpsi === $value ? 'checked' : '' ?> required>
                         <span class="text-sm text-gray-700"><?= e($label) ?></span>
                     </label>
@@ -142,7 +142,7 @@ $selectedCatatan = (string) old('catatan_makan', '');
         </div>
 
         <button type="submit"
-                class="w-full bg-orange-600 text-white rounded-lg py-2.5 text-sm font-medium hover:bg-orange-700">
+                class="w-full bg-primary text-white rounded-lg py-2.5 text-sm font-medium hover:bg-primary-hover">
             Ajukan Penitipan
         </button>
     </form>

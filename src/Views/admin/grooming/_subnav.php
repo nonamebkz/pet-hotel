@@ -17,8 +17,8 @@ $tabs = [
         <?php $isActive = $activeTab === $key; ?>
         <a href="<?= e($tab['href']) ?>"
            class="<?= $isActive
-               ? 'text-slate-800 font-medium border-b-2 border-slate-800 pb-2 -mb-px'
-               : 'text-gray-500 hover:text-slate-800 pb-2' ?>">
+               ? 'text-admin font-medium border-b-2 border-admin pb-2 -mb-px'
+               : 'text-gray-500 hover:text-admin pb-2' ?>">
             <?= e($tab['label']) ?>
         </a>
     <?php endforeach; ?>

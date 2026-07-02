@@ -17,19 +17,19 @@ use App\Core\Csrf;
     <div>
         <label for="current_password" class="block text-sm font-medium text-gray-700 mb-1">Password Lama</label>
         <input type="password" id="current_password" name="current_password" required
-               class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500">
+               class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
     </div>
     <div>
         <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password Baru</label>
         <input type="password" id="password" name="password" required minlength="8"
-               class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500">
+               class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
     </div>
     <div>
         <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-1">Konfirmasi Password Baru</label>
         <input type="password" id="password_confirmation" name="password_confirmation" required minlength="8"
-               class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500">
+               class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
     </div>
-    <button type="submit" class="bg-orange-600 text-white rounded-lg px-4 py-2 font-medium hover:bg-orange-700">
+    <button type="submit" class="bg-primary text-white rounded-lg px-4 py-2 font-medium hover:bg-primary-hover">
         Simpan Password
     </button>
 </form>

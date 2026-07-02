@@ -15,7 +15,7 @@ $title = $title ?? 'Belum ada data';
 $description = $description ?? null;
 $ctaLabel = $ctaLabel ?? null;
 $ctaHref = $ctaHref ?? null;
-$ctaClass = $ctaClass ?? 'bg-slate-800 text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-slate-700 inline-block';
+$ctaClass = $ctaClass ?? 'bg-admin text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-admin-hover inline-block';
 
 $iconPaths = [
     'empty' => 'M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4',

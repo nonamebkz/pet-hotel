@@ -8,7 +8,7 @@ $jenisList = $jenisList ?? [];
     <div class="flex items-center justify-between mb-6">
         <h1 class="text-2xl font-bold text-gray-800">Jenis Grooming</h1>
         <a href="/admin/grooming/layanan/tambah"
-           class="bg-slate-800 text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-slate-700">
+           class="bg-admin text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-admin-hover">
             + Tambah Jenis
         </a>
     </div>

@@ -11,7 +11,7 @@ $layananList = $layananList ?? [];
             <p class="text-sm text-gray-500 mt-1">Layanan kesehatan kucing — booking online, bayar di loket saat kunjungan.</p>
         </div>
         <a href="/pet-care/booking"
-           class="bg-orange-600 text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-orange-700">
+           class="bg-primary text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-primary-hover">
             Ajukan Booking
         </a>
     </div>
@@ -36,7 +36,7 @@ $layananList = $layananList ?? [];
             <?php endforeach; ?>
         </div>
 
-        <div class="mt-6 bg-orange-50 border border-orange-100 rounded-xl p-4 text-sm text-orange-900">
+        <div class="mt-6 bg-primary-soft border border-primary-soft rounded-xl p-4 text-sm text-content-primary">
             <strong>Catatan:</strong> Anda membawa kucing sendiri ke petshop (antar sendiri).
             Pembayaran dilakukan langsung di loket — harga di atas hanya estimasi.
         </div>

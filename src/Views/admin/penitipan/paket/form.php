@@ -11,7 +11,7 @@ $submitLabel = $submitLabel ?? 'Simpan';
 ?>
 <div>
     <div class="mb-6">
-        <a href="/admin/penitipan/paket" class="text-sm text-gray-500 hover:text-slate-800">&larr; Kembali</a>
+        <a href="/admin/penitipan/paket" class="text-sm text-gray-500 hover:text-admin">&larr; Kembali</a>
         <h1 class="text-2xl font-bold text-gray-800 mt-2"><?= $paket ? 'Edit Paket' : 'Tambah Paket' ?></h1>
     </div>
     <form method="POST" action="<?= e($action) ?>" class="bg-white rounded-xl border p-6 max-w-xl space-y-4">
@@ -35,6 +35,6 @@ $submitLabel = $submitLabel ?? 'Simpan';
             <input type="checkbox" name="aktif" value="1" <?= !isset($paket['aktif']) || !empty($paket['aktif']) ? 'checked' : '' ?>>
             <span class="text-sm">Aktif</span>
         </label>
-        <button type="submit" class="bg-slate-800 text-white rounded-lg px-4 py-2 text-sm"><?= e($submitLabel) ?></button>
+        <button type="submit" class="bg-admin text-white rounded-lg px-4 py-2 text-sm"><?= e($submitLabel) ?></button>
     </form>
 </div>

@@ -90,7 +90,7 @@ enum StatusPenitipan: string
     {
         return match ($this) {
             self::MENUNGGU_KONFIRMASI => 'bg-yellow-100 text-yellow-800',
-            self::MENUNGGU_PEMBAYARAN => 'bg-orange-100 text-orange-800',
+            self::MENUNGGU_PEMBAYARAN => 'bg-primary-soft text-primary-hover',
             self::MENUNGGU_VERIFIKASI_BUKTI => 'bg-blue-100 text-blue-800',
             self::CHECK_IN => 'bg-indigo-100 text-indigo-800',
             self::SEDANG_DITITIPKAN => 'bg-purple-100 text-purple-800',

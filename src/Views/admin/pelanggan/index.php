@@ -32,7 +32,7 @@ $segmentLabels = [
                    placeholder="Nama, email, atau telepon"
                    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
         </div>
-        <button type="submit" class="bg-slate-800 text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-slate-700">
+        <button type="submit" class="bg-admin text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-admin-hover">
             Cari
         </button>
     </form>

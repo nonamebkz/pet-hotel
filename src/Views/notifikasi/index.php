@@ -17,7 +17,7 @@ $notifikasiList = $notifikasiList ?? [];
     <?php else: ?>
         <div class="space-y-3">
             <?php foreach ($notifikasiList as $notif): ?>
-                <div class="bg-white rounded-xl border p-4 <?= empty($notif['sudah_dibaca']) ? 'border-orange-200 bg-orange-50/30' : '' ?>">
+                <div class="bg-white rounded-xl border p-4 <?= empty($notif['sudah_dibaca']) ? 'border-primary-muted bg-primary-soft/30' : '' ?>">
                     <div class="flex items-start justify-between gap-3">
                         <div>
                             <div class="font-medium text-gray-800"><?= e((string) $notif['judul']) ?></div>

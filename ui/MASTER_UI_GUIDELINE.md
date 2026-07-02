@@ -55,17 +55,19 @@ sesuai @ui/MASTER_UI_GUIDELINE.md — fokus item CRITICAL di Acceptance Criteria
 
 | Token | Hex | Tailwind / Class |
 |---|---|---|
-| Primary | `#F97316` | `bg-primary`, `text-primary`, `hover:bg-primary-hover` |
-| Primary Hover | `#EA580C` | `bg-primary-hover` |
-| Success | `#16A34A` | `text-success`, `bg-success-bg` |
-| Success BG | `#DCFCE7` | `bg-success-bg` |
-| Warning | `#D97706` | `text-warning`, `bg-warning-bg` |
-| Warning BG | `#FEF3C7` | `bg-warning-bg` |
-| Danger | `#DC2626` | `text-danger`, `bg-red-*` |
-| Text Primary | `#111827` | `text-content-primary`, `text-gray-800` |
-| Text Secondary | `#6B7280` | `text-content-secondary`, `text-gray-600` |
-| Border | `#E5E7EB` | `border`, `border-gray-200` |
-| Page BG | `#F8FAFC` | `bg-page` |
+| Primary | `#E07A5F` | `bg-primary`, `text-primary`, `hover:bg-primary-hover` |
+| Primary Hover | `#C96A52` | `bg-primary-hover` |
+| Primary Soft | `#FDF0EC` | `bg-primary-soft` |
+| Admin | `#3D405B` | `bg-admin`, `text-admin`, `hover:bg-admin-hover` |
+| Success | `#2A9D8F` | `text-success`, `bg-success-bg` |
+| Success BG | `#E6F5F3` | `bg-success-bg` |
+| Warning | `#E9C46A` | `text-warning`, `bg-warning-bg` |
+| Warning BG | `#FEF9E7` | `bg-warning-bg` |
+| Danger | `#E76F51` | `text-danger`, `bg-red-*` |
+| Text Primary | `#264653` | `text-content-primary` |
+| Text Secondary | `#6B7280` | `text-content-secondary` |
+| Border | `#E8E4DF` | `border-border` |
+| Page BG | `#FAFAF8` | `bg-page` |
 | Card BG | `#FFFFFF` | `bg-card`, `bg-white` |
 
 ### Tipografi
@@ -87,8 +89,8 @@ sesuai @ui/MASTER_UI_GUIDELINE.md — fokus item CRITICAL di Acceptance Criteria
 | Komponen | Pattern |
 |---|---|
 | Card | `bg-white rounded-xl border p-6` |
-| Admin Primary CTA | `bg-slate-800 text-white rounded-lg px-4 py-2 hover:bg-slate-700` |
-| Pelanggan Primary CTA | `bg-orange-600 text-white rounded-lg px-4 py-2 hover:bg-orange-700` |
+| Admin Primary CTA | `bg-admin text-white rounded-lg px-4 py-2 hover:bg-admin-hover` |
+| Pelanggan Primary CTA | `bg-primary text-white rounded-lg px-4 py-2 hover:bg-primary-hover` |
 | Secondary Button | `border border-gray-300 rounded-lg px-4 py-2 hover:bg-gray-50` |
 | Table | `bg-white rounded-xl border overflow-hidden` + `thead bg-gray-50` |
 | Empty State | centered card: icon + title + description + CTA |

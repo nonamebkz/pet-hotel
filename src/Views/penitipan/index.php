@@ -24,7 +24,7 @@ $promoConfig = $promoConfig ?? [];
         <?php foreach ($paketList as $paket): ?>
             <div class="bg-white rounded-xl border p-5">
                 <div class="font-semibold text-lg text-gray-800"><?= e((string) $paket['nama']) ?></div>
-                <div class="text-orange-600 font-medium mt-1">
+                <div class="text-primary font-medium mt-1">
                     Rp <?= e(number_format((float) $paket['harga_per_hari'], 0, ',', '.')) ?> / hari
                 </div>
                 <?php if (!empty($paket['deskripsi'])): ?>
@@ -42,7 +42,7 @@ $promoConfig = $promoConfig ?? [];
             <li>Kucing harus terdaftar di menu "Kucing Saya"</li>
         </ul>
         <a href="/penitipan/booking"
-           class="inline-block bg-orange-600 text-white rounded-lg px-5 py-2.5 text-sm font-medium hover:bg-orange-700">
+           class="inline-block bg-primary text-white rounded-lg px-5 py-2.5 text-sm font-medium hover:bg-primary-hover">
             Ajukan Penitipan
         </a>
     </div>

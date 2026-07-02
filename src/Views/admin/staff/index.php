@@ -14,7 +14,7 @@ $roleLabels = [
     <div class="flex items-center justify-between mb-6">
         <h1 class="text-2xl font-bold text-gray-800">Manajemen Akun Staff</h1>
         <a href="/admin/staff/tambah"
-           class="bg-slate-800 text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-slate-700">
+           class="bg-admin text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-admin-hover">
             + Tambah Staff
         </a>
     </div>
@@ -54,7 +54,7 @@ $roleLabels = [
                             <td class="px-4 py-3 text-gray-700"><?= e((string) $staff['email']) ?></td>
                             <td class="px-4 py-3 text-gray-700"><?= e((string) ($staff['username'] ?? '—')) ?></td>
                             <td class="px-4 py-3">
-                                <span class="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-800">
+                                <span class="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-admin">
                                     <?= e($roleLabels[$staff['role'] ?? ''] ?? (string) ($staff['role'] ?? '—')) ?>
                                 </span>
                             </td>

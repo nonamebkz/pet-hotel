@@ -12,7 +12,7 @@ $statusLabels = $statusLabels ?? [];
     <div class="flex items-center justify-between mb-6">
         <h1 class="text-2xl font-bold text-gray-800">Riwayat Grooming</h1>
         <a href="/grooming/booking"
-           class="bg-orange-600 text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-orange-700">
+           class="bg-primary text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-primary-hover">
             + Booking Baru
         </a>
     </div>
@@ -20,7 +20,7 @@ $statusLabels = $statusLabels ?? [];
     <?php if ($bookingList === []): ?>
         <div class="bg-white rounded-xl border p-8 text-center">
             <p class="text-gray-600 mb-4">Belum ada booking grooming.</p>
-            <a href="/grooming/booking" class="text-orange-600 hover:underline font-medium">Ajukan booking pertama</a>
+            <a href="/grooming/booking" class="text-primary hover:underline font-medium">Ajukan booking pertama</a>
         </div>
     <?php else: ?>
         <div class="space-y-4">
@@ -52,10 +52,10 @@ $statusLabels = $statusLabels ?? [];
 
                     <div class="flex flex-wrap gap-3 pt-3 border-t text-sm">
                         <a href="/grooming/detail?id=<?= e((string) $booking['id']) ?>"
-                           class="text-orange-600 hover:underline">Detail</a>
+                           class="text-primary hover:underline">Detail</a>
                         <?php if ((string) $booking['status'] === StatusBookingGrooming::MENUNGGU_PEMBAYARAN->value): ?>
                             <a href="/grooming/pembayaran?id=<?= e((string) $booking['id']) ?>"
-                               class="text-orange-600 hover:underline font-medium">Bayar & Upload Bukti</a>
+                               class="text-primary hover:underline font-medium">Bayar & Upload Bukti</a>
                         <?php endif; ?>
                         <?php if ($canCancel): ?>
                             <form method="POST" action="/grooming/booking/batalkan" class="inline"

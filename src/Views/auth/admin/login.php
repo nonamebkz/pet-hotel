@@ -40,7 +40,7 @@ use App\Core\Csrf;
                class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-500">
     </div>
     <button type="submit"
-            class="w-full bg-slate-800 text-white rounded-lg py-2 font-medium hover:bg-slate-900 disabled:opacity-60 disabled:cursor-not-allowed">
+            class="w-full bg-admin text-white rounded-lg py-2 font-medium hover:bg-admin-hover disabled:opacity-60 disabled:cursor-not-allowed">
         Login
     </button>
 </form>

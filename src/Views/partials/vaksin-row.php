@@ -15,13 +15,13 @@ $row = $vaksinList[$index] ?? [];
         <input type="text" name="vaksin_jenis[]"
                value="<?= e((string) old("vaksin_jenis.$index", $row['jenis_vaksin'] ?? '')) ?>"
                placeholder="FVRCP, Rabies, ..."
-               class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500">
+               class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary">
     </div>
     <div class="w-40">
         <label class="block text-xs font-medium text-gray-600 mb-1">Tanggal</label>
         <input type="date" name="vaksin_tanggal[]"
                value="<?= e((string) old("vaksin_tanggal.$index", $row['tanggal_vaksin'] ?? '')) ?>"
-               class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500">
+               class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary">
     </div>
     <div class="flex-1 min-w-[160px]">
         <label class="block text-xs font-medium text-gray-600 mb-1">Sertifikat (opsional)</label>

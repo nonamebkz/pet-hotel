@@ -26,9 +26,9 @@ $hasActiveFilter = ($filterStatus !== '' || $filterJenis !== '' || $filterQ !== 
     </p>
 
     <div class="flex flex-wrap gap-4 mb-6 text-sm border-b border-gray-200">
-        <a href="/admin/grooming/pembayaran" class="text-gray-500 hover:text-slate-800 pb-2">Verifikasi Grooming</a>
-        <a href="/admin/penitipan/pembayaran" class="text-gray-500 hover:text-slate-800 pb-2">Verifikasi Penitipan</a>
-        <span class="text-slate-800 font-medium border-b-2 border-slate-800 pb-2 -mb-px">Riwayat Transaksi</span>
+        <a href="/admin/grooming/pembayaran" class="text-gray-500 hover:text-admin pb-2">Verifikasi Grooming</a>
+        <a href="/admin/penitipan/pembayaran" class="text-gray-500 hover:text-admin pb-2">Verifikasi Penitipan</a>
+        <span class="text-admin font-medium border-b-2 border-admin pb-2 -mb-px">Riwayat Transaksi</span>
     </div>
 
     <form method="GET" action="/admin/transaksi" class="mb-4 bg-page rounded-xl border p-4 space-y-4">
@@ -55,7 +55,7 @@ $hasActiveFilter = ($filterStatus !== '' || $filterJenis !== '' || $filterQ !== 
                 </select>
             </div>
             <button type="submit"
-                    class="bg-slate-800 text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-slate-700">
+                    class="bg-admin text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-admin-hover">
                 Terapkan Filter
             </button>
         </div>

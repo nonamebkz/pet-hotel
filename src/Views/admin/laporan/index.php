@@ -53,19 +53,19 @@ foreach ($trend as $point) {
             <a href="/admin/laporan/grooming<?= e($querySuffix) ?>"
                class="bg-white rounded-xl border p-6 hover:border-slate-400 transition print:border print:shadow-none">
                 <div class="text-sm text-gray-500 mb-1">Booking Grooming</div>
-                <div class="text-3xl font-bold text-slate-800"><?= e((string) $ringkasan['grooming']) ?></div>
+                <div class="text-3xl font-bold text-admin"><?= e((string) $ringkasan['grooming']) ?></div>
                 <div class="text-xs text-gray-400 mt-2 print:hidden">Lihat detail →</div>
             </a>
             <a href="/admin/laporan/penitipan<?= e($querySuffix) ?>"
                class="bg-white rounded-xl border p-6 hover:border-slate-400 transition print:border print:shadow-none">
                 <div class="text-sm text-gray-500 mb-1">Booking Pet Hotel</div>
-                <div class="text-3xl font-bold text-slate-800"><?= e((string) $ringkasan['penitipan']) ?></div>
+                <div class="text-3xl font-bold text-admin"><?= e((string) $ringkasan['penitipan']) ?></div>
                 <div class="text-xs text-gray-400 mt-2 print:hidden">Lihat detail →</div>
             </a>
             <a href="/admin/laporan/pet-care<?= e($querySuffix) ?>"
                class="bg-white rounded-xl border p-6 hover:border-slate-400 transition print:border print:shadow-none">
                 <div class="text-sm text-gray-500 mb-1">Booking Pet Care</div>
-                <div class="text-3xl font-bold text-slate-800"><?= e((string) $ringkasan['pet_care']) ?></div>
+                <div class="text-3xl font-bold text-admin"><?= e((string) $ringkasan['pet_care']) ?></div>
                 <div class="text-xs text-gray-400 mt-2 print:hidden">Lihat detail →</div>
             </a>
         </div>
@@ -85,7 +85,7 @@ foreach ($trend as $point) {
                         ?>
                         <div class="flex flex-col items-center min-w-[2.5rem] flex-1 group" title="<?= e((string) ($point['label'] ?? '')) ?>">
                             <div class="flex items-end gap-0.5 h-36 w-full justify-center">
-                                <div class="w-2 sm:w-3 bg-slate-600 rounded-t transition-all group-hover:bg-slate-800"
+                                <div class="w-2 sm:w-3 bg-slate-600 rounded-t transition-all group-hover:bg-admin"
                                      style="height: <?= e((string) $groomingPct) ?>%"
                                      title="Booking: <?= e((string) $grooming) ?>"></div>
                                 <div class="w-2 sm:w-3 bg-green-500 rounded-t transition-all group-hover:bg-green-600"
@@ -113,7 +113,7 @@ foreach ($trend as $point) {
 
     <div class="mt-6 print:hidden">
         <button type="button" onclick="window.print()"
-                class="bg-slate-800 text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-slate-700">
+                class="bg-admin text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-admin-hover">
             Cetak / Simpan PDF
         </button>
     </div>

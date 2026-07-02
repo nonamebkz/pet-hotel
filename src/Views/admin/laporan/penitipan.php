@@ -64,11 +64,11 @@ $totalPendapatan = (float) ($metrics['pendapatan_awal'] ?? 0) + (float) ($metric
         <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div class="bg-white rounded-xl border p-4 print:border print:shadow-none">
                 <div class="text-sm text-gray-500">Jumlah Booking</div>
-                <div class="text-2xl font-bold text-slate-800"><?= e((string) ($metrics['jumlah_booking'] ?? 0)) ?></div>
+                <div class="text-2xl font-bold text-admin"><?= e((string) ($metrics['jumlah_booking'] ?? 0)) ?></div>
             </div>
             <div class="bg-white rounded-xl border p-4 print:border print:shadow-none">
                 <div class="text-sm text-gray-500">Total Hari Dititipkan</div>
-                <div class="text-2xl font-bold text-slate-800"><?= e((string) ($metrics['total_hari'] ?? 0)) ?> hari</div>
+                <div class="text-2xl font-bold text-admin"><?= e((string) ($metrics['total_hari'] ?? 0)) ?> hari</div>
             </div>
             <div class="bg-white rounded-xl border p-4 print:border print:shadow-none">
                 <div class="text-sm text-gray-500">Total Pendapatan (Lunas)</div>
@@ -151,7 +151,7 @@ $totalPendapatan = (float) ($metrics['pendapatan_awal'] ?? 0) + (float) ($metric
 
     <div class="mt-6 print:hidden">
         <button type="button" onclick="window.print()"
-                class="bg-slate-800 text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-slate-700">
+                class="bg-admin text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-admin-hover">
             Cetak / Simpan PDF
         </button>
     </div>

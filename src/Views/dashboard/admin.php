@@ -39,13 +39,13 @@ $revenueDelta = (float) $pendapatan['harian'] - (float) ($pendapatan['kemarin'] 
                 <div class="flex flex-wrap gap-2">
                     <?php if ($pendingVerification['grooming'] > 0): ?>
                         <a href="/admin/grooming/pembayaran"
-                           class="bg-slate-800 text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-slate-700">
+                           class="bg-admin text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-admin-hover">
                             Verifikasi Grooming
                         </a>
                     <?php endif; ?>
                     <?php if ($pendingVerification['penitipan'] > 0): ?>
                         <a href="/admin/penitipan/pembayaran"
-                           class="border border-slate-800 text-slate-800 rounded-lg px-4 py-2 text-sm font-medium hover:bg-white">
+                           class="border border-admin text-admin rounded-lg px-4 py-2 text-sm font-medium hover:bg-white">
                             Verifikasi Penitipan
                         </a>
                     <?php endif; ?>
@@ -85,7 +85,7 @@ $revenueDelta = (float) $pendapatan['harian'] - (float) ($pendapatan['kemarin'] 
     <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div class="bg-white rounded-xl border p-6">
             <div class="text-sm text-gray-500 mb-1">Booking Hari Ini</div>
-            <div class="text-3xl font-bold text-slate-800"><?= e((string) $bookingsToday['total']) ?></div>
+            <div class="text-3xl font-bold text-admin"><?= e((string) $bookingsToday['total']) ?></div>
             <div class="text-xs mt-2 <?= $bookingDelta >= 0 ? 'text-green-600' : 'text-red-600' ?>">
                 <?= $bookingDelta >= 0 ? '+' : '' ?><?= e((string) $bookingDelta) ?> vs kemarin
             </div>
@@ -105,7 +105,7 @@ $revenueDelta = (float) $pendapatan['harian'] - (float) ($pendapatan['kemarin'] 
 
         <a href="/admin/penitipan/booking" class="bg-white rounded-xl border p-6 hover:border-slate-400 transition block">
             <div class="text-sm text-gray-500 mb-1">Penitipan Aktif</div>
-            <div class="text-3xl font-bold text-slate-800"><?= e((string) $penitipanAktif) ?></div>
+            <div class="text-3xl font-bold text-admin"><?= e((string) $penitipanAktif) ?></div>
             <div class="text-xs text-gray-400 mt-2">
                 <?= $penitipanAktif === 0 ? 'Belum ada penitipan aktif' : 'Check-in & sedang dititipkan' ?>
             </div>
@@ -113,7 +113,7 @@ $revenueDelta = (float) $pendapatan['harian'] - (float) ($pendapatan['kemarin'] 
 
         <div class="bg-white rounded-xl border p-6">
             <div class="text-sm text-gray-500 mb-1">Pendapatan Terverifikasi</div>
-            <div class="text-lg font-bold text-slate-800">
+            <div class="text-lg font-bold text-admin">
                 Hari ini: Rp <?= e(number_format((float) $pendapatan['harian'], 0, ',', '.')) ?>
             </div>
             <div class="text-xs mt-1 <?= $revenueDelta >= 0 ? 'text-green-600' : 'text-red-600' ?>">

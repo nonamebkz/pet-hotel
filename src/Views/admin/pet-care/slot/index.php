@@ -14,15 +14,15 @@ $errors = Session::getFlash('errors', []);
     <div class="flex items-center justify-between mb-6">
         <h1 class="text-2xl font-bold text-gray-800">Slot Dokter Pet Care</h1>
         <a href="/admin/pet-care/slot/tambah?tanggal=<?= e($tanggal) ?>"
-           class="bg-slate-800 text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-slate-900">
+           class="bg-admin text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-admin-hover">
             + Tambah Slot
         </a>
     </div>
 
     <div class="flex gap-4 mb-6 text-sm">
-        <a href="/admin/pet-care/layanan" class="text-gray-500 hover:text-slate-800">Layanan</a>
-        <a href="/admin/pet-care/slot" class="text-slate-800 font-medium border-b-2 border-slate-800 pb-1">Slot Dokter</a>
-        <a href="/admin/pet-care/booking" class="text-gray-500 hover:text-slate-800">Booking</a>
+        <a href="/admin/pet-care/layanan" class="text-gray-500 hover:text-admin">Layanan</a>
+        <a href="/admin/pet-care/slot" class="text-admin font-medium border-b-2 border-admin pb-1">Slot Dokter</a>
+        <a href="/admin/pet-care/booking" class="text-gray-500 hover:text-admin">Booking</a>
     </div>
 
     <form method="GET" action="/admin/pet-care/slot" class="mb-6 flex items-end gap-3">

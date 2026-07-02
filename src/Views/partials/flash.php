@@ -9,7 +9,7 @@ $success = Session::getFlash('success');
 $error = Session::getFlash('error');
 ?>
 <?php if ($success): ?>
-    <div class="mb-4 rounded-lg bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-800">
+    <div class="mb-4 rounded-lg bg-success-bg border border-success/20 px-4 py-3 text-sm text-success">
         <?= e((string) $success) ?>
     </div>
 <?php endif; ?>

@@ -109,7 +109,7 @@ $promoUsed = !empty($pelanggan['pernah_pakai_promo_penitipan']);
                                 <img src="<?= e((string) $kucing['foto_url']) ?>" alt="<?= e((string) $kucing['nama']) ?>"
                                      class="w-16 h-16 rounded-lg object-cover border">
                             <?php else: ?>
-                                <div class="w-16 h-16 rounded-lg bg-orange-100 flex items-center justify-center text-orange-600 text-lg font-bold">
+                                <div class="w-16 h-16 rounded-lg bg-primary-soft flex items-center justify-center text-primary text-lg font-bold">
                                     <?= e(mb_substr((string) $kucing['nama'], 0, 1)) ?>
                                 </div>
                             <?php endif; ?>

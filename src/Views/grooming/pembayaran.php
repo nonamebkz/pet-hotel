@@ -12,7 +12,7 @@ $errors = $errors ?? [];
 ?>
 <div>
     <div class="mb-6">
-        <a href="/grooming/detail?id=<?= e((string) $booking['id']) ?>" class="text-sm text-gray-500 hover:text-orange-600">&larr; Detail Booking</a>
+        <a href="/grooming/detail?id=<?= e((string) $booking['id']) ?>" class="text-sm text-gray-500 hover:text-primary">&larr; Detail Booking</a>
         <h1 class="text-2xl font-bold text-gray-800 mt-2">Pembayaran Grooming</h1>
     </div>
 
@@ -27,7 +27,7 @@ $errors = $errors ?? [];
 
             <div class="bg-gray-50 rounded-lg p-4 text-sm">
                 <div class="font-medium text-gray-800 mb-2">Total yang harus ditransfer</div>
-                <div class="text-2xl font-bold text-orange-600">
+                <div class="text-2xl font-bold text-primary">
                     Rp <?= e(number_format((float) $transaksi['total_bayar'], 0, ',', '.')) ?>
                 </div>
                 <?php if (!empty($transaksi['batas_waktu_bayar'])): ?>
@@ -69,7 +69,7 @@ $errors = $errors ?? [];
                 </div>
 
                 <button type="submit"
-                        class="w-full bg-orange-600 text-white rounded-lg py-2.5 text-sm font-medium hover:bg-orange-700">
+                        class="w-full bg-primary text-white rounded-lg py-2.5 text-sm font-medium hover:bg-primary-hover">
                     Kirim Bukti Transfer
                 </button>
             </form>

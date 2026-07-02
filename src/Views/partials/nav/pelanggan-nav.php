@@ -46,14 +46,12 @@ $akunActive = nav_is_active(['/profil', '/change-password']);
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                             </svg>
                         </button>
-                        <div
-                            data-nav-dropdown-panel
-                            class="hidden absolute left-0 top-full mt-1 w-48 bg-card border border-border rounded-xl shadow-sm py-1 z-50"
-                        >
-                            <a href="/grooming" class="<?= nav_mobile_link_classes(nav_is_active('/grooming', true)) ?>">Grooming</a>
-                            <a href="/penitipan" class="<?= nav_mobile_link_classes(nav_is_active('/penitipan', true)) ?>">Penitipan</a>
-                            <a href="/pet-care" class="<?= nav_mobile_link_classes(nav_is_active('/pet-care', true)) ?>">Pet Care</a>
-                            <a href="/kucing" class="<?= nav_mobile_link_classes(nav_is_active('/kucing', true)) ?>">Kucing Saya</a>
+                        <div data-nav-dropdown-panel class="<?= nav_dropdown_panel_classes('left') ?>">
+                            <p class="px-4 pt-1 pb-2 text-[11px] font-semibold uppercase tracking-wide text-content-secondary">Layanan</p>
+                            <a href="/grooming" class="<?= nav_dropdown_link_classes(nav_is_active('/grooming', true)) ?>">Grooming</a>
+                            <a href="/penitipan" class="<?= nav_dropdown_link_classes(nav_is_active('/penitipan', true)) ?>">Penitipan</a>
+                            <a href="/pet-care" class="<?= nav_dropdown_link_classes(nav_is_active('/pet-care', true)) ?>">Pet Care</a>
+                            <a href="/kucing" class="<?= nav_dropdown_link_classes(nav_is_active('/kucing', true)) ?>">Kucing Saya</a>
                         </div>
                     </div>
                 </div>
@@ -68,7 +66,7 @@ $akunActive = nav_is_active(['/profil', '/change-password']);
                         aria-haspopup="true"
                         class="<?= nav_dropdown_trigger_classes($akunActive) ?> gap-2"
                     >
-                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-orange-100 text-primary text-xs font-semibold">
+                        <span class="<?= nav_avatar_classes() ?>">
                             <?= e($navInitials) ?>
                         </span>
                         <span class="max-w-[8rem] truncate"><?= e($navName) ?></span>
@@ -76,18 +74,16 @@ $akunActive = nav_is_active(['/profil', '/change-password']);
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                         </svg>
                     </button>
-                    <div
-                        data-nav-dropdown-panel
-                        class="hidden absolute right-0 top-full mt-1 w-52 bg-card border border-border rounded-xl shadow-sm py-1 z-50"
-                    >
-                        <div class="px-3 py-2 border-b border-border">
+                    <div data-nav-dropdown-panel class="<?= nav_dropdown_panel_classes('right') ?>">
+                        <div class="px-4 py-2.5 border-b border-border mb-1">
                             <p class="text-sm font-semibold text-content-primary truncate"><?= e($navName) ?></p>
                         </div>
-                        <a href="/profil" class="<?= nav_mobile_link_classes(nav_is_active('/profil', true)) ?>">Profil</a>
-                        <a href="/change-password" class="<?= nav_mobile_link_classes(nav_is_active('/change-password', true)) ?>">Ubah Password</a>
-                        <form method="POST" action="/logout" class="border-t border-border mt-1 pt-1">
+                        <a href="/profil" class="<?= nav_dropdown_link_classes(nav_is_active('/profil', true)) ?>">Profil</a>
+                        <a href="/change-password" class="<?= nav_dropdown_link_classes(nav_is_active('/change-password', true)) ?>">Ubah Password</a>
+                        <div class="my-1.5 border-t border-border"></div>
+                        <form method="POST" action="/logout">
                             <?= Csrf::field() ?>
-                            <button type="submit" class="flex items-center min-h-10 px-3 py-2 text-sm text-danger hover:bg-red-50 rounded-lg w-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
+                            <button type="submit" class="flex items-center mx-2 px-3 py-2.5 text-sm text-danger hover:bg-red-50 rounded-lg w-[calc(100%-1rem)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
                                 Logout
                             </button>
                         </form>
@@ -141,7 +137,7 @@ $akunActive = nav_is_active(['/profil', '/change-password']);
                 <div>
                     <p class="px-3 mb-1 text-xs font-semibold uppercase tracking-wide text-content-secondary">Akun</p>
                     <div class="px-3 py-2 mb-1 flex items-center gap-2">
-                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-orange-100 text-primary text-xs font-semibold">
+                        <span class="<?= nav_avatar_classes() ?>">
                             <?= e($navInitials) ?>
                         </span>
                         <span class="text-sm font-semibold text-content-primary truncate"><?= e($navName) ?></span>

@@ -25,7 +25,7 @@ $statusRefund = $transaksi ? StatusRefund::tryFrom((string) ($transaksi['status_
 ?>
 <div>
     <div class="mb-6">
-        <a href="/grooming/riwayat" class="text-sm text-gray-500 hover:text-orange-600">&larr; Riwayat</a>
+        <a href="/grooming/riwayat" class="text-sm text-gray-500 hover:text-primary">&larr; Riwayat</a>
         <h1 class="text-2xl font-bold text-gray-800 mt-2">Detail Booking Grooming</h1>
     </div>
 
@@ -95,7 +95,7 @@ $statusRefund = $transaksi ? StatusRefund::tryFrom((string) ($transaksi['status_
         <div class="flex flex-wrap gap-3 pt-2">
             <?php if ((string) ($booking['status'] ?? '') === StatusBookingGrooming::MENUNGGU_PEMBAYARAN->value): ?>
                 <a href="/grooming/pembayaran?id=<?= e((string) $booking['id']) ?>"
-                   class="bg-orange-600 text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-orange-700">
+                   class="bg-primary text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-primary-hover">
                     Upload Bukti Transfer
                 </a>
             <?php endif; ?>
