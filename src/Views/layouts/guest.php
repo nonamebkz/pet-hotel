@@ -9,7 +9,7 @@ declare(strict_types=1);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= e($title ?? 'Petshop') ?> — Petshop</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <?php require __DIR__ . '/../partials/head/tailwind-config.php'; ?>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-primary-soft to-primary-muted flex items-center justify-center p-4">
     <div class="w-full max-w-md">
