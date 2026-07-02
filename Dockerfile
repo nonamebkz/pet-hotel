@@ -23,7 +23,14 @@ WORKDIR /var/www/html
 COPY --from=vendor /app/vendor ./vendor
 COPY . .
 
-RUN mkdir -p public/uploads storage/logs \
-    && chown -R www-data:www-data public/uploads storage/logs
+RUN mkdir -p public/uploads/profil public/uploads/kucing public/uploads/vaksin public/uploads/bukti_transfer storage/logs \
+    && chown -R www-data:www-data public/uploads storage/logs \
+    && chmod -R 775 public/uploads storage/logs
+
+COPY docker/entrypoint.sh /usr/local/bin/petshop-entrypoint.sh
+RUN chmod +x /usr/local/bin/petshop-entrypoint.sh
+
+ENTRYPOINT ["/usr/local/bin/petshop-entrypoint.sh"]
+CMD ["apache2-foreground"]
 
 EXPOSE 80

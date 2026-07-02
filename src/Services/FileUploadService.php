@@ -63,8 +63,12 @@ final class FileUploadService
 
         $uploadDir = BASE_PATH . '/public/uploads/' . $category;
 
-        if (!is_dir($uploadDir) && !mkdir($uploadDir, 0755, true)) {
-            return ['success' => false, 'error' => 'Folder upload tidak tersedia.'];
+        if (!is_dir($uploadDir) && !@mkdir($uploadDir, 0775, true) && !is_dir($uploadDir)) {
+            return ['success' => false, 'error' => 'Folder upload tidak tersedia. Periksa permission direktori public/uploads.'];
+        }
+
+        if (!is_writable($uploadDir)) {
+            return ['success' => false, 'error' => 'Folder upload tidak dapat ditulis. Periksa permission direktori public/uploads.'];
         }
 
         $filename = bin2hex(random_bytes(16)) . '.' . $extension;
