@@ -4,7 +4,7 @@ set -e
 UPLOAD_ROOT="/var/www/html/public/uploads"
 LOG_ROOT="/var/www/html/storage/logs"
 
-for dir in profil kucing vaksin bukti_transfer; do
+for dir in profil kucing vaksin bukti_transfer monitoring; do
     mkdir -p "${UPLOAD_ROOT}/${dir}"
 done
 

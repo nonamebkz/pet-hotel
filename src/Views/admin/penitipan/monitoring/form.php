@@ -13,6 +13,14 @@ $errors = $errors ?? [];
     <h1 class="text-2xl font-bold mt-2 mb-2">Monitoring Harian</h1>
     <p class="text-sm text-gray-500 mb-6"><?= e((string) $booking['kucing_nama']) ?> · <?= e((string) $booking['pelanggan_nama']) ?></p>
 
+    <?php if ($errors !== []): ?>
+        <div class="mb-4 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-800 space-y-1">
+            <?php foreach ($errors as $field => $message): ?>
+                <p><?= e((string) $message) ?></p>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+
     <form method="POST" action="/admin/penitipan/monitoring/tambah" enctype="multipart/form-data" class="bg-white rounded-xl border p-6 max-w-xl space-y-4 mb-8">
         <?= Csrf::field() ?>
         <input type="hidden" name="booking_id" value="<?= e((string) $booking['id']) ?>">
@@ -34,7 +42,12 @@ $errors = $errors ?? [];
         <div class="space-y-3">
             <?php foreach ($monitoringList as $m): ?>
                 <div class="bg-white border rounded-lg p-3 text-sm">
-                    <div class="font-medium"><?= e(date('d/m/Y', strtotime((string) $m['tanggal']))) ?></div>
+                    <div class="flex items-center justify-between gap-2">
+                        <div class="font-medium"><?= e(date('d/m/Y', strtotime((string) $m['tanggal']))) ?></div>
+                        <?php if (!empty($m['staff_nama'])): ?>
+                            <span class="text-xs text-gray-500"><?= e((string) $m['staff_nama']) ?></span>
+                        <?php endif; ?>
+                    </div>
                     <?php if (!empty($m['foto_url'])): ?>
                         <img src="<?= e((string) $m['foto_url']) ?>" class="mt-2 max-h-32 rounded" alt="">
                     <?php endif; ?>

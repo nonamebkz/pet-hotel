@@ -12,6 +12,7 @@ final class FileUploadService
         'kucing' => ['image/jpeg', 'image/png', 'image/webp'],
         'vaksin' => ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'],
         'bukti_transfer' => ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'],
+        'monitoring' => ['image/jpeg', 'image/png', 'image/webp'],
     ];
 
     /**

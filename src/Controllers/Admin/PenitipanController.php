@@ -461,7 +461,9 @@ final class PenitipanController
         $result = $this->monitoringService->create($bookingId, $staffId, $request->all(), $request->file('foto'));
 
         if (!$result['success']) {
-            Session::flash('errors', $result['errors'] ?? ['general' => $result['error'] ?? 'Gagal menyimpan.']);
+            $errors = $result['errors'] ?? ['general' => $result['error'] ?? 'Gagal menyimpan.'];
+            Session::flash('errors', $errors);
+            Session::flash('error', $errors['general'] ?? ($errors['foto'] ?? reset($errors) ?: 'Gagal menyimpan monitoring.'));
 
             return Response::redirect('/admin/penitipan/monitoring/tambah?booking_id=' . urlencode($bookingId));
         }

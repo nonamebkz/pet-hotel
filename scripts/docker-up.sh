@@ -45,7 +45,7 @@ if [[ ! -f .env ]]; then
 fi
 
 echo ">> Menyiapkan direktori upload & logs..."
-mkdir -p public/uploads/profil public/uploads/kucing public/uploads/vaksin public/uploads/bukti_transfer storage/logs
+mkdir -p public/uploads/profil public/uploads/kucing public/uploads/vaksin public/uploads/bukti_transfer public/uploads/monitoring storage/logs
 chmod -R 775 public/uploads storage/logs 2>/dev/null || true
 
 if [[ "$FRESH" -eq 1 ]]; then
