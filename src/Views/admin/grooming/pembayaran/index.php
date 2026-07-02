@@ -9,26 +9,39 @@ $pendingList = $pendingList ?? [];
 <div>
     <h1 class="text-2xl font-bold text-gray-800 mb-6">Verifikasi Bukti Transfer</h1>
 
-    <div class="flex gap-4 mb-6 text-sm">
-        <a href="/admin/grooming/layanan" class="text-gray-500 hover:text-slate-800">Jenis</a>
-        <a href="/admin/grooming/kuota" class="text-gray-500 hover:text-slate-800">Kuota</a>
-        <a href="/admin/grooming/booking" class="text-gray-500 hover:text-slate-800">Booking</a>
-        <a href="/admin/grooming/pembayaran" class="text-slate-800 font-medium border-b-2 border-slate-800 pb-1">Verifikasi Bukti</a>
-    </div>
+    <?php
+    $activeTab = 'pembayaran';
+    require __DIR__ . '/../_subnav.php';
+    ?>
 
     <?php if ($pendingList === []): ?>
-        <div class="bg-white rounded-xl border p-8 text-center text-gray-600">
-            Tidak ada bukti transfer menunggu verifikasi.
-        </div>
+        <?php
+        $variant = 'success';
+        $title = 'Semua bukti transfer sudah diproses';
+        $description = 'Tidak ada bukti transfer grooming yang menunggu verifikasi saat ini.';
+        $ctaLabel = 'Lihat riwayat transaksi';
+        $ctaHref = '/admin/transaksi';
+        require __DIR__ . '/../../../partials/ui/empty-state.php';
+        ?>
     <?php else: ?>
+        <div class="mb-4 flex items-center gap-2">
+            <span class="text-xs font-semibold uppercase tracking-wide text-amber-800">Prioritas</span>
+            <span class="text-xs bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full">
+                <?= count($pendingList) ?> menunggu verifikasi
+            </span>
+        </div>
+
         <div class="space-y-6">
             <?php foreach ($pendingList as $item): ?>
-                <div class="bg-white rounded-xl border p-6">
+                <div class="bg-white rounded-xl border-2 border-amber-200 p-6">
                     <div class="grid lg:grid-cols-2 gap-6">
                         <div>
-                            <h2 class="font-semibold text-gray-800 mb-2">
-                                <?= e((string) $item['pelanggan_nama']) ?> — <?= e((string) $item['jenis_nama']) ?>
-                            </h2>
+                            <div class="flex items-start justify-between gap-3 mb-3">
+                                <h2 class="font-semibold text-gray-800">
+                                    <?= e((string) $item['pelanggan_nama']) ?> — <?= e((string) $item['jenis_nama']) ?>
+                                </h2>
+                                <span class="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full shrink-0">Urgent</span>
+                            </div>
                             <div class="text-sm text-gray-600 space-y-1 mb-4">
                                 <div>Tanggal grooming: <?= e(date('d/m/Y', strtotime((string) $item['booking_tanggal']))) ?></div>
                                 <?php if (!empty($item['jam_grooming'])): ?>
@@ -53,14 +66,17 @@ $pendingList = $pendingList ?? [];
                             </div>
 
                             <div class="flex flex-wrap gap-2">
-                                <form method="POST" action="/admin/grooming/pembayaran/setujui">
+                                <form method="POST" action="/admin/grooming/pembayaran/setujui"
+                                      data-confirm="Setujui bukti transfer ini? Booking akan ditandai lunas.">
                                     <?= Csrf::field() ?>
                                     <input type="hidden" name="bukti_id" value="<?= e((string) $item['bukti_id']) ?>">
                                     <button type="submit" class="text-sm bg-green-600 text-white rounded-lg px-4 py-2 hover:bg-green-700">
                                         Setujui Bukti
                                     </button>
                                 </form>
-                                <form method="POST" action="/admin/grooming/pembayaran/tolak" class="flex items-center gap-2">
+                                <form method="POST" action="/admin/grooming/pembayaran/tolak"
+                                      class="flex items-center gap-2"
+                                      data-confirm="Tolak bukti transfer ini? Pelanggan perlu mengunggah ulang.">
                                     <?= Csrf::field() ?>
                                     <input type="hidden" name="bukti_id" value="<?= e((string) $item['bukti_id']) ?>">
                                     <input type="text" name="catatan" placeholder="Catatan penolakan"
@@ -84,10 +100,10 @@ $pendingList = $pendingList ?? [];
                                     Buka PDF Bukti Transfer
                                 </a>
                             <?php else: ?>
-                                <a href="<?= e($fileUrl) ?>" target="_blank">
-                                    <img src="<?= e($fileUrl) ?>" alt="Bukti transfer"
-                                         class="max-w-full rounded-lg border">
-                                </a>
+                                <img src="<?= e($fileUrl) ?>" alt="Bukti transfer"
+                                     data-lightbox
+                                     class="max-w-full rounded-lg border cursor-pointer hover:opacity-90 transition">
+                                <p class="text-xs text-gray-400 mt-1">Klik gambar untuk memperbesar</p>
                             <?php endif; ?>
                         </div>
                     </div>

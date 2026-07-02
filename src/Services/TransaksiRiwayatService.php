@@ -40,6 +40,8 @@ final class TransaksiRiwayatService
             'rows' => $rows,
             'statusLabels' => StatusPembayaran::labels(),
             'refundLabels' => StatusRefund::labels(),
+            'hasActiveFilter' => $filterStatus !== null && $filterStatus !== '',
+            'activeFilters' => $this->buildPelangganFilterChips($filterStatus ?? '', StatusPembayaran::labels()),
         ];
     }
 
@@ -100,6 +102,14 @@ final class TransaksiRiwayatService
             'rows' => $rows,
             'statusLabels' => StatusPembayaran::labels(),
             'refundLabels' => StatusRefund::labels(),
+            'activeFilters' => $this->buildAdminFilterChips(
+                $periode['mulai'],
+                $periode['akhir'],
+                $filterStatus ?? '',
+                $filterJenis ?? '',
+                $filterQ,
+                StatusPembayaran::labels(),
+            ),
         ];
     }
 
@@ -259,5 +269,48 @@ final class TransaksiRiwayatService
         $parsed = \DateTimeImmutable::createFromFormat('Y-m-d', $date);
 
         return $parsed !== false && $parsed->format('Y-m-d') === $date;
+    }
+
+    /** @param array<string, string> $statusLabels @return list<array{label: string, removeHref?: string}> */
+    private function buildPelangganFilterChips(string $filterStatus, array $statusLabels): array
+    {
+        if ($filterStatus === '') {
+            return [];
+        }
+
+        return [[
+            'label' => 'Status: ' . ($statusLabels[$filterStatus] ?? $filterStatus),
+            'removeHref' => '/transaksi',
+        ]];
+    }
+
+    /** @param array<string, string> $statusLabels @return list<array{label: string, removeHref?: string}> */
+    private function buildAdminFilterChips(
+        string $mulai,
+        string $akhir,
+        string $filterStatus,
+        string $filterJenis,
+        string $filterQ,
+        array $statusLabels,
+    ): array {
+        $chips = [[
+            'label' => date('d/m', strtotime($mulai)) . '–' . date('d/m', strtotime($akhir)),
+        ]];
+
+        if ($filterStatus !== '') {
+            $chips[] = [
+                'label' => 'Status: ' . ($statusLabels[$filterStatus] ?? $filterStatus),
+            ];
+        }
+
+        if ($filterJenis !== '') {
+            $chips[] = ['label' => 'Layanan: ' . ($filterJenis === JenisLayanan::GROOMING->value ? 'Grooming' : 'Penitipan')];
+        }
+
+        if ($filterQ !== '') {
+            $chips[] = ['label' => 'Pelanggan: ' . $filterQ];
+        }
+
+        return $chips;
     }
 }

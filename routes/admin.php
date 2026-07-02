@@ -72,6 +72,7 @@ $router->post('/admin/grooming/kuota/tambah', [AdminGroomingController::class, '
 $router->get('/admin/grooming/kuota/edit', [AdminGroomingController::class, 'kuotaEdit'], ['auth:staff']);
 $router->post('/admin/grooming/kuota/edit', [AdminGroomingController::class, 'kuotaUpdate'], ['auth:staff']);
 $router->post('/admin/grooming/kuota/hapus', [AdminGroomingController::class, 'kuotaDestroy'], ['auth:staff']);
+$router->post('/admin/grooming/kuota/hapus-massal', [AdminGroomingController::class, 'kuotaBulkDestroy'], ['auth:staff']);
 $router->get('/admin/grooming/booking', [AdminGroomingController::class, 'bookingIndex'], ['auth:staff']);
 $router->post('/admin/grooming/booking/konfirmasi', [AdminGroomingController::class, 'bookingConfirm'], ['auth:staff']);
 $router->post('/admin/grooming/booking/tolak', [AdminGroomingController::class, 'bookingReject'], ['auth:staff']);

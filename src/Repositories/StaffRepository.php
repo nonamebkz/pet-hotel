@@ -66,6 +66,7 @@ final class StaffRepository
         ?string $username,
         string $passwordHash,
         string $status,
+        string $role = '',
     ): void {
         $stmt = Database::connection()->prepare(
             'INSERT INTO staff (id, nama, email, username, password_hash, role, status)
@@ -77,7 +78,7 @@ final class StaffRepository
             'email' => $email,
             'username' => $username,
             'password_hash' => $passwordHash,
-            'role' => StaffRole::STAFF->value,
+            'role' => $role !== '' ? $role : StaffRole::STAFF->value,
             'status' => $status,
         ]);
     }

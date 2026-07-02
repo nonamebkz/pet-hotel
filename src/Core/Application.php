@@ -16,6 +16,7 @@ final class Application
     public function __construct()
     {
         require_once __DIR__ . '/helpers.php';
+        require_once BASE_PATH . '/src/Views/helpers/ui.php';
 
         $this->router = new Router();
         $this->registerMiddleware();

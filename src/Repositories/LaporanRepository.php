@@ -45,6 +45,56 @@ final class LaporanRepository
     }
 
     /**
+     * @return list<array{label: string, grooming: int, revenue: float}>
+     */
+    public function dailyTrend(string $mulai, string $akhir): array
+    {
+        $pdo = Database::connection();
+        $stmt = $pdo->prepare(
+            'SELECT DATE(b.tanggal) AS hari, COUNT(*) AS grooming
+             FROM booking_grooming b
+             WHERE b.tanggal BETWEEN :mulai AND :akhir
+             GROUP BY DATE(b.tanggal)
+             ORDER BY hari ASC'
+        );
+        $stmt->execute(['mulai' => $mulai, 'akhir' => $akhir]);
+        $bookingRows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $stmtRev = $pdo->prepare(
+            'SELECT DATE(dibayar_at) AS hari, COALESCE(SUM(total_bayar), 0) AS revenue
+             FROM transaksi
+             WHERE status_pembayaran = :lunas
+               AND dibayar_at IS NOT NULL
+               AND DATE(dibayar_at) BETWEEN :mulai AND :akhir
+             GROUP BY DATE(dibayar_at)
+             ORDER BY hari ASC'
+        );
+        $stmtRev->execute([
+            'lunas' => StatusPembayaran::LUNAS->value,
+            'mulai' => $mulai,
+            'akhir' => $akhir,
+        ]);
+        $revMap = [];
+
+        foreach ($stmtRev->fetchAll(PDO::FETCH_ASSOC) as $row) {
+            $revMap[(string) $row['hari']] = (float) $row['revenue'];
+        }
+
+        $trend = [];
+
+        foreach ($bookingRows as $row) {
+            $hari = (string) $row['hari'];
+            $trend[] = [
+                'label' => date('d/m', strtotime($hari)),
+                'grooming' => (int) $row['grooming'],
+                'revenue' => $revMap[$hari] ?? 0.0,
+            ];
+        }
+
+        return $trend;
+    }
+
+    /**
      * @return array{
      *     jumlah_booking: int,
      *     total_pendapatan: float,

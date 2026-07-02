@@ -18,119 +18,167 @@ $isEdit = $kucing !== null && !empty($kucing['id']);
         <h1 class="text-2xl font-bold text-gray-800 mt-2"><?= $isEdit ? 'Edit Kucing' : 'Tambah Kucing' ?></h1>
     </div>
 
-    <form method="POST" action="<?= e($action) ?>" enctype="multipart/form-data"
-          class="bg-white rounded-xl border p-6 space-y-4">
+    <form method="POST" action="<?= e($action) ?>" enctype="multipart/form-data" data-stepper>
         <?= Csrf::field() ?>
         <?php if ($isEdit): ?>
             <input type="hidden" name="id" value="<?= e((string) $kucing['id']) ?>">
         <?php endif; ?>
 
         <?php if (!empty($errors['general'])): ?>
-            <p class="text-red-600 text-sm"><?= e($errors['general']) ?></p>
+            <p class="text-red-600 text-sm mb-4"><?= e($errors['general']) ?></p>
         <?php endif; ?>
 
-        <div class="flex items-center gap-4">
-            <?php if (!empty($kucing['foto_url'])): ?>
-                <img src="<?= e((string) $kucing['foto_url']) ?>" alt="Foto kucing"
-                     class="w-16 h-16 rounded-lg object-cover border">
-            <?php endif; ?>
-            <div class="flex-1">
-                <label for="foto" class="block text-sm font-medium text-gray-700 mb-1">Foto Kucing (opsional)</label>
-                <input type="file" id="foto" name="foto" accept="image/jpeg,image/png,image/webp"
-                       class="w-full text-sm text-gray-600">
-                <?php if (!empty($errors['foto'])): ?>
-                    <p class="text-red-600 text-xs mt-1"><?= e($errors['foto']) ?></p>
+        <div class="flex items-center gap-2 mb-6 text-sm">
+            <span data-step-indicator class="text-orange-600 font-semibold">1. Identitas</span>
+            <span class="text-gray-300">→</span>
+            <span data-step-indicator class="text-gray-400">2. Kesehatan</span>
+            <span class="text-gray-300">→</span>
+            <span data-step-indicator class="text-gray-400">3. Vaksin</span>
+        </div>
+
+        <div class="bg-white rounded-xl border p-6 space-y-4" data-step-panel>
+            <h2 class="text-base font-semibold text-gray-800">Identitas Kucing</h2>
+
+            <div class="flex items-center gap-4">
+                <?php if (!empty($kucing['foto_url'])): ?>
+                    <img src="<?= e((string) $kucing['foto_url']) ?>" alt="Foto kucing"
+                         class="w-16 h-16 rounded-lg object-cover border">
                 <?php endif; ?>
-            </div>
-        </div>
-
-        <div class="grid sm:grid-cols-2 gap-4">
-            <div>
-                <label for="nama" class="block text-sm font-medium text-gray-700 mb-1">Nama Kucing</label>
-                <input type="text" id="nama" name="nama" required
-                       value="<?= e((string) old('nama', $kucing['nama'] ?? '')) ?>"
-                       class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500">
-                <?php if (!empty($errors['nama'])): ?>
-                    <p class="text-red-600 text-xs mt-1"><?= e($errors['nama']) ?></p>
-                <?php endif; ?>
-            </div>
-            <div>
-                <label for="jenis_kelamin" class="block text-sm font-medium text-gray-700 mb-1">Jenis Kelamin</label>
-                <select id="jenis_kelamin" name="jenis_kelamin" required
-                        class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500">
-                    <option value="">— Pilih —</option>
-                    <?php foreach ($jenisKelaminLabels as $value => $label): ?>
-                        <option value="<?= e($value) ?>"
-                            <?= (string) old('jenis_kelamin', $kucing['jenis_kelamin'] ?? '') === $value ? 'selected' : '' ?>>
-                            <?= e($label) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-                <?php if (!empty($errors['jenis_kelamin'])): ?>
-                    <p class="text-red-600 text-xs mt-1"><?= e($errors['jenis_kelamin']) ?></p>
-                <?php endif; ?>
-            </div>
-        </div>
-
-        <div class="grid sm:grid-cols-2 gap-4">
-            <div>
-                <label for="ras" class="block text-sm font-medium text-gray-700 mb-1">Ras</label>
-                <input type="text" id="ras" name="ras"
-                       value="<?= e((string) old('ras', $kucing['ras'] ?? '')) ?>"
-                       class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500">
-            </div>
-            <div>
-                <label for="tanggal_lahir" class="block text-sm font-medium text-gray-700 mb-1">Tanggal Lahir</label>
-                <input type="date" id="tanggal_lahir" name="tanggal_lahir"
-                       value="<?= e((string) old('tanggal_lahir', $kucing['tanggal_lahir'] ?? '')) ?>"
-                       class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500">
-                <?php if (!empty($errors['tanggal_lahir'])): ?>
-                    <p class="text-red-600 text-xs mt-1"><?= e($errors['tanggal_lahir']) ?></p>
-                <?php endif; ?>
-            </div>
-        </div>
-
-        <div>
-            <label for="berat_badan" class="block text-sm font-medium text-gray-700 mb-1">Berat Badan (kg)</label>
-            <input type="number" id="berat_badan" name="berat_badan" step="0.01" min="0"
-                   value="<?= e((string) old('berat_badan', $kucing['berat_badan'] ?? '')) ?>"
-                   class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500">
-            <?php if (!empty($errors['berat_badan'])): ?>
-                <p class="text-red-600 text-xs mt-1"><?= e($errors['berat_badan']) ?></p>
-            <?php endif; ?>
-        </div>
-
-        <div>
-            <label for="catatan_kesehatan" class="block text-sm font-medium text-gray-700 mb-1">Catatan Kesehatan / Alergi</label>
-            <textarea id="catatan_kesehatan" name="catatan_kesehatan" rows="2"
-                      class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"><?= e((string) old('catatan_kesehatan', $kucing['catatan_kesehatan'] ?? '')) ?></textarea>
-        </div>
-
-        <div class="border-t pt-4">
-            <div class="flex items-center justify-between mb-3">
-                <div>
-                    <h2 class="text-sm font-semibold text-gray-800">Riwayat Vaksin (opsional)</h2>
-                    <p class="text-xs text-gray-500">Syarat vaksin hanya divalidasi saat booking pet hotel.</p>
+                <div class="flex-1">
+                    <label for="foto" class="block text-sm font-medium text-gray-700 mb-1">Foto Kucing (opsional)</label>
+                    <input type="file" id="foto" name="foto" accept="image/jpeg,image/png,image/webp"
+                           class="w-full text-sm text-gray-600">
+                    <?php if (!empty($errors['foto'])): ?>
+                        <p class="text-red-600 text-xs mt-1"><?= e($errors['foto']) ?></p>
+                    <?php endif; ?>
                 </div>
-                <button type="button" id="add-vaksin-row"
-                        class="text-sm text-orange-600 hover:text-orange-700 font-medium">
-                    + Tambah baris
+            </div>
+
+            <div class="grid sm:grid-cols-2 gap-4">
+                <div>
+                    <label for="nama" class="block text-sm font-medium text-gray-700 mb-1">Nama Kucing</label>
+                    <input type="text" id="nama" name="nama" required
+                           value="<?= e((string) old('nama', $kucing['nama'] ?? '')) ?>"
+                           class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500">
+                    <?php if (!empty($errors['nama'])): ?>
+                        <p class="text-red-600 text-xs mt-1"><?= e($errors['nama']) ?></p>
+                    <?php endif; ?>
+                </div>
+                <div>
+                    <label for="jenis_kelamin" class="block text-sm font-medium text-gray-700 mb-1">Jenis Kelamin</label>
+                    <select id="jenis_kelamin" name="jenis_kelamin" required
+                            class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500">
+                        <option value="">— Pilih —</option>
+                        <?php foreach ($jenisKelaminLabels as $value => $label): ?>
+                            <option value="<?= e($value) ?>"
+                                <?= (string) old('jenis_kelamin', $kucing['jenis_kelamin'] ?? '') === $value ? 'selected' : '' ?>>
+                                <?= e($label) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                    <?php if (!empty($errors['jenis_kelamin'])): ?>
+                        <p class="text-red-600 text-xs mt-1"><?= e($errors['jenis_kelamin']) ?></p>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <div class="grid sm:grid-cols-2 gap-4">
+                <div>
+                    <label for="ras" class="block text-sm font-medium text-gray-700 mb-1">Ras</label>
+                    <input type="text" id="ras" name="ras"
+                           value="<?= e((string) old('ras', $kucing['ras'] ?? '')) ?>"
+                           class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500">
+                </div>
+                <div>
+                    <label for="tanggal_lahir" class="block text-sm font-medium text-gray-700 mb-1">Tanggal Lahir</label>
+                    <input type="date" id="tanggal_lahir" name="tanggal_lahir"
+                           value="<?= e((string) old('tanggal_lahir', $kucing['tanggal_lahir'] ?? '')) ?>"
+                           class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500">
+                    <?php if (!empty($errors['tanggal_lahir'])): ?>
+                        <p class="text-red-600 text-xs mt-1"><?= e($errors['tanggal_lahir']) ?></p>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <div class="flex justify-end pt-2">
+                <button type="button" data-step-next
+                        class="bg-orange-600 text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-orange-700">
+                    Lanjut →
                 </button>
             </div>
-            <div id="vaksin-rows" class="space-y-2">
-                <?php if ($vaksinList === []): ?>
-                    <?php $index = 0; require __DIR__ . '/../partials/vaksin-row.php'; ?>
-                <?php else: ?>
-                    <?php foreach ($vaksinList as $index => $row): ?>
-                        <?php require __DIR__ . '/../partials/vaksin-row.php'; ?>
-                    <?php endforeach; ?>
+        </div>
+
+        <div class="bg-white rounded-xl border p-6 space-y-4 hidden" data-step-panel>
+            <h2 class="text-base font-semibold text-gray-800">Data Kesehatan</h2>
+
+            <div>
+                <label for="berat_badan" class="block text-sm font-medium text-gray-700 mb-1">Berat Badan (kg)</label>
+                <input type="number" id="berat_badan" name="berat_badan" step="0.01" min="0"
+                       value="<?= e((string) old('berat_badan', $kucing['berat_badan'] ?? '')) ?>"
+                       class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500">
+                <?php if (!empty($errors['berat_badan'])): ?>
+                    <p class="text-red-600 text-xs mt-1"><?= e($errors['berat_badan']) ?></p>
                 <?php endif; ?>
+            </div>
+
+            <div>
+                <label for="catatan_kesehatan" class="block text-sm font-medium text-gray-700 mb-1">Catatan Kesehatan / Alergi</label>
+                <textarea id="catatan_kesehatan" name="catatan_kesehatan" rows="3"
+                          class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                          placeholder="Alergi makanan, kondisi khusus, dll."><?= e((string) old('catatan_kesehatan', $kucing['catatan_kesehatan'] ?? '')) ?></textarea>
+            </div>
+
+            <div class="flex justify-between pt-2">
+                <button type="button" data-step-prev
+                        class="border border-gray-300 text-gray-700 rounded-lg px-4 py-2 text-sm hover:bg-gray-50">
+                    ← Kembali
+                </button>
+                <button type="button" data-step-next
+                        class="bg-orange-600 text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-orange-700">
+                    Lanjut →
+                </button>
             </div>
         </div>
 
-        <button type="submit" class="bg-orange-600 text-white rounded-lg px-6 py-2 font-medium hover:bg-orange-700">
-            <?= e($submitLabel) ?>
-        </button>
+        <div class="bg-white rounded-xl border p-6 space-y-4 hidden" data-step-panel>
+            <button type="button"
+                    data-collapsible-trigger="vaksin-section"
+                    class="flex w-full items-center justify-between text-left">
+                <div>
+                    <h2 class="text-base font-semibold text-gray-800">Riwayat Vaksin (opsional)</h2>
+                    <p class="text-xs text-gray-500 mt-0.5">Syarat vaksin hanya divalidasi saat booking pet hotel.</p>
+                </div>
+                <span class="text-sm text-orange-600 shrink-0 ml-4">Tampilkan/Sembunyikan</span>
+            </button>
+
+            <div id="vaksin-section">
+                <div class="flex items-center justify-end mb-3">
+                    <button type="button" id="add-vaksin-row"
+                            class="text-sm text-orange-600 hover:text-orange-700 font-medium">
+                        + Tambah baris
+                    </button>
+                </div>
+                <div id="vaksin-rows" class="space-y-2">
+                    <?php if ($vaksinList === []): ?>
+                        <?php $index = 0; require __DIR__ . '/../partials/vaksin-row.php'; ?>
+                    <?php else: ?>
+                        <?php foreach ($vaksinList as $index => $row): ?>
+                            <?php require __DIR__ . '/../partials/vaksin-row.php'; ?>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <div class="flex justify-between pt-2 border-t">
+                <button type="button" data-step-prev
+                        class="border border-gray-300 text-gray-700 rounded-lg px-4 py-2 text-sm hover:bg-gray-50">
+                    ← Kembali
+                </button>
+                <button type="submit" class="bg-orange-600 text-white rounded-lg px-6 py-2 font-medium hover:bg-orange-700">
+                    <?= e($submitLabel) ?>
+                </button>
+            </div>
+        </div>
     </form>
 </div>
 

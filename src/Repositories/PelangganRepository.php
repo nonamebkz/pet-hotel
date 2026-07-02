@@ -37,7 +37,15 @@ final class PelangganRepository
     public function findAllForAdmin(?string $search = null): array
     {
         $sql = 'SELECT p.id, p.nama, p.email, p.no_telepon, p.created_at,
-                       COUNT(k.id) AS jumlah_kucing
+                       COUNT(k.id) AS jumlah_kucing,
+                       COALESCE(
+                           GREATEST(
+                               COALESCE((SELECT MAX(b.created_at) FROM booking_grooming b WHERE b.pelanggan_id = p.id), p.created_at),
+                               COALESCE((SELECT MAX(b.created_at) FROM booking_penitipan b WHERE b.pelanggan_id = p.id), p.created_at),
+                               COALESCE((SELECT MAX(b.created_at) FROM booking_pet_care b WHERE b.pelanggan_id = p.id), p.created_at)
+                           ),
+                           p.created_at
+                       ) AS last_activity_at
                 FROM pelanggan p
                 LEFT JOIN kucing k ON k.pelanggan_id = p.id';
         $params = [];

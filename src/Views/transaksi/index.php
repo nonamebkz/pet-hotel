@@ -9,39 +9,65 @@ $rows = $rows ?? [];
 $filterStatus = $filterStatus ?? '';
 $statusLabels = $statusLabels ?? StatusPembayaran::labels();
 $refundLabels = $refundLabels ?? StatusRefund::labels();
+$hasActiveFilter = $hasActiveFilter ?? ($filterStatus !== '');
+$activeFilters = $activeFilters ?? [];
 ?>
 <div>
     <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
         <h1 class="text-2xl font-bold text-gray-800">Riwayat Transaksi</h1>
     </div>
 
-    <form method="GET" action="/transaksi" class="mb-6 flex flex-wrap items-end gap-3">
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-            <select name="status"
-                    class="border border-gray-300 rounded-lg px-3 py-2 text-sm min-w-[200px]">
-                <option value="">Semua Status</option>
-                <?php foreach ($statusLabels as $value => $label): ?>
-                    <option value="<?= e($value) ?>" <?= $filterStatus === $value ? 'selected' : '' ?>>
-                        <?= e($label) ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </div>
-        <button type="submit"
-                class="bg-gray-100 border border-gray-300 rounded-lg px-4 py-2 text-sm hover:bg-gray-200">
-            Terapkan Filter
-        </button>
-        <?php if ($filterStatus !== ''): ?>
-            <a href="/transaksi" class="text-sm text-gray-500 hover:underline py-2">Reset</a>
-        <?php endif; ?>
-    </form>
+    <div class="bg-page rounded-xl border p-4 mb-6">
+        <form method="GET" action="/transaksi" class="flex flex-wrap items-end gap-3">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                <select name="status"
+                        class="border border-gray-300 rounded-lg px-3 py-2 text-sm min-w-[200px] bg-white">
+                    <option value="">Semua Status</option>
+                    <?php foreach ($statusLabels as $value => $label): ?>
+                        <option value="<?= e($value) ?>" <?= $filterStatus === $value ? 'selected' : '' ?>>
+                            <?= e($label) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <button type="submit"
+                    class="bg-orange-600 text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-orange-700">
+                Terapkan Filter
+            </button>
+        </form>
+    </div>
+
+    <?php if ($hasActiveFilter): ?>
+        <?php
+        ui_filter_chips(
+            $activeFilters,
+            '/transaksi',
+            count($rows),
+            'transaksi',
+        );
+        ?>
+    <?php endif; ?>
 
     <?php if ($rows === []): ?>
-        <div class="bg-white rounded-xl border p-8 text-center">
-            <p class="text-gray-600 mb-2">Belum ada transaksi<?= $filterStatus !== '' ? ' dengan status ini' : '' ?>.</p>
-            <p class="text-sm text-gray-500">Transaksi grooming, penitipan, dan perpanjangan penitipan akan muncul di sini.</p>
-        </div>
+        <?php
+        if ($hasActiveFilter) {
+            $variant = 'filtered';
+            $title = 'Tidak ditemukan transaksi untuk filter yang dipilih';
+            $description = 'Coba status lain atau reset filter untuk melihat semua transaksi.';
+            $ctaLabel = 'Reset Filter';
+            $ctaHref = '/transaksi';
+            $ctaClass = 'bg-orange-600 text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-orange-700 inline-block';
+        } else {
+            $variant = 'empty';
+            $title = 'Belum ada transaksi';
+            $description = 'Transaksi grooming, penitipan, dan perpanjangan penitipan akan muncul di sini.';
+            $ctaLabel = 'Ajukan Grooming';
+            $ctaHref = '/grooming/booking';
+            $ctaClass = 'bg-orange-600 text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-orange-700 inline-block';
+        }
+        require __DIR__ . '/../partials/ui/empty-state.php';
+        ?>
     <?php else: ?>
         <div class="space-y-4">
             <?php foreach ($rows as $row): ?>

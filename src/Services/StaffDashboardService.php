@@ -31,19 +31,29 @@ final class StaffDashboardService
     {
         $today = date('Y-m-d');
         $tomorrow = date('Y-m-d', strtotime($today . ' +1 day'));
+        $yesterday = date('Y-m-d', strtotime($today . ' -1 day'));
         $mingguMulai = date('Y-m-d', strtotime('monday this week'));
 
         $harianMulai = $today . ' 00:00:00';
+        $kemarinMulai = $yesterday . ' 00:00:00';
+        $kemarinAkhir = $today . ' 00:00:00';
         $mingguMulaiDt = $mingguMulai . ' 00:00:00';
         $akhirEksklusif = $tomorrow . ' 00:00:00';
 
+        $bookingsToday = $this->dashboardRepo->countBookingsToday($today);
+        $bookingsYesterday = $this->dashboardRepo->countBookingsToday($yesterday);
+        $pendapatanHarian = $this->dashboardRepo->sumVerifiedRevenue($harianMulai, $akhirEksklusif);
+        $pendapatanKemarin = $this->dashboardRepo->sumVerifiedRevenue($kemarinMulai, $kemarinAkhir);
+
         return [
             'today' => $today,
-            'bookingsToday' => $this->dashboardRepo->countBookingsToday($today),
+            'bookingsToday' => $bookingsToday,
+            'bookingsYesterday' => $bookingsYesterday,
             'pendingVerification' => $this->transaksiRepo->countPendingVerification(),
             'penitipanAktif' => $this->dashboardRepo->countPenitipanAktif(),
             'pendapatan' => [
-                'harian' => $this->dashboardRepo->sumVerifiedRevenue($harianMulai, $akhirEksklusif),
+                'harian' => $pendapatanHarian,
+                'kemarin' => $pendapatanKemarin,
                 'mingguan' => $this->dashboardRepo->sumVerifiedRevenue($mingguMulaiDt, $akhirEksklusif),
                 'mingguMulai' => $mingguMulai,
                 'mingguAkhir' => $today,

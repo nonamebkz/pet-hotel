@@ -22,9 +22,31 @@ final class AdminPelangganService
      */
     public function list(?string $search): array
     {
-        return [
-            'pelangganList' => $this->pelangganRepo->findAllForAdmin($search),
-        ];
+        $pelangganList = $this->pelangganRepo->findAllForAdmin($search);
+
+        foreach ($pelangganList as &$pelanggan) {
+            $pelanggan['segment'] = $this->resolveSegment($pelanggan);
+        }
+        unset($pelanggan);
+
+        return ['pelangganList' => $pelangganList];
+    }
+
+    /** @param array<string, mixed> $pelanggan */
+    private function resolveSegment(array $pelanggan): string
+    {
+        $createdAt = strtotime((string) ($pelanggan['created_at'] ?? ''));
+        $lastActivity = strtotime((string) ($pelanggan['last_activity_at'] ?? $pelanggan['created_at'] ?? ''));
+
+        if ($createdAt !== false && $createdAt >= strtotime('-30 days')) {
+            return 'baru';
+        }
+
+        if ($lastActivity !== false && $lastActivity < strtotime('-90 days')) {
+            return 'dormant';
+        }
+
+        return 'aktif';
     }
 
     /**

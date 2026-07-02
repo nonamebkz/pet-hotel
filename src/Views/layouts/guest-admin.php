@@ -10,7 +10,7 @@ use App\Core\Csrf;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= e($title ?? 'Petshop') ?> — Admin</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <?php require __DIR__ . '/../partials/head/tailwind-config.php'; ?>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center p-4">
     <div class="w-full max-w-md">
@@ -23,5 +23,7 @@ use App\Core\Csrf;
             <?= $content ?? '' ?>
         </div>
     </div>
+    <?php require __DIR__ . '/../partials/ui/confirm-modal.php'; ?>
+    <script src="/js/ui.js" defer></script>
 </body>
 </html>

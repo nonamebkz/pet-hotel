@@ -14,6 +14,9 @@ $filterJenis = $filterJenis ?? '';
 $filterQ = $filterQ ?? '';
 $statusLabels = $statusLabels ?? StatusPembayaran::labels();
 $refundLabels = $refundLabels ?? StatusRefund::labels();
+$activeFilters = $activeFilters ?? [];
+$hasActiveFilter = ($filterStatus !== '' || $filterJenis !== '' || $filterQ !== ''
+    || $mulai !== date('Y-m-01') || $akhir !== date('Y-m-t'));
 ?>
 <div>
     <h1 class="text-2xl font-bold text-gray-800 mb-2">Riwayat Transaksi</h1>
@@ -22,64 +25,99 @@ $refundLabels = $refundLabels ?? StatusRefund::labels();
         Periode transaksi: <?= e(date('d/m/Y', strtotime($mulai))) ?> — <?= e(date('d/m/Y', strtotime($akhir))) ?>
     </p>
 
-    <div class="flex flex-wrap gap-4 mb-6 text-sm">
-        <a href="/admin/grooming/pembayaran" class="text-gray-500 hover:text-slate-800">Verifikasi Grooming</a>
-        <a href="/admin/penitipan/pembayaran" class="text-gray-500 hover:text-slate-800">Verifikasi Penitipan</a>
-        <span class="text-slate-800 font-medium border-b-2 border-slate-800 pb-1">Riwayat Transaksi</span>
+    <div class="flex flex-wrap gap-4 mb-6 text-sm border-b border-gray-200">
+        <a href="/admin/grooming/pembayaran" class="text-gray-500 hover:text-slate-800 pb-2">Verifikasi Grooming</a>
+        <a href="/admin/penitipan/pembayaran" class="text-gray-500 hover:text-slate-800 pb-2">Verifikasi Penitipan</a>
+        <span class="text-slate-800 font-medium border-b-2 border-slate-800 pb-2 -mb-px">Riwayat Transaksi</span>
     </div>
 
-    <form method="GET" action="/admin/transaksi" class="mb-6 flex flex-wrap items-end gap-3">
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Mulai</label>
-            <input type="date" name="mulai" value="<?= e($mulai) ?>"
-                   class="border border-gray-300 rounded-lg px-3 py-2 text-sm">
+    <form method="GET" action="/admin/transaksi" class="mb-4 bg-page rounded-xl border p-4 space-y-4">
+        <div class="flex flex-wrap items-end gap-3">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Mulai</label>
+                <input type="date" name="mulai" value="<?= e($mulai) ?>"
+                       class="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Akhir</label>
+                <input type="date" name="akhir" value="<?= e($akhir) ?>"
+                       class="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                <select name="status" class="border border-gray-300 rounded-lg px-3 py-2 text-sm min-w-[180px] bg-white">
+                    <option value="">Semua</option>
+                    <?php foreach ($statusLabels as $value => $label): ?>
+                        <option value="<?= e($value) ?>" <?= $filterStatus === $value ? 'selected' : '' ?>>
+                            <?= e($label) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <button type="submit"
+                    class="bg-slate-800 text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-slate-700">
+                Terapkan Filter
+            </button>
         </div>
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Akhir</label>
-            <input type="date" name="akhir" value="<?= e($akhir) ?>"
-                   class="border border-gray-300 rounded-lg px-3 py-2 text-sm">
-        </div>
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-            <select name="status" class="border border-gray-300 rounded-lg px-3 py-2 text-sm min-w-[180px]">
-                <option value="">Semua</option>
-                <?php foreach ($statusLabels as $value => $label): ?>
-                    <option value="<?= e($value) ?>" <?= $filterStatus === $value ? 'selected' : '' ?>>
-                        <?= e($label) ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </div>
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Jenis Layanan</label>
-            <select name="jenis" class="border border-gray-300 rounded-lg px-3 py-2 text-sm min-w-[160px]">
-                <option value="">Semua</option>
-                <option value="<?= e(JenisLayanan::GROOMING->value) ?>"
-                    <?= $filterJenis === JenisLayanan::GROOMING->value ? 'selected' : '' ?>>
-                    Grooming
-                </option>
-                <option value="<?= e(JenisLayanan::PENITIPAN->value) ?>"
-                    <?= $filterJenis === JenisLayanan::PENITIPAN->value ? 'selected' : '' ?>>
-                    Penitipan
-                </option>
-            </select>
-        </div>
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Pelanggan</label>
-            <input type="search" name="q" value="<?= e($filterQ) ?>"
-                   placeholder="Cari nama..."
-                   class="border border-gray-300 rounded-lg px-3 py-2 text-sm min-w-[180px]">
-        </div>
-        <button type="submit"
-                class="bg-gray-100 border border-gray-300 rounded-lg px-4 py-2 text-sm hover:bg-gray-200">
-            Terapkan Filter
-        </button>
+
+        <details class="group">
+            <summary class="text-sm text-slate-700 cursor-pointer hover:underline list-none flex items-center gap-1">
+                <span class="group-open:rotate-90 transition inline-block">▸</span>
+                Filter lanjutan
+            </summary>
+            <div class="flex flex-wrap items-end gap-3 mt-4 pt-4 border-t border-gray-200">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Jenis Layanan</label>
+                    <select name="jenis" class="border border-gray-300 rounded-lg px-3 py-2 text-sm min-w-[160px] bg-white">
+                        <option value="">Semua</option>
+                        <option value="<?= e(JenisLayanan::GROOMING->value) ?>"
+                            <?= $filterJenis === JenisLayanan::GROOMING->value ? 'selected' : '' ?>>
+                            Grooming
+                        </option>
+                        <option value="<?= e(JenisLayanan::PENITIPAN->value) ?>"
+                            <?= $filterJenis === JenisLayanan::PENITIPAN->value ? 'selected' : '' ?>>
+                            Penitipan
+                        </option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Pelanggan</label>
+                    <input type="search" name="q" value="<?= e($filterQ) ?>"
+                           placeholder="Cari nama..."
+                           class="border border-gray-300 rounded-lg px-3 py-2 text-sm min-w-[180px] bg-white">
+                </div>
+            </div>
+        </details>
     </form>
 
+    <?php if ($activeFilters !== []): ?>
+        <?php
+        ui_filter_chips(
+            $activeFilters,
+            '/admin/transaksi',
+            count($rows),
+            'transaksi',
+        );
+        ?>
+    <?php endif; ?>
+
     <?php if ($rows === []): ?>
-        <div class="bg-white rounded-xl border p-8 text-center text-gray-600">
-            Tidak ada transaksi untuk filter yang dipilih.
-        </div>
+        <?php
+        if ($hasActiveFilter) {
+            $variant = 'filtered';
+            $title = 'Tidak ada transaksi untuk filter yang dipilih';
+            $description = 'Coba ubah periode, status, atau kata kunci pencarian.';
+            $ctaLabel = 'Reset Filter';
+            $ctaHref = '/admin/transaksi';
+        } else {
+            $variant = 'empty';
+            $title = 'Belum ada transaksi tercatat';
+            $description = 'Transaksi pembayaran akan muncul setelah pelanggan melakukan booking.';
+            $ctaLabel = null;
+            $ctaHref = null;
+        }
+        require __DIR__ . '/../../partials/ui/empty-state.php';
+        ?>
     <?php else: ?>
         <div class="bg-white rounded-xl border overflow-hidden">
             <div class="overflow-x-auto">

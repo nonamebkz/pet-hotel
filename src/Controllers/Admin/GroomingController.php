@@ -161,7 +161,7 @@ final class GroomingController
             return Response::redirect('/admin/grooming/kuota/tambah');
         }
 
-        $result = $this->kuotaService->create($request->all());
+        $result = $this->kuotaService->createFromInput($request->all());
 
         if (!$result['success']) {
             Session::pullOld($request->all());
@@ -170,7 +170,33 @@ final class GroomingController
             return Response::redirect('/admin/grooming/kuota/tambah');
         }
 
-        Session::flash('success', 'Kuota berhasil ditambahkan.');
+        Session::flash('success', 'Kuota berhasil ditambahkan.' . (isset($result['created']) ? ' (' . (int) $result['created'] . ' tanggal)' : ''));
+
+        return Response::redirect('/admin/grooming/kuota');
+    }
+
+    public function kuotaBulkDestroy(Request $request): Response
+    {
+        if (!Csrf::verifyRequest()) {
+            Session::flash('error', 'Token CSRF tidak valid.');
+
+            return Response::redirect('/admin/grooming/kuota');
+        }
+
+        $ids = $request->input('ids', []);
+
+        if (!is_array($ids)) {
+            $ids = [];
+        }
+
+        $result = $this->kuotaService->bulkDelete($ids);
+
+        Session::flash(
+            $result['success'] ? 'success' : 'error',
+            $result['success']
+                ? ((int) ($result['deleted'] ?? 0)) . ' kuota dihapus.'
+                : ($result['error'] ?? 'Gagal menghapus kuota.'),
+        );
 
         return Response::redirect('/admin/grooming/kuota');
     }
@@ -358,8 +384,14 @@ final class GroomingController
 
     public function pembayaranIndex(Request $request): Response
     {
+        $pendingList = $this->transaksiRepo->findPendingVerification();
+
+        usort($pendingList, static function (array $a, array $b): int {
+            return strcmp((string) ($b['bukti_uploaded_at'] ?? ''), (string) ($a['bukti_uploaded_at'] ?? ''));
+        });
+
         return $this->adminView('admin/grooming/pembayaran/index', 'Verifikasi Bukti Transfer', [
-            'pendingList' => $this->transaksiRepo->findPendingVerification(),
+            'pendingList' => $pendingList,
         ]);
     }
 

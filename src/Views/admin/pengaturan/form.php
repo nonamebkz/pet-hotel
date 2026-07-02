@@ -11,7 +11,7 @@ $field = static function (string $key) use ($settings): string {
     return e((string) old($key, $settings[$key] ?? ''));
 };
 ?>
-<div>
+<div class="pb-24">
     <div class="mb-6">
         <h1 class="text-2xl font-bold text-gray-800">Pengaturan Bisnis Petshop</h1>
         <p class="text-sm text-gray-500 mt-1">
@@ -20,11 +20,12 @@ $field = static function (string $key) use ($settings): string {
         </p>
     </div>
 
-    <form method="POST" action="/admin/pengaturan" class="space-y-6">
+    <form method="POST" action="/admin/pengaturan" id="pengaturan-form" class="space-y-6">
         <?= Csrf::field() ?>
 
         <fieldset class="bg-white rounded-xl border p-6 space-y-4">
             <legend class="text-lg font-semibold text-gray-800 px-1">Lokasi Petshop</legend>
+            <p class="text-xs text-gray-500 -mt-2">Memengaruhi perhitungan jarak antar-jemput dan estimasi biaya untuk booking baru.</p>
             <?php
             $petshop_lat = old('petshop_lat', $settings['petshop_lat'] ?? null);
             $petshop_lng = old('petshop_lng', $settings['petshop_lng'] ?? null);
@@ -34,6 +35,7 @@ $field = static function (string $key) use ($settings): string {
 
         <fieldset class="bg-white rounded-xl border p-6 space-y-4">
             <legend class="text-lg font-semibold text-gray-800 px-1">Antar-jemput</legend>
+            <p class="text-xs text-gray-500 -mt-2">Diterapkan saat pelanggan memilih opsi antar-jemput pada booking grooming.</p>
             <div class="grid gap-4 sm:grid-cols-2">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Radius gratis (km)</label>
@@ -59,6 +61,7 @@ $field = static function (string $key) use ($settings): string {
 
         <fieldset class="bg-white rounded-xl border p-6 space-y-4">
             <legend class="text-lg font-semibold text-gray-800 px-1">Pembayaran</legend>
+            <p class="text-xs text-gray-500 -mt-2">Mengatur batas waktu upload bukti dan informasi rekening yang ditampilkan ke pelanggan.</p>
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Batas waktu pembayaran (jam)</label>
                 <input type="number" name="payment_deadline_hours" min="1" max="168"
@@ -98,6 +101,7 @@ $field = static function (string $key) use ($settings): string {
 
         <fieldset class="bg-white rounded-xl border p-6 space-y-4">
             <legend class="text-lg font-semibold text-gray-800 px-1">Promo & Lainnya</legend>
+            <p class="text-xs text-gray-500 -mt-2">Promo penitipan dan syarat vaksin hanya berlaku untuk booking pet hotel baru.</p>
             <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Minimal hari promo</label>
@@ -133,12 +137,15 @@ $field = static function (string $key) use ($settings): string {
                 </div>
             </div>
         </fieldset>
+    </form>
 
-        <div class="flex justify-end">
-            <button type="submit"
-                    class="bg-slate-800 text-white rounded-lg px-6 py-2 text-sm font-medium hover:bg-slate-900">
+    <div class="fixed bottom-0 left-0 right-0 z-30 bg-white border-t shadow-lg print:hidden">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+            <p class="text-sm text-gray-500 hidden sm:block">Perubahan hanya berlaku untuk booking baru setelah disimpan.</p>
+            <button type="submit" form="pengaturan-form"
+                    class="bg-slate-800 text-white rounded-lg px-6 py-2 text-sm font-medium hover:bg-slate-700 ml-auto">
                 Simpan Pengaturan
             </button>
         </div>
-    </form>
+    </div>
 </div>

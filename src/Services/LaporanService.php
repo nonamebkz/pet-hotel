@@ -33,6 +33,7 @@ final class LaporanService
             'mulai' => $periode['mulai'],
             'akhir' => $periode['akhir'],
             'ringkasan' => $this->repo->countRingkasan($periode['mulai'], $periode['akhir']),
+            'trend' => $this->repo->dailyTrend($periode['mulai'], $periode['akhir']),
         ];
     }
 

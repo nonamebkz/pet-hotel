@@ -36,6 +36,7 @@ final class StaffManagementService
             $validated['username'],
             password_hash($validated['password'], PASSWORD_DEFAULT),
             $validated['status'],
+            $validated['role'],
         );
 
         return ['success' => true, 'staffId' => $id];
@@ -130,10 +131,16 @@ final class StaffManagementService
         $passwordErrors = $this->validatePasswordInput($input);
         $errors = array_merge($errors, $passwordErrors);
 
-        $status = trim((string) ($input['status'] ?? StatusAkun::AKTIF->value));
+        $status = trim((string) ($input['status'] ?? StatusAkun::NONAKTIF->value));
 
         if (!in_array($status, [StatusAkun::AKTIF->value, StatusAkun::NONAKTIF->value], true)) {
             $errors['status'] = 'Status tidak valid.';
+        }
+
+        $role = trim((string) ($input['role'] ?? StaffRole::STAFF->value));
+
+        if ($role !== StaffRole::STAFF->value) {
+            $errors['role'] = 'Hanya role Staff yang dapat dibuat dari halaman ini.';
         }
 
         return [
@@ -142,6 +149,7 @@ final class StaffManagementService
             'username' => $profile['username'],
             'password' => (string) ($input['password'] ?? ''),
             'status' => $status,
+            'role' => $role,
             'errors' => $errors,
         ];
     }
