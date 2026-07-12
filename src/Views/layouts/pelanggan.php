@@ -23,9 +23,9 @@ $navUnreadCount = (int) ($navUnreadCount ?? 0);
     <title><?= e($title ?? 'Dashboard') ?> — Petshop</title>
     <?php require __DIR__ . '/../partials/head/tailwind-config.php'; ?>
 </head>
-<body class="min-h-screen bg-page">
+<body class="min-h-screen bg-page font-body text-content-primary antialiased">
     <?php require __DIR__ . '/../partials/nav/pelanggan-nav.php'; ?>
-    <main class="max-w-7xl mx-auto px-4 py-8">
+    <main id="main-content" class="max-w-7xl mx-auto px-4 py-8">
         <?php require __DIR__ . '/../partials/flash.php'; ?>
         <?= $content ?? '' ?>
     </main>

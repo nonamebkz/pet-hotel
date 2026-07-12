@@ -32,6 +32,7 @@ final class DashboardController
             'roleLabel' => $role->label(),
             'today' => $summary['today'],
             'bookingsToday' => $summary['bookingsToday'],
+            'bookingsYesterday' => $summary['bookingsYesterday'],
             'pendingVerification' => $summary['pendingVerification'],
             'penitipanAktif' => $summary['penitipanAktif'],
             'pendapatan' => $summary['pendapatan'],

@@ -215,7 +215,10 @@ final class StaffManagementController
         $merged['nama'] = $request->input('nama', $merged['nama'] ?? '');
         $merged['email'] = $request->input('email', $merged['email'] ?? '');
         $merged['username'] = $request->input('username', $merged['username'] ?? '');
-        $merged['status'] = $request->input('status', $merged['status'] ?? StatusAkun::AKTIF->value);
+        $statusFallback = $staff !== null
+            ? (string) ($staff['status'] ?? StatusAkun::AKTIF->value)
+            : StatusAkun::NONAKTIF->value;
+        $merged['status'] = $request->input('status', $merged['status'] ?? $statusFallback);
 
         return $this->adminView('admin/staff/form', $staff ? 'Edit Staff' : 'Tambah Staff', [
             'staff' => $merged ?: null,

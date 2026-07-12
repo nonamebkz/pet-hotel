@@ -1,6 +1,24 @@
 (function () {
     'use strict';
 
+    function setMobileIcons(nav, isOpen) {
+        var openIcon = nav.querySelector('[data-nav-icon-open]');
+        var closeIcon = nav.querySelector('[data-nav-icon-close]');
+        var trigger = nav.querySelector('[data-nav-mobile-trigger]');
+
+        if (openIcon) {
+            openIcon.classList.toggle('hidden', isOpen);
+        }
+
+        if (closeIcon) {
+            closeIcon.classList.toggle('hidden', !isOpen);
+        }
+
+        if (trigger) {
+            trigger.setAttribute('aria-label', isOpen ? 'Tutup menu navigasi' : 'Buka menu navigasi');
+        }
+    }
+
     function closeAllDropdowns(except) {
         document.querySelectorAll('[data-nav-dropdown]').forEach(function (dropdown) {
             if (dropdown === except) {
@@ -32,6 +50,7 @@
             trigger.setAttribute('aria-expanded', 'false');
         }
 
+        setMobileIcons(nav, false);
         closeAllDropdowns(null);
     }
 
@@ -53,6 +72,7 @@
                 } else {
                     mobilePanel.classList.remove('hidden');
                     mobileTrigger.setAttribute('aria-expanded', 'true');
+                    setMobileIcons(nav, true);
                     closeAllDropdowns(null);
                 }
             });

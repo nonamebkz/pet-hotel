@@ -145,7 +145,10 @@
     document.querySelectorAll('[data-password-match]').forEach(function (confirmInput) {
         var targetId = confirmInput.getAttribute('data-password-match');
         var target = targetId ? document.getElementById(targetId) : null;
-        var hint = confirmInput.parentElement ? confirmInput.parentElement.querySelector('[data-match-hint]') : null;
+        var field = confirmInput.closest('[data-password-field]');
+        var hint = field
+            ? field.querySelector('[data-match-hint]')
+            : (confirmInput.parentElement ? confirmInput.parentElement.querySelector('[data-match-hint]') : null);
 
         function validate() {
             if (!target || !hint) {
@@ -153,12 +156,14 @@
             }
             if (confirmInput.value === '') {
                 hint.textContent = '';
+                hint.className = 'text-xs mt-1.5 text-content-secondary';
                 return;
             }
-            hint.textContent = confirmInput.value === target.value ? 'Password cocok' : 'Password tidak cocok';
-            hint.className = confirmInput.value === target.value
-                ? 'text-xs text-green-600 mt-1'
-                : 'text-xs text-red-600 mt-1';
+            var matched = confirmInput.value === target.value;
+            hint.textContent = matched ? 'Password cocok' : 'Password tidak cocok';
+            hint.className = matched
+                ? 'text-xs mt-1.5 text-success font-medium'
+                : 'text-xs mt-1.5 text-red-600 font-medium';
         }
 
         confirmInput.addEventListener('input', validate);
@@ -203,7 +208,21 @@
     document.querySelectorAll('[data-stepper]').forEach(function (stepper) {
         var steps = stepper.querySelectorAll('[data-step-panel]');
         var indicators = stepper.querySelectorAll('[data-step-indicator]');
-        var current = 0;
+        var startAttr = parseInt(stepper.getAttribute('data-step-start') || '0', 10);
+        var current = Number.isFinite(startAttr) ? Math.max(0, Math.min(startAttr, steps.length - 1)) : 0;
+
+        function setDotState(dot, state) {
+            if (!dot) {
+                return;
+            }
+            if (state === 'active') {
+                dot.className = 'flex h-8 w-8 items-center justify-center rounded-xl bg-admin text-white text-sm font-semibold shadow-soft';
+            } else if (state === 'done') {
+                dot.className = 'flex h-8 w-8 items-center justify-center rounded-xl bg-success text-white text-sm font-semibold shadow-soft';
+            } else {
+                dot.className = 'flex h-8 w-8 items-center justify-center rounded-xl bg-admin-soft text-admin text-sm font-semibold';
+            }
+        }
 
         function showStep(index) {
             current = index;
@@ -211,14 +230,32 @@
                 panel.classList.toggle('hidden', i !== index);
             });
             indicators.forEach(function (indicator, i) {
-                indicator.classList.toggle('text-primary', i <= index);
-                indicator.classList.toggle('font-semibold', i === index);
-                indicator.classList.toggle('text-gray-400', i > index);
+                var active = i === index;
+                var done = i < index;
+                indicator.setAttribute('aria-current', active ? 'step' : 'false');
+                setDotState(indicator.querySelector('[data-step-dot]'), active ? 'active' : (done ? 'done' : 'todo'));
+                var label = indicator.querySelector('[data-step-label]');
+                if (label) {
+                    label.className = 'text-xs sm:text-sm ' + (active
+                        ? 'font-semibold text-admin'
+                        : (done ? 'font-medium text-success' : 'text-content-secondary'));
+                }
             });
         }
 
         stepper.querySelectorAll('[data-step-next]').forEach(function (btn) {
             btn.addEventListener('click', function () {
+                var panel = steps[current];
+                if (!panel) {
+                    return;
+                }
+                var fields = panel.querySelectorAll('input, select, textarea');
+                for (var i = 0; i < fields.length; i += 1) {
+                    if (!fields[i].checkValidity()) {
+                        fields[i].reportValidity();
+                        return;
+                    }
+                }
                 if (current < steps.length - 1) {
                     showStep(current + 1);
                 }
@@ -233,7 +270,7 @@
             });
         });
 
-        showStep(0);
+        showStep(current);
     });
 
     document.querySelectorAll('[data-collapsible-trigger]').forEach(function (trigger) {

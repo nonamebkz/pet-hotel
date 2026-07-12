@@ -28,15 +28,15 @@ $iconBg = [
     'success' => 'bg-green-50 text-green-600',
 ];
 ?>
-<div class="bg-white rounded-xl border p-8 text-center">
-    <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full <?= e($iconBg[$variant] ?? $iconBg['empty']) ?>">
+<div class="rounded-2xl border border-white/80 bg-card p-8 text-center shadow-soft">
+    <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl <?= e($iconBg[$variant] ?? $iconBg['empty']) ?>">
         <svg class="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="<?= e($iconPaths[$variant] ?? $iconPaths['empty']) ?>"></path>
         </svg>
     </div>
-    <h3 class="text-base font-semibold text-gray-800 mb-1"><?= e($title) ?></h3>
+    <h3 class="font-heading text-lg text-content-primary mb-1"><?= e($title) ?></h3>
     <?php if ($description !== null && $description !== ''): ?>
-        <p class="text-sm text-gray-500 mb-4 max-w-md mx-auto"><?= e($description) ?></p>
+        <p class="text-sm text-content-secondary mb-4 max-w-md mx-auto"><?= e($description) ?></p>
     <?php endif; ?>
     <?php if ($ctaLabel !== null && $ctaHref !== null): ?>
         <a href="<?= e($ctaHref) ?>" class="<?= e($ctaClass) ?>"><?= e($ctaLabel) ?></a>

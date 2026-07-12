@@ -57,24 +57,39 @@ if ($kategori !== '') {
         static fn (array $notif): bool => $resolveKategori((string) ($notif['jenis'] ?? '')) === $kategori,
     ));
 }
-?>
-<div>
-    <div class="mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">Notifikasi</h1>
-        <p class="text-sm text-gray-500 mt-1">Semua pemberitahuan operasional untuk akun Anda.</p>
-    </div>
 
-    <div class="flex flex-wrap gap-2 mb-6">
+$btnSecondary = 'cursor-pointer inline-flex items-center justify-center rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-semibold text-admin shadow-soft transition duration-soft hover:bg-admin-soft focus:outline-none focus-visible:ring-2 focus-visible:ring-admin';
+?>
+<div class="font-body space-y-6">
+    <section class="relative overflow-hidden rounded-2xl border border-white/80 bg-card p-6 sm:p-8 shadow-soft">
+        <div class="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-admin/5 blur-2xl" aria-hidden="true"></div>
+        <div class="relative flex flex-wrap items-start justify-between gap-4">
+            <div>
+                <p class="text-xs font-semibold uppercase tracking-wider text-content-secondary">Operasional</p>
+                <h1 class="mt-1 font-heading text-2xl sm:text-3xl text-content-primary">Notifikasi</h1>
+                <p class="mt-2 text-sm text-content-secondary max-w-xl">
+                    Semua pemberitahuan operasional untuk akun Anda.
+                </p>
+            </div>
+            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-admin text-white shadow-soft" aria-hidden="true">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"/>
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    <nav class="flex flex-wrap gap-2" aria-label="Filter kategori notifikasi">
         <?php foreach ($kategoriTabs as $key => $label): ?>
             <?php $isActive = $kategori === $key; ?>
             <a href="/admin/notifikasi<?= $key !== '' ? '?kategori=' . urlencode($key) : '' ?>"
-               class="text-sm rounded-full px-4 py-1.5 border transition <?= $isActive
-                   ? 'bg-admin text-white border-admin'
-                   : 'bg-white text-gray-600 border-gray-200 hover:border-slate-400' ?>">
+               class="cursor-pointer inline-flex items-center rounded-xl px-4 py-2 text-sm font-semibold transition duration-soft focus:outline-none focus-visible:ring-2 focus-visible:ring-admin <?= $isActive
+                   ? 'bg-admin text-white shadow-soft'
+                   : 'border border-border bg-card text-content-secondary shadow-soft hover:bg-admin-soft hover:text-admin' ?>">
                 <?= e($label) ?>
             </a>
         <?php endforeach; ?>
-    </div>
+    </nav>
 
     <?php if ($filteredList === []): ?>
         <?php
@@ -85,7 +100,7 @@ if ($kategori !== '') {
         $description = 'Aktivitas booking, pembayaran, dan operasional akan muncul di sini secara otomatis.';
         $ctaLabel = 'Lihat Riwayat Transaksi';
         $ctaHref = '/admin/transaksi';
-        $ctaClass = 'border border-gray-300 text-gray-700 rounded-lg px-4 py-2 text-sm font-medium hover:bg-gray-50 inline-block';
+        $ctaClass = $btnSecondary;
         require __DIR__ . '/../../partials/ui/empty-state.php';
         ?>
     <?php else: ?>
@@ -110,28 +125,33 @@ if ($kategori !== '') {
                     'reminder' => 'border-l-amber-400',
                     'sistem' => 'border-l-gray-300',
                 ];
+                $isUnread = empty($notif['sudah_dibaca']);
                 ?>
-                <div class="bg-white rounded-xl border border-l-4 <?= e($katColors[$kat] ?? $katColors['sistem']) ?> p-4 <?= empty($notif['sudah_dibaca']) ? 'bg-slate-50/50' : '' ?>">
+                <article class="rounded-2xl border border-white/80 border-l-4 <?= e($katColors[$kat] ?? $katColors['sistem']) ?> bg-card p-4 sm:p-5 shadow-soft transition duration-soft hover:shadow-soft-lg <?= $isUnread ? 'bg-admin-soft/30' : '' ?>">
                     <div class="flex items-start justify-between gap-3">
-                        <div>
+                        <div class="min-w-0">
                             <div class="flex items-center gap-2">
-                                <?php if (empty($notif['sudah_dibaca'])): ?>
-                                    <span class="w-2 h-2 rounded-full bg-admin shrink-0" aria-hidden="true"></span>
+                                <?php if ($isUnread): ?>
+                                    <span class="h-2 w-2 shrink-0 rounded-full bg-admin" aria-hidden="true"></span>
                                 <?php endif; ?>
-                                <div class="font-medium text-gray-800"><?= e((string) $notif['judul']) ?></div>
+                                <h2 class="font-heading text-base text-content-primary"><?= e((string) $notif['judul']) ?></h2>
                             </div>
-                            <p class="text-sm text-gray-600 mt-1"><?= e((string) $notif['pesan']) ?></p>
+                            <p class="mt-1.5 text-sm text-content-secondary"><?= e((string) $notif['pesan']) ?></p>
                             <?php if ($actionUrl !== null): ?>
-                                <a href="<?= e($actionUrl) ?>" class="inline-block text-sm text-slate-700 hover:underline mt-2">
-                                    Lihat detail →
+                                <a href="<?= e($actionUrl) ?>"
+                                   class="mt-2.5 inline-flex cursor-pointer items-center gap-1 text-sm font-semibold text-admin transition duration-soft hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-admin rounded-lg">
+                                    Lihat detail
+                                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
+                                    </svg>
                                 </a>
                             <?php endif; ?>
                         </div>
-                        <time class="text-xs text-gray-400 shrink-0">
+                        <time class="shrink-0 text-xs font-medium text-content-secondary">
                             <?= e(date('d/m/Y H:i', strtotime((string) $notif['created_at']))) ?>
                         </time>
                     </div>
-                </div>
+                </article>
             <?php endforeach; ?>
         </div>
     <?php endif; ?>

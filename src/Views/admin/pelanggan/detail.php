@@ -8,94 +8,121 @@ $minVaksin = $minVaksin ?? 1;
 $jenisKelaminLabels = $jenisKelaminLabels ?? [];
 $addressComplete = $addressComplete ?? false;
 $promoUsed = !empty($pelanggan['pernah_pakai_promo_penitipan']);
+
+$namaPelanggan = (string) ($pelanggan['nama'] ?? '');
+$initial = mb_substr($namaPelanggan !== '' ? $namaPelanggan : 'P', 0, 1);
 ?>
-<div>
-    <nav class="text-sm text-gray-500 mb-4">
-        <a href="/admin/pelanggan" class="hover:text-slate-700 hover:underline">Pelanggan</a>
-        <span class="mx-1">/</span>
-        <span class="text-gray-800">Detail</span>
+<div class="font-body space-y-6">
+    <nav class="flex flex-wrap items-center gap-1.5 text-sm text-content-secondary" aria-label="Breadcrumb">
+        <a href="/admin/pelanggan"
+           class="cursor-pointer font-medium transition duration-soft hover:text-admin focus:outline-none focus-visible:underline">
+            Pelanggan
+        </a>
+        <span class="text-content-secondary/50" aria-hidden="true">/</span>
+        <span class="font-semibold text-content-primary">Detail</span>
     </nav>
 
-    <div class="flex items-center justify-between mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">Detail Pelanggan</h1>
-        <a href="/admin/pelanggan" class="text-sm text-slate-700 hover:underline">← Kembali</a>
-    </div>
-
-    <div class="bg-white rounded-xl border p-6 mb-6">
-        <h2 class="text-lg font-semibold text-gray-800 mb-4">Profil</h2>
-
-        <div class="flex flex-wrap gap-6">
-            <div class="flex-shrink-0">
+    <section class="relative overflow-hidden rounded-2xl border border-white/80 bg-card p-6 sm:p-8 shadow-soft">
+        <div class="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-admin/5 blur-2xl" aria-hidden="true"></div>
+        <div class="relative flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-4 min-w-0">
                 <?php if (!empty($pelanggan['foto_profil_url'])): ?>
                     <img src="<?= e((string) $pelanggan['foto_profil_url']) ?>" alt="Foto profil"
-                         class="w-20 h-20 rounded-full object-cover border">
+                         class="h-16 w-16 sm:h-20 sm:w-20 shrink-0 rounded-2xl object-cover border border-border shadow-soft">
                 <?php else: ?>
-                    <div class="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 text-2xl font-medium">
-                        <?= e(mb_substr((string) ($pelanggan['nama'] ?? 'P'), 0, 1)) ?>
+                    <div class="flex h-16 w-16 sm:h-20 sm:w-20 shrink-0 items-center justify-center rounded-2xl bg-admin-soft font-heading text-2xl font-semibold text-admin shadow-soft" aria-hidden="true">
+                        <?= e(mb_strtoupper($initial)) ?>
                     </div>
                 <?php endif; ?>
+                <div class="min-w-0">
+                    <p class="text-xs font-semibold uppercase tracking-wider text-content-secondary">CRM</p>
+                    <h1 class="mt-1 font-heading text-2xl sm:text-3xl text-content-primary truncate">
+                        <?= e($namaPelanggan !== '' ? $namaPelanggan : 'Detail Pelanggan') ?>
+                    </h1>
+                    <p class="mt-1 text-sm text-content-secondary truncate">
+                        <?= e((string) ($pelanggan['email'] ?? '')) ?>
+                    </p>
+                </div>
             </div>
+            <a href="/admin/pelanggan"
+               class="cursor-pointer inline-flex items-center gap-2 rounded-xl border border-border bg-page/60 px-4 py-2.5 text-sm font-semibold text-admin shadow-soft transition duration-soft hover:bg-admin-soft focus:outline-none focus-visible:ring-2 focus-visible:ring-admin">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/>
+                </svg>
+                Kembali
+            </a>
+        </div>
+    </section>
 
-            <div class="flex-1 min-w-[240px] grid gap-3 sm:grid-cols-2 text-sm">
-                <div>
-                    <div class="text-xs font-medium text-gray-500 mb-0.5">Nama</div>
-                    <div class="text-gray-800"><?= e((string) ($pelanggan['nama'] ?? '')) ?></div>
+    <section class="rounded-2xl border border-white/80 bg-card p-6 sm:p-8 shadow-soft">
+        <h2 class="font-heading text-lg text-content-primary mb-5">Profil</h2>
+
+        <div class="grid gap-4 sm:grid-cols-2 text-sm">
+            <div>
+                <div class="text-xs font-semibold uppercase tracking-wider text-content-secondary mb-1">Nama</div>
+                <div class="font-medium text-content-primary"><?= e((string) ($pelanggan['nama'] ?? '')) ?></div>
+            </div>
+            <div>
+                <div class="text-xs font-semibold uppercase tracking-wider text-content-secondary mb-1">Email</div>
+                <div class="font-medium text-content-primary"><?= e((string) ($pelanggan['email'] ?? '')) ?></div>
+            </div>
+            <div>
+                <div class="text-xs font-semibold uppercase tracking-wider text-content-secondary mb-1">Telepon</div>
+                <div class="font-medium text-content-primary"><?= e((string) ($pelanggan['no_telepon'] ?? '—')) ?></div>
+            </div>
+            <div>
+                <div class="text-xs font-semibold uppercase tracking-wider text-content-secondary mb-1">Terdaftar</div>
+                <div class="font-medium text-content-primary">
+                    <?= !empty($pelanggan['created_at'])
+                        ? e(date('d M Y H:i', strtotime((string) $pelanggan['created_at'])))
+                        : '—' ?>
                 </div>
-                <div>
-                    <div class="text-xs font-medium text-gray-500 mb-0.5">Email</div>
-                    <div class="text-gray-800"><?= e((string) ($pelanggan['email'] ?? '')) ?></div>
-                </div>
-                <div>
-                    <div class="text-xs font-medium text-gray-500 mb-0.5">Telepon</div>
-                    <div class="text-gray-800"><?= e((string) ($pelanggan['no_telepon'] ?? '—')) ?></div>
-                </div>
-                <div>
-                    <div class="text-xs font-medium text-gray-500 mb-0.5">Terdaftar</div>
-                    <div class="text-gray-800">
-                        <?= !empty($pelanggan['created_at'])
-                            ? e(date('d M Y H:i', strtotime((string) $pelanggan['created_at'])))
-                            : '—' ?>
-                    </div>
-                </div>
-                <div class="sm:col-span-2">
-                    <div class="text-xs font-medium text-gray-500 mb-0.5">Alamat</div>
-                    <div class="text-gray-800 whitespace-pre-wrap"><?= e((string) ($pelanggan['alamat_lengkap'] ?? '—')) ?></div>
-                </div>
+            </div>
+            <div class="sm:col-span-2">
+                <div class="text-xs font-semibold uppercase tracking-wider text-content-secondary mb-1">Alamat</div>
+                <div class="font-medium text-content-primary whitespace-pre-wrap"><?= e((string) ($pelanggan['alamat_lengkap'] ?? '—')) ?></div>
             </div>
         </div>
 
-        <div class="flex flex-wrap gap-2 mt-4 pt-4 border-t">
+        <div class="flex flex-wrap gap-2 mt-5 pt-5 border-t border-border">
             <?php if ($addressComplete): ?>
-                <span class="text-xs font-medium bg-green-100 text-green-800 px-3 py-1 rounded-full">
+                <span class="inline-flex items-center rounded-lg bg-success-bg px-2.5 py-1 text-xs font-semibold text-success">
                     Alamat lengkap untuk antar-jemput
                 </span>
             <?php else: ?>
-                <span class="text-xs font-medium bg-amber-100 text-amber-800 px-3 py-1 rounded-full">
+                <span class="inline-flex items-center rounded-lg bg-warning-bg px-2.5 py-1 text-xs font-semibold text-amber-800">
                     Alamat belum lengkap
                 </span>
             <?php endif; ?>
             <?php if ($promoUsed): ?>
-                <span class="text-xs font-medium bg-blue-100 text-blue-800 px-3 py-1 rounded-full">
+                <span class="inline-flex items-center rounded-lg bg-primary-soft px-2.5 py-1 text-xs font-semibold text-primary">
                     Sudah pernah pakai promo penitipan
                 </span>
             <?php else: ?>
-                <span class="text-xs font-medium bg-gray-100 text-gray-600 px-3 py-1 rounded-full">
+                <span class="inline-flex items-center rounded-lg bg-page px-2.5 py-1 text-xs font-semibold text-content-secondary">
                     Belum pernah pakai promo penitipan
                 </span>
             <?php endif; ?>
         </div>
-    </div>
+    </section>
 
-    <div>
-        <h2 class="text-lg font-semibold text-gray-800 mb-4">
-            Kucing Milik Pelanggan
-            <span class="text-sm font-normal text-gray-500">(<?= count($kucingList) ?>)</span>
-        </h2>
+    <section class="space-y-4">
+        <div class="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 class="font-heading text-lg text-content-primary">
+                Kucing Milik Pelanggan
+            </h2>
+            <span class="text-sm font-medium text-content-secondary"><?= count($kucingList) ?> kucing</span>
+        </div>
 
         <?php if ($kucingList === []): ?>
-            <div class="bg-white rounded-xl border p-8 text-center text-gray-600">
-                Pelanggan ini belum mendaftarkan kucing.
-            </div>
+            <?php
+            $variant = 'empty';
+            $title = 'Belum ada kucing terdaftar';
+            $description = 'Pelanggan ini belum mendaftarkan kucing.';
+            $ctaLabel = null;
+            $ctaHref = null;
+            require __DIR__ . '/../../partials/ui/empty-state.php';
+            ?>
         <?php else: ?>
             <div class="space-y-4">
                 <?php foreach ($kucingList as $kucing): ?>
@@ -103,75 +130,75 @@ $promoUsed = !empty($pelanggan['pernah_pakai_promo_penitipan']);
                     $vaksinCount = (int) ($kucing['vaksin_count'] ?? 0);
                     $eligible = !empty($kucing['eligible_pet_hotel']);
                     ?>
-                    <div class="bg-white rounded-xl border p-5">
+                    <article class="rounded-2xl border border-white/80 bg-card p-5 sm:p-6 shadow-soft transition duration-soft hover:shadow-soft-lg">
                         <div class="flex flex-wrap gap-4 mb-4">
                             <?php if (!empty($kucing['foto_url'])): ?>
                                 <img src="<?= e((string) $kucing['foto_url']) ?>" alt="<?= e((string) $kucing['nama']) ?>"
-                                     class="w-16 h-16 rounded-lg object-cover border">
+                                     class="h-16 w-16 shrink-0 rounded-2xl object-cover border border-border shadow-soft">
                             <?php else: ?>
-                                <div class="w-16 h-16 rounded-lg bg-primary-soft flex items-center justify-center text-primary text-lg font-bold">
+                                <div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-primary-soft font-heading text-lg font-semibold text-primary shadow-soft" aria-hidden="true">
                                     <?= e(mb_substr((string) $kucing['nama'], 0, 1)) ?>
                                 </div>
                             <?php endif; ?>
 
                             <div class="flex-1 min-w-[200px]">
-                                <h3 class="font-semibold text-gray-800 text-lg"><?= e((string) $kucing['nama']) ?></h3>
-                                <p class="text-sm text-gray-600">
+                                <h3 class="font-heading text-lg text-content-primary"><?= e((string) $kucing['nama']) ?></h3>
+                                <p class="mt-0.5 text-sm text-content-secondary">
                                     <?= e($jenisKelaminLabels[$kucing['jenis_kelamin']] ?? (string) $kucing['jenis_kelamin']) ?>
                                     <?php if (!empty($kucing['ras'])): ?>
                                         · <?= e((string) $kucing['ras']) ?>
                                     <?php endif; ?>
                                 </p>
-                                <div class="flex flex-wrap gap-2 mt-2">
+                                <div class="flex flex-wrap gap-2 mt-2.5">
                                     <?php if ($eligible): ?>
-                                        <span class="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full">
+                                        <span class="inline-flex items-center rounded-lg bg-success-bg px-2 py-0.5 text-xs font-semibold text-success">
                                             Eligible pet hotel
                                         </span>
                                     <?php else: ?>
-                                        <span class="text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded-full">
+                                        <span class="inline-flex items-center rounded-lg bg-red-50 px-2 py-0.5 text-xs font-semibold text-red-700">
                                             Vaksin belum memenuhi syarat (min. <?= (int) $minVaksin ?>)
                                         </span>
                                     <?php endif; ?>
-                                    <span class="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">
+                                    <span class="inline-flex items-center rounded-lg bg-primary-soft px-2 py-0.5 text-xs font-semibold text-primary">
                                         <?= $vaksinCount ?> entri vaksin lengkap
                                     </span>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="grid gap-2 sm:grid-cols-3 text-sm mb-4">
+                        <div class="grid gap-3 sm:grid-cols-3 text-sm mb-4">
                             <?php if (!empty($kucing['tanggal_lahir'])): ?>
                                 <div>
-                                    <span class="text-xs text-gray-500">Tanggal lahir</span>
-                                    <div class="text-gray-800">
+                                    <div class="text-xs font-semibold uppercase tracking-wider text-content-secondary mb-0.5">Tanggal lahir</div>
+                                    <div class="font-medium text-content-primary">
                                         <?= e(date('d/m/Y', strtotime((string) $kucing['tanggal_lahir']))) ?>
                                     </div>
                                 </div>
                             <?php endif; ?>
                             <?php if (!empty($kucing['berat_badan'])): ?>
                                 <div>
-                                    <span class="text-xs text-gray-500">Berat badan</span>
-                                    <div class="text-gray-800"><?= e((string) $kucing['berat_badan']) ?> kg</div>
+                                    <div class="text-xs font-semibold uppercase tracking-wider text-content-secondary mb-0.5">Berat badan</div>
+                                    <div class="font-medium text-content-primary"><?= e((string) $kucing['berat_badan']) ?> kg</div>
                                 </div>
                             <?php endif; ?>
                             <?php if (!empty($kucing['catatan_kesehatan'])): ?>
                                 <div class="sm:col-span-3">
-                                    <span class="text-xs text-gray-500">Catatan kesehatan</span>
-                                    <div class="text-gray-800 whitespace-pre-wrap"><?= e((string) $kucing['catatan_kesehatan']) ?></div>
+                                    <div class="text-xs font-semibold uppercase tracking-wider text-content-secondary mb-0.5">Catatan kesehatan</div>
+                                    <div class="font-medium text-content-primary whitespace-pre-wrap"><?= e((string) $kucing['catatan_kesehatan']) ?></div>
                                 </div>
                             <?php endif; ?>
                         </div>
 
-                        <div class="bg-gray-50 rounded-lg p-3">
-                            <div class="font-medium text-gray-700 mb-2 text-sm">Riwayat Vaksin</div>
+                        <div class="rounded-2xl border border-border bg-page/60 p-4">
+                            <div class="mb-2 text-sm font-semibold text-content-primary">Riwayat Vaksin</div>
                             <?php
                             $vaksinList = $kucing['vaksin_list'] ?? [];
                             require __DIR__ . '/../../partials/vaksin-readonly-list.php';
                             ?>
                         </div>
-                    </div>
+                    </article>
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>
-    </div>
+    </section>
 </div>

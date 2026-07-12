@@ -2,20 +2,16 @@
 
 declare(strict_types=1);
 
-$activeTab = $activeTab ?? 'index';
-$mulai = $mulai ?? date('Y-m-01');
-$akhir = $akhir ?? date('Y-m-t');
-$query = http_build_query(['mulai' => $mulai, 'akhir' => $akhir]);
-$querySuffix = $query !== '' ? '?' . $query : '';
+/** @var string $activeTab layanan|slot|booking */
+$activeTab = $activeTab ?? 'layanan';
 
 $tabs = [
-    'index' => ['label' => 'Ringkasan', 'href' => '/admin/laporan' . $querySuffix],
-    'grooming' => ['label' => 'Grooming', 'href' => '/admin/laporan/grooming' . $querySuffix],
-    'penitipan' => ['label' => 'Pet Hotel', 'href' => '/admin/laporan/penitipan' . $querySuffix],
-    'pet-care' => ['label' => 'Pet Care', 'href' => '/admin/laporan/pet-care' . $querySuffix],
+    'layanan' => ['label' => 'Layanan', 'href' => '/admin/pet-care/layanan'],
+    'slot' => ['label' => 'Slot Dokter', 'href' => '/admin/pet-care/slot'],
+    'booking' => ['label' => 'Booking', 'href' => '/admin/pet-care/booking'],
 ];
 ?>
-<nav class="flex flex-wrap gap-2 mb-6 print:hidden" aria-label="Navigasi laporan">
+<nav class="flex flex-wrap gap-2 mb-6" aria-label="Navigasi pet care">
     <?php foreach ($tabs as $key => $tab): ?>
         <?php $isActive = $activeTab === $key; ?>
         <?php if ($isActive): ?>

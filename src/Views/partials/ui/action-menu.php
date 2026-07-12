@@ -11,18 +11,22 @@ $items = $items ?? [];
 ?>
 <div class="relative inline-block text-left" data-action-menu>
     <button type="button"
-            class="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-800"
+            class="cursor-pointer p-2 rounded-xl text-content-secondary transition duration-soft hover:bg-admin-soft hover:text-admin focus:outline-none focus-visible:ring-2 focus-visible:ring-admin"
             data-action-menu-trigger
             aria-haspopup="true"
             aria-expanded="false"
-            aria-label="Menu aksi">&#8942;</button>
-    <div class="hidden absolute right-0 z-20 mt-1 w-44 origin-top-right rounded-lg border bg-white shadow-lg py-1"
+            aria-label="Menu aksi">
+        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 6.75a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm0 6.75a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm0 6.75a1.5 1.5 0 110-3 1.5 1.5 0 010 3z"/>
+        </svg>
+    </button>
+    <div class="hidden absolute right-0 z-20 mt-1 w-48 origin-top-right rounded-xl border border-border bg-card shadow-soft-lg py-1"
          data-action-menu-panel
          role="menu">
         <?php foreach ($items as $item): ?>
             <?php if (($item['type'] ?? '') === 'link' && !empty($item['href'])): ?>
                 <a href="<?= e((string) $item['href']) ?>"
-                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 <?= e((string) ($item['class'] ?? '')) ?>"
+                   class="block cursor-pointer px-4 py-2.5 text-sm text-content-primary transition duration-soft hover:bg-admin-soft <?= e((string) ($item['class'] ?? '')) ?>"
                    role="menuitem"><?= e((string) $item['label']) ?></a>
             <?php elseif (($item['type'] ?? '') === 'form' && !empty($item['formAction'])): ?>
                 <form method="POST" action="<?= e((string) $item['formAction']) ?>"
@@ -35,7 +39,7 @@ $items = $items ?? [];
                         <input type="hidden" name="<?= e((string) $name) ?>" value="<?= e((string) $value) ?>">
                     <?php endforeach; ?>
                     <button type="submit"
-                            class="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 <?= e((string) ($item['class'] ?? 'text-gray-700')) ?>"
+                            class="w-full cursor-pointer text-left px-4 py-2.5 text-sm transition duration-soft hover:bg-admin-soft <?= e((string) ($item['class'] ?? 'text-content-primary')) ?>"
                             role="menuitem"><?= e((string) $item['label']) ?></button>
                 </form>
             <?php endif; ?>

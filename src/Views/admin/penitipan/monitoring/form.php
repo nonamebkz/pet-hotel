@@ -7,55 +7,98 @@ use App\Core\Csrf;
 $booking = $booking ?? [];
 $monitoringList = $monitoringList ?? [];
 $errors = $errors ?? [];
+$inputClass = 'w-full rounded-xl border border-border bg-page/60 px-3.5 py-3 text-sm text-content-primary shadow-soft-inset transition duration-soft hover:border-admin/30 focus:border-admin focus:bg-white focus:outline-none focus:ring-2 focus:ring-admin/25';
 ?>
-<div>
-    <a href="/admin/penitipan/booking" class="text-sm text-gray-500">&larr; Booking</a>
-    <h1 class="text-2xl font-bold mt-2 mb-2">Monitoring Harian</h1>
-    <p class="text-sm text-gray-500 mb-6"><?= e((string) $booking['kucing_nama']) ?> · <?= e((string) $booking['pelanggan_nama']) ?></p>
+<div class="font-body space-y-6 max-w-2xl">
+    <nav class="flex flex-wrap items-center gap-2 text-sm text-content-secondary" aria-label="Breadcrumb">
+        <a href="/admin/penitipan/booking" class="cursor-pointer hover:text-admin focus:outline-none focus-visible:underline">Booking</a>
+        <span aria-hidden="true">/</span>
+        <span class="font-medium text-content-primary">Monitoring</span>
+    </nav>
+
+    <section class="relative overflow-hidden rounded-2xl border border-white/80 bg-card p-6 shadow-soft">
+        <div class="relative">
+            <p class="text-xs font-semibold uppercase tracking-wider text-content-secondary">Monitoring harian</p>
+            <h1 class="mt-1 font-heading text-2xl text-content-primary"><?= e((string) ($booking['kucing_nama'] ?? '')) ?></h1>
+            <p class="mt-1 text-sm text-content-secondary">Pemilik: <?= e((string) ($booking['pelanggan_nama'] ?? '')) ?></p>
+        </div>
+    </section>
+
+    <?php require __DIR__ . '/../_nav.php'; ?>
 
     <?php if ($errors !== []): ?>
-        <div class="mb-4 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-800 space-y-1">
-            <?php foreach ($errors as $field => $message): ?>
+        <div class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 space-y-1" role="alert">
+            <?php foreach ($errors as $message): ?>
                 <p><?= e((string) $message) ?></p>
             <?php endforeach; ?>
         </div>
     <?php endif; ?>
 
-    <form method="POST" action="/admin/penitipan/monitoring/tambah" enctype="multipart/form-data" class="bg-white rounded-xl border p-6 max-w-xl space-y-4 mb-8">
+    <form method="POST" action="/admin/penitipan/monitoring/tambah" enctype="multipart/form-data"
+          class="rounded-2xl border border-white/80 bg-card p-5 sm:p-6 shadow-soft space-y-5" data-loading-submit>
         <?= Csrf::field() ?>
-        <input type="hidden" name="booking_id" value="<?= e((string) $booking['id']) ?>">
-        <div><label class="text-sm font-medium">Tanggal</label>
-            <input type="date" name="tanggal" value="<?= e(date('Y-m-d')) ?>" class="w-full border rounded-lg px-3 py-2 text-sm mt-1" required></div>
-        <div><label class="text-sm font-medium">Foto (opsional)</label>
-            <input type="file" name="foto" accept="image/*" class="w-full text-sm mt-1"></div>
-        <div><label class="text-sm font-medium">Catatan makan</label>
-            <textarea name="catatan_makan" rows="2" class="w-full border rounded-lg px-3 py-2 text-sm mt-1"></textarea></div>
-        <div><label class="text-sm font-medium">Kondisi</label>
-            <textarea name="kondisi" rows="2" class="w-full border rounded-lg px-3 py-2 text-sm mt-1"></textarea></div>
-        <div><label class="text-sm font-medium">Aktivitas harian</label>
-            <textarea name="aktivitas_harian" rows="2" class="w-full border rounded-lg px-3 py-2 text-sm mt-1"></textarea></div>
-        <button type="submit" class="bg-admin text-white rounded-lg px-4 py-2 text-sm">Simpan Monitoring</button>
+        <input type="hidden" name="booking_id" value="<?= e((string) ($booking['id'] ?? '')) ?>">
+
+        <div>
+            <label for="tanggal" class="mb-1.5 block text-sm font-semibold text-content-primary">Tanggal</label>
+            <input type="date" id="tanggal" name="tanggal" value="<?= e(date('Y-m-d')) ?>" required class="<?= e($inputClass) ?>">
+        </div>
+
+        <div>
+            <label for="foto" class="mb-1.5 block text-sm font-semibold text-content-primary">Foto <span class="font-normal text-content-secondary">(opsional)</span></label>
+            <input type="file" id="foto" name="foto" accept="image/*"
+                   class="block w-full text-sm text-content-secondary file:mr-3 file:cursor-pointer file:rounded-xl file:border-0 file:bg-admin-soft file:px-4 file:py-2 file:text-sm file:font-semibold file:text-admin hover:file:bg-admin/10">
+        </div>
+
+        <div>
+            <label for="catatan_makan" class="mb-1.5 block text-sm font-semibold text-content-primary">Catatan makan</label>
+            <textarea id="catatan_makan" name="catatan_makan" rows="2" class="<?= e($inputClass) ?>" placeholder="Contoh: Makan pagi & sore normal"></textarea>
+        </div>
+
+        <div>
+            <label for="kondisi" class="mb-1.5 block text-sm font-semibold text-content-primary">Kondisi</label>
+            <textarea id="kondisi" name="kondisi" rows="2" class="<?= e($inputClass) ?>" placeholder="Kondisi kesehatan / mood"></textarea>
+        </div>
+
+        <div>
+            <label for="aktivitas_harian" class="mb-1.5 block text-sm font-semibold text-content-primary">Aktivitas harian</label>
+            <textarea id="aktivitas_harian" name="aktivitas_harian" rows="2" class="<?= e($inputClass) ?>" placeholder="Bermain, istirahat, dll."></textarea>
+        </div>
+
+        <div class="flex flex-wrap gap-3">
+            <button type="submit" class="cursor-pointer inline-flex items-center justify-center rounded-xl bg-admin px-5 py-3 text-sm font-semibold text-white shadow-soft hover:bg-admin-hover disabled:opacity-60">
+                Simpan Monitoring
+            </button>
+            <a href="/admin/penitipan/booking" class="cursor-pointer inline-flex items-center px-4 py-3 text-sm font-semibold text-content-secondary hover:text-admin">Kembali</a>
+        </div>
     </form>
 
     <?php if ($monitoringList !== []): ?>
-        <h2 class="font-semibold mb-3">Riwayat Monitoring</h2>
-        <div class="space-y-3">
+        <section class="space-y-3">
+            <h2 class="font-heading text-lg text-content-primary">Riwayat monitoring</h2>
             <?php foreach ($monitoringList as $m): ?>
-                <div class="bg-white border rounded-lg p-3 text-sm">
+                <article class="rounded-2xl border border-white/80 bg-card p-4 shadow-soft space-y-2">
                     <div class="flex items-center justify-between gap-2">
-                        <div class="font-medium"><?= e(date('d/m/Y', strtotime((string) $m['tanggal']))) ?></div>
+                        <h3 class="font-semibold text-content-primary"><?= e(date('d/m/Y', strtotime((string) $m['tanggal']))) ?></h3>
                         <?php if (!empty($m['staff_nama'])): ?>
-                            <span class="text-xs text-gray-500"><?= e((string) $m['staff_nama']) ?></span>
+                            <span class="text-xs text-content-secondary"><?= e((string) $m['staff_nama']) ?></span>
                         <?php endif; ?>
                     </div>
                     <?php if (!empty($m['foto_url'])): ?>
-                        <img src="<?= e((string) $m['foto_url']) ?>" class="mt-2 max-h-32 rounded" alt="">
+                        <img src="<?= e((string) $m['foto_url']) ?>" alt="Foto monitoring <?= e(date('d/m/Y', strtotime((string) $m['tanggal']))) ?>"
+                             class="mt-1 max-h-40 rounded-xl object-cover shadow-soft" data-lightbox>
                     <?php endif; ?>
-                    <?php if (!empty($m['catatan_makan'])): ?><p class="text-gray-600 mt-1">Makan: <?= e((string) $m['catatan_makan']) ?></p><?php endif; ?>
-                    <?php if (!empty($m['kondisi'])): ?><p class="text-gray-600">Kondisi: <?= e((string) $m['kondisi']) ?></p><?php endif; ?>
-                    <?php if (!empty($m['aktivitas_harian'])): ?><p class="text-gray-600">Aktivitas: <?= e((string) $m['aktivitas_harian']) ?></p><?php endif; ?>
-                </div>
+                    <?php if (!empty($m['catatan_makan'])): ?>
+                        <p class="text-sm text-content-secondary"><span class="font-medium text-content-primary">Makan:</span> <?= e((string) $m['catatan_makan']) ?></p>
+                    <?php endif; ?>
+                    <?php if (!empty($m['kondisi'])): ?>
+                        <p class="text-sm text-content-secondary"><span class="font-medium text-content-primary">Kondisi:</span> <?= e((string) $m['kondisi']) ?></p>
+                    <?php endif; ?>
+                    <?php if (!empty($m['aktivitas_harian'])): ?>
+                        <p class="text-sm text-content-secondary"><span class="font-medium text-content-primary">Aktivitas:</span> <?= e((string) $m['aktivitas_harian']) ?></p>
+                    <?php endif; ?>
+                </article>
             <?php endforeach; ?>
-        </div>
+        </section>
     <?php endif; ?>
 </div>

@@ -8,59 +8,61 @@ $jenis = $jenis ?? null;
 $errors = $errors ?? [];
 $action = $action ?? '';
 $submitLabel = $submitLabel ?? 'Simpan';
+$isEdit = $jenis !== null && !empty($jenis['id']);
+$inputClass = 'w-full rounded-xl border border-border bg-page/60 px-3.5 py-3 text-sm text-content-primary shadow-soft-inset transition duration-soft hover:border-admin/30 focus:border-admin focus:bg-white focus:outline-none focus:ring-2 focus:ring-admin/25';
+$errorBorder = ' border-red-400 focus:border-red-400 focus:ring-red-200';
 ?>
-<div>
-    <div class="mb-6">
-        <a href="/admin/grooming/layanan" class="text-sm text-gray-500 hover:text-admin">&larr; Kembali</a>
-        <h1 class="text-2xl font-bold text-gray-800 mt-2"><?= $jenis ? 'Edit Jenis Grooming' : 'Tambah Jenis Grooming' ?></h1>
-    </div>
+<div class="font-body max-w-xl space-y-6">
+    <nav class="flex flex-wrap items-center gap-2 text-sm text-content-secondary" aria-label="Breadcrumb">
+        <a href="/admin/grooming/layanan" class="cursor-pointer hover:text-admin focus:outline-none focus-visible:underline">Jenis</a>
+        <span aria-hidden="true">/</span>
+        <span class="font-medium text-content-primary"><?= $isEdit ? 'Edit' : 'Tambah' ?></span>
+    </nav>
 
-    <form method="POST" action="<?= e($action) ?>" class="bg-white rounded-xl border p-6 max-w-xl space-y-4">
+    <header>
+        <h1 class="font-heading text-2xl sm:text-3xl text-content-primary"><?= $isEdit ? 'Edit jenis grooming' : 'Tambah jenis grooming' ?></h1>
+        <p class="mt-2 text-sm text-content-secondary">Atur nama, harga, dan status layanan.</p>
+    </header>
+
+    <?php if (!empty($errors['general'])): ?>
+        <div class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800" role="alert"><?= e((string) $errors['general']) ?></div>
+    <?php endif; ?>
+
+    <form method="POST" action="<?= e($action) ?>" class="rounded-2xl border border-white/80 bg-card p-5 sm:p-6 shadow-soft space-y-5" data-loading-submit>
         <?= Csrf::field() ?>
-        <?php if ($jenis): ?>
+        <?php if ($isEdit): ?>
             <input type="hidden" name="id" value="<?= e((string) ($jenis['id'] ?? '')) ?>">
         <?php endif; ?>
 
-        <?php if (!empty($errors['general'])): ?>
-            <p class="text-sm text-red-600"><?= e((string) $errors['general']) ?></p>
-        <?php endif; ?>
-
         <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Nama</label>
-            <input type="text" name="nama" value="<?= e((string) ($jenis['nama'] ?? old('nama', ''))) ?>"
-                   class="w-full border rounded-lg px-3 py-2 text-sm <?= !empty($errors['nama']) ? 'border-red-400' : 'border-gray-300' ?>">
-            <?php if (!empty($errors['nama'])): ?>
-                <p class="text-xs text-red-600 mt-1"><?= e((string) $errors['nama']) ?></p>
-            <?php endif; ?>
+            <label for="nama" class="mb-1.5 block text-sm font-semibold text-content-primary">Nama</label>
+            <input type="text" id="nama" name="nama" value="<?= e((string) ($jenis['nama'] ?? old('nama', ''))) ?>"
+                   class="<?= e($inputClass . (!empty($errors['nama']) ? $errorBorder : '')) ?>">
+            <?php if (!empty($errors['nama'])): ?><p class="mt-1.5 text-xs text-red-600"><?= e((string) $errors['nama']) ?></p><?php endif; ?>
         </div>
 
         <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi</label>
-            <textarea name="deskripsi" rows="3"
-                      class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"><?= e((string) ($jenis['deskripsi'] ?? old('deskripsi', ''))) ?></textarea>
+            <label for="deskripsi" class="mb-1.5 block text-sm font-semibold text-content-primary">Deskripsi</label>
+            <textarea id="deskripsi" name="deskripsi" rows="3" class="<?= e($inputClass) ?>"><?= e((string) ($jenis['deskripsi'] ?? old('deskripsi', ''))) ?></textarea>
         </div>
 
         <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Harga (Rp)</label>
-            <input type="number" name="harga" min="0" step="1000"
+            <label for="harga" class="mb-1.5 block text-sm font-semibold text-content-primary">Harga (Rp)</label>
+            <input type="number" id="harga" name="harga" min="0" step="1000"
                    value="<?= e((string) ($jenis['harga'] ?? old('harga', ''))) ?>"
-                   class="w-full border rounded-lg px-3 py-2 text-sm <?= !empty($errors['harga']) ? 'border-red-400' : 'border-gray-300' ?>">
-            <?php if (!empty($errors['harga'])): ?>
-                <p class="text-xs text-red-600 mt-1"><?= e((string) $errors['harga']) ?></p>
-            <?php endif; ?>
+                   class="<?= e($inputClass . (!empty($errors['harga']) ? $errorBorder : '')) ?>">
+            <?php if (!empty($errors['harga'])): ?><p class="mt-1.5 text-xs text-red-600"><?= e((string) $errors['harga']) ?></p><?php endif; ?>
         </div>
 
-        <div>
-            <label class="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" name="aktif" value="1"
-                       <?= !isset($jenis['aktif']) || !empty($jenis['aktif']) ? 'checked' : '' ?>
-                       class="rounded border-gray-300">
-                <span class="text-sm text-gray-700">Aktif</span>
-            </label>
-        </div>
+        <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-border bg-page/50 px-4 py-3 shadow-soft-inset">
+            <input type="checkbox" name="aktif" value="1" class="h-4 w-4 rounded border-border text-admin focus:ring-admin"
+                   <?= !isset($jenis['aktif']) || !empty($jenis['aktif']) ? 'checked' : '' ?>>
+            <span class="text-sm font-medium text-content-primary">Aktif (dapat dipilih pelanggan)</span>
+        </label>
 
-        <button type="submit" class="bg-admin text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-admin-hover">
-            <?= e($submitLabel) ?>
-        </button>
+        <div class="flex flex-wrap gap-3">
+            <button type="submit" class="cursor-pointer rounded-xl bg-admin px-5 py-3 text-sm font-semibold text-white shadow-soft hover:bg-admin-hover disabled:opacity-60"><?= e($submitLabel) ?></button>
+            <a href="/admin/grooming/layanan" class="cursor-pointer px-4 py-3 text-sm font-semibold text-content-secondary hover:text-admin">Batal</a>
+        </div>
     </form>
 </div>
