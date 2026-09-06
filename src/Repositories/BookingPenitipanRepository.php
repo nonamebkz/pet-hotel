@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repositories;
 
 use App\Core\Database;
+use App\Enums\StatusPenitipan;
 use PDO;
 
 final class BookingPenitipanRepository
@@ -190,6 +191,38 @@ final class BookingPenitipanRepository
 
         $stmt = Database::connection()->prepare($sql);
         $stmt->execute($params);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function countByStatus(string $status): int
+    {
+        $stmt = Database::connection()->prepare(
+            'SELECT COUNT(*) FROM booking_penitipan WHERE status = :status'
+        );
+        $stmt->execute(['status' => $status]);
+
+        return (int) $stmt->fetchColumn();
+    }
+
+    /** @return list<array<string, mixed>> */
+    public function findMenungguKonfirmasiPreview(int $limit = 5): array
+    {
+        $stmt = Database::connection()->prepare(
+            'SELECT b.id, b.check_in, b.lama_hari,
+                    k.nama AS kucing_nama,
+                    pl.nama AS pelanggan_nama,
+                    b.subtotal_penitipan, b.potongan_promo, b.biaya_antar_jemput
+             FROM booking_penitipan b
+             INNER JOIN kucing k ON k.id = b.kucing_id
+             INNER JOIN pelanggan pl ON pl.id = b.pelanggan_id
+             WHERE b.status = :status
+             ORDER BY b.created_at DESC
+             LIMIT :limit'
+        );
+        $stmt->bindValue('status', StatusPenitipan::MENUNGGU_KONFIRMASI->value);
+        $stmt->bindValue('limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

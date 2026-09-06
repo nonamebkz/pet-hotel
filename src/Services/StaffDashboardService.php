@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Enums\JenisLayanan;
+use App\Enums\StatusPenitipan;
+use App\Repositories\BookingPenitipanRepository;
+use App\Repositories\MonitoringPenitipanRepository;
 use App\Repositories\StaffDashboardRepository;
 use App\Repositories\TransaksiRepository;
 
@@ -15,6 +18,8 @@ final class StaffDashboardService
     public function __construct(
         private readonly StaffDashboardRepository $dashboardRepo = new StaffDashboardRepository(),
         private readonly TransaksiRepository $transaksiRepo = new TransaksiRepository(),
+        private readonly BookingPenitipanRepository $bookingPenitipanRepo = new BookingPenitipanRepository(),
+        private readonly MonitoringPenitipanRepository $monitoringRepo = new MonitoringPenitipanRepository(),
     ) {}
 
     /**
@@ -22,6 +27,10 @@ final class StaffDashboardService
      *   today: string,
      *   bookingsToday: array{grooming: int, penitipan: int, pet_care: int, total: int},
      *   pendingVerification: array{grooming: int, penitipan: int, total: int},
+     *   pendingPenitipanConfirmation: int,
+     *   pendingPenitipanConfirmationPreview: list<array<string, mixed>>,
+     *   pendingMonitoringPenitipan: int,
+     *   pendingMonitoringPenitipanPreview: list<array<string, mixed>>,
      *   penitipanAktif: int,
      *   pendapatan: array{harian: float, mingguan: float, mingguMulai: string, mingguAkhir: string},
      *   pendingVerificationPreview: list<array<string, mixed>>
@@ -45,11 +54,19 @@ final class StaffDashboardService
         $pendapatanHarian = $this->dashboardRepo->sumVerifiedRevenue($harianMulai, $akhirEksklusif);
         $pendapatanKemarin = $this->dashboardRepo->sumVerifiedRevenue($kemarinMulai, $kemarinAkhir);
 
+        $pendingPenitipanConfirmation = $this->bookingPenitipanRepo->countByStatus(
+            StatusPenitipan::MENUNGGU_KONFIRMASI->value,
+        );
+
         return [
             'today' => $today,
             'bookingsToday' => $bookingsToday,
             'bookingsYesterday' => $bookingsYesterday,
             'pendingVerification' => $this->transaksiRepo->countPendingVerification(),
+            'pendingPenitipanConfirmation' => $pendingPenitipanConfirmation,
+            'pendingPenitipanConfirmationPreview' => $this->buildPendingPenitipanConfirmationPreview(),
+            'pendingMonitoringPenitipan' => $this->monitoringRepo->countBookingsMissingTodayMonitoring(),
+            'pendingMonitoringPenitipanPreview' => $this->buildPendingMonitoringPenitipanPreview(),
             'penitipanAktif' => $this->dashboardRepo->countPenitipanAktif(),
             'pendapatan' => [
                 'harian' => $pendapatanHarian,
@@ -98,9 +115,50 @@ final class StaffDashboardService
                     'layanan_label' => $layananLabel,
                     'total_bayar' => (float) ($item['total_bayar'] ?? 0),
                     'uploaded_at' => (string) ($item['bukti_uploaded_at'] ?? ''),
-                    'url' => '/admin/penitipan/pembayaran',
+                    'url' => '/admin/penitipan/pembayaran#bukti-' . urlencode((string) ($item['bukti_id'] ?? '')),
                 ];
             }
+        }
+
+        return $preview;
+    }
+
+    /** @return list<array<string, mixed>> */
+    private function buildPendingPenitipanConfirmationPreview(): array
+    {
+        $preview = [];
+
+        foreach ($this->bookingPenitipanRepo->findMenungguKonfirmasiPreview(self::PREVIEW_LIMIT) as $item) {
+            $subtotal = (float) ($item['subtotal_penitipan'] ?? 0);
+            $promo = (float) ($item['potongan_promo'] ?? 0);
+            $antar = (float) ($item['biaya_antar_jemput'] ?? 0);
+
+            $preview[] = [
+                'pelanggan_nama' => (string) ($item['pelanggan_nama'] ?? ''),
+                'kucing_nama' => (string) ($item['kucing_nama'] ?? ''),
+                'check_in' => (string) ($item['check_in'] ?? ''),
+                'lama_hari' => (int) ($item['lama_hari'] ?? 0),
+                'total_bayar' => $subtotal - $promo + $antar,
+                'url' => '/admin/penitipan/booking?status=' . urlencode(StatusPenitipan::MENUNGGU_KONFIRMASI->value),
+            ];
+        }
+
+        return $preview;
+    }
+
+    /** @return list<array<string, mixed>> */
+    private function buildPendingMonitoringPenitipanPreview(): array
+    {
+        $preview = [];
+
+        foreach ($this->monitoringRepo->findBookingsMissingTodayMonitoringPreview(self::PREVIEW_LIMIT) as $item) {
+            $bookingId = (string) ($item['booking_id'] ?? '');
+            $preview[] = [
+                'pelanggan_nama' => (string) ($item['pelanggan_nama'] ?? ''),
+                'kucing_nama' => (string) ($item['kucing_nama'] ?? ''),
+                'check_out' => (string) ($item['check_out'] ?? ''),
+                'url' => '/admin/penitipan/monitoring/tambah?booking_id=' . urlencode($bookingId),
+            ];
         }
 
         return $preview;

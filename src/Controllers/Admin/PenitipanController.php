@@ -302,9 +302,29 @@ final class PenitipanController
 
     public function bookingIndex(Request $request): Response
     {
+        $statusParamProvided = array_key_exists('status', $_GET);
+        $checkInParamProvided = array_key_exists('check_in', $_GET);
+        $monitoringParamProvided = array_key_exists('monitoring', $_GET);
+        $filterMonitoring = $monitoringParamProvided ? trim((string) $request->input('monitoring', '')) : '';
+        $countMenungguGlobal = $this->bookingRepo->countByStatus(StatusPenitipan::MENUNGGU_KONFIRMASI->value);
+        $countBelumMonitoringGlobal = $this->monitoringRepo->countBookingsMissingTodayMonitoring();
+        $countSedangDitipkanGlobal = $this->bookingRepo->countByStatus(StatusPenitipan::SEDANG_DITITIPKAN->value);
+
+        if (!$statusParamProvided && !$checkInParamProvided && !$monitoringParamProvided && $countMenungguGlobal > 0) {
+            $status = StatusPenitipan::MENUNGGU_KONFIRMASI->value;
+            $checkIn = '';
+            $autoFiltered = true;
+        } elseif ($filterMonitoring === 'belum_input') {
+            $status = StatusPenitipan::SEDANG_DITITIPKAN->value;
+            $checkIn = $checkInParamProvided ? trim((string) $request->input('check_in', '')) : '';
+            $autoFiltered = true;
+        } else {
+            $status = $statusParamProvided ? trim((string) $request->input('status', '')) : '';
+            $checkIn = $checkInParamProvided ? trim((string) $request->input('check_in', '')) : '';
+            $autoFiltered = false;
+        }
+
         $filters = [];
-        $status = trim((string) $request->input('status', ''));
-        $checkIn = trim((string) $request->input('check_in', ''));
 
         if ($status !== '') {
             $filters['status'] = $status;
@@ -315,29 +335,87 @@ final class PenitipanController
         }
 
         $bookings = $this->bookingRepo->findAllForAdmin($filters);
+        $bookingIds = array_map(static fn (array $b): string => (string) $b['id'], $bookings);
+        $monitoringSummary = $this->monitoringRepo->findSummaryByBookingIds($bookingIds);
 
         foreach ($bookings as &$booking) {
-            $transaksi = $this->transaksiRepo->findByPenitipanBooking((string) $booking['id']);
-            $booking['transaksi_id'] = $transaksi['id'] ?? null;
-            $booking['transaksi_lunas'] = $transaksi
-                && (string) $transaksi['status_pembayaran'] === StatusPembayaran::LUNAS->value;
-            $booking['status_refund'] = $transaksi['status_refund'] ?? StatusRefund::TIDAK_ADA->value;
-            $statusEnum = StatusPenitipan::tryFrom((string) $booking['status']);
-            $booking['status_label'] = $statusEnum
-                ? $statusEnum->displayLabel((bool) $booking['transaksi_lunas'])
-                : (string) $booking['status'];
-            $booking['vaksin_count'] = $this->vaksinRepo->countLengkapByKucingId((string) $booking['kucing_id']);
-            $booking['vaksin_list'] = $this->vaksinRepo->findByKucingId((string) $booking['kucing_id']);
-            $booking['can_staff_cancel_refund'] = $this->refundService->canStaffCancelPenitipanWithRefund(
-                $booking,
-                $transaksi,
-            );
-            $booking['can_mark_refund'] = $this->refundService->canMarkRefundCompleted($transaksi, $booking);
+            $this->enrichBookingRow($booking, $monitoringSummary);
         }
         unset($booking);
 
+        if ($filterMonitoring === 'belum_input') {
+            $bookings = array_values(array_filter(
+                $bookings,
+                static fn (array $b): bool => (string) $b['status'] === StatusPenitipan::SEDANG_DITITIPKAN->value
+                    && empty($b['monitoring_has_today']),
+            ));
+        }
+
+        $showPinnedPending = $status === '' && $filterMonitoring === '';
+        $pendingConfirmList = [];
+        $pendingMonitoringList = [];
+        $otherBookingList = [];
+
+        if ($showPinnedPending) {
+            $activeIds = array_map(
+                static fn (array $b): string => (string) $b['id'],
+                $this->bookingRepo->findAllForAdmin(['status' => StatusPenitipan::SEDANG_DITITIPKAN->value]),
+            );
+            $activeSummary = $this->monitoringRepo->findSummaryByBookingIds($activeIds);
+
+            foreach ($this->bookingRepo->findAllForAdmin(['status' => StatusPenitipan::SEDANG_DITITIPKAN->value]) as $activeBooking) {
+                $this->enrichBookingRow($activeBooking, $activeSummary);
+
+                if (empty($activeBooking['monitoring_has_today'])) {
+                    $pendingMonitoringList[] = $activeBooking;
+                }
+            }
+
+            usort(
+                $pendingMonitoringList,
+                static fn (array $a, array $b): int => strcmp((string) ($a['check_out'] ?? ''), (string) ($b['check_out'] ?? '')),
+            );
+        }
+
+        foreach ($bookings as $booking) {
+            if ((string) $booking['status'] === StatusPenitipan::MENUNGGU_KONFIRMASI->value) {
+                $pendingConfirmList[] = $booking;
+            } else {
+                $otherBookingList[] = $booking;
+            }
+        }
+
+        if ($showPinnedPending) {
+            usort(
+                $pendingConfirmList,
+                static fn (array $a, array $b): int => strcmp((string) ($b['created_at'] ?? ''), (string) ($a['created_at'] ?? '')),
+            );
+
+            $pinnedMonitoringIds = array_flip(array_map(
+                static fn (array $b): string => (string) $b['id'],
+                $pendingMonitoringList,
+            ));
+            $otherBookingList = array_values(array_filter(
+                $otherBookingList,
+                static fn (array $b): bool => !isset($pinnedMonitoringIds[(string) $b['id']]),
+            ));
+        } else {
+            $otherBookingList = $bookings;
+            $pendingConfirmList = [];
+            $pendingMonitoringList = [];
+        }
+
         return $this->adminView('admin/penitipan/booking/index', 'Booking Penitipan', [
+            'pendingConfirmList' => $pendingConfirmList,
+            'pendingMonitoringList' => $pendingMonitoringList,
+            'otherBookingList' => $otherBookingList,
             'bookingList' => $bookings,
+            'countMenungguGlobal' => $countMenungguGlobal,
+            'countMenungguVerifikasi' => $this->transaksiRepo->countPendingVerification()['penitipan'],
+            'countBelumMonitoringGlobal' => $countBelumMonitoringGlobal,
+            'countSedangDitipkanGlobal' => $countSedangDitipkanGlobal,
+            'autoFiltered' => $autoFiltered,
+            'filterMonitoring' => $filterMonitoring,
             'statusLabels' => StatusPenitipan::labels(),
             'refundLabels' => StatusRefund::labels(),
             'opsiLabels' => OpsiPengantaran::labels(),
@@ -357,7 +435,7 @@ final class PenitipanController
         $result = $this->bookingService->confirmByStaff((string) $request->input('id', ''), $staffId);
         Session::flash($result['success'] ? 'success' : 'error', $result['success'] ? 'Penitipan dikonfirmasi.' : ($result['error'] ?? 'Gagal konfirmasi.'));
 
-        return Response::redirect('/admin/penitipan/booking');
+        return $this->bookingRedirectWithFilters($request);
     }
 
     public function bookingReject(Request $request): Response
@@ -366,10 +444,11 @@ final class PenitipanController
             return $this->csrfFail('/admin/penitipan/booking');
         }
 
-        $result = $this->bookingService->rejectByStaff((string) $request->input('id', ''));
+        $alasan = trim((string) $request->input('alasan', '')) ?: null;
+        $result = $this->bookingService->rejectByStaff((string) $request->input('id', ''), $alasan);
         Session::flash($result['success'] ? 'success' : 'error', $result['success'] ? 'Booking ditolak.' : ($result['error'] ?? 'Gagal menolak.'));
 
-        return Response::redirect('/admin/penitipan/booking');
+        return $this->bookingRedirectWithFilters($request);
     }
 
     public function bookingCheckIn(Request $request): Response
@@ -379,9 +458,9 @@ final class PenitipanController
         }
 
         $result = $this->bookingService->checkIn((string) $request->input('id', ''));
-        Session::flash($result['success'] ? 'success' : 'error', $result['success'] ? 'Check-in berhasil.' : ($result['error'] ?? 'Gagal check-in.'));
+        Session::flash($result['success'] ? 'success' : 'error', $result['success'] ? 'Check-in berhasil. Kucing sedang dititipkan.' : ($result['error'] ?? 'Gagal check-in.'));
 
-        return Response::redirect('/admin/penitipan/booking');
+        return $this->bookingRedirectWithFilters($request);
     }
 
     public function bookingUpdateStatus(Request $request): Response
@@ -396,7 +475,7 @@ final class PenitipanController
         );
         Session::flash($result['success'] ? 'success' : 'error', $result['success'] ? 'Status diperbarui.' : ($result['error'] ?? 'Gagal memperbarui.'));
 
-        return Response::redirect('/admin/penitipan/booking');
+        return $this->bookingRedirectWithFilters($request);
     }
 
     public function bookingCancelRefund(Request $request): Response
@@ -413,7 +492,7 @@ final class PenitipanController
             $result['success'] ? 'Booking dibatalkan. Refund ditandai pending.' : ($result['error'] ?? 'Gagal membatalkan.'),
         );
 
-        return Response::redirect('/admin/penitipan/booking');
+        return $this->bookingRedirectWithFilters($request);
     }
 
     public function transaksiRefundSelesai(Request $request): Response
@@ -429,7 +508,7 @@ final class PenitipanController
             $result['success'] ? 'Refund ditandai selesai.' : ($result['error'] ?? 'Gagal memperbarui refund.'),
         );
 
-        return Response::redirect('/admin/penitipan/booking');
+        return $this->bookingRedirectWithFilters($request);
     }
 
     public function monitoringCreate(Request $request): Response
@@ -443,9 +522,40 @@ final class PenitipanController
             return Response::redirect('/admin/penitipan/booking');
         }
 
-        return $this->adminView('admin/penitipan/monitoring/form', 'Input Monitoring', [
+        $status = StatusPenitipan::tryFrom((string) $booking['status']);
+        $canInput = $status === StatusPenitipan::SEDANG_DITITIPKAN;
+        $canView = in_array($status, [StatusPenitipan::SEDANG_DITITIPKAN, StatusPenitipan::CHECK_OUT], true);
+
+        if (!$canView) {
+            Session::flash('error', 'Monitoring tidak tersedia untuk booking ini.');
+
+            return Response::redirect('/admin/penitipan/booking');
+        }
+
+        $tab = trim((string) $request->input('tab', ''));
+        if (!in_array($tab, ['input', 'riwayat'], true)) {
+            $tab = $canInput ? 'input' : 'riwayat';
+        } elseif ($tab === 'input' && !$canInput) {
+            $tab = 'riwayat';
+        }
+
+        $monitoringList = $this->monitoringRepo->findByBookingId($bookingId);
+        $lastMonitoring = $monitoringList[0] ?? null;
+        $checkOut = (string) ($booking['check_out'] ?? '');
+        $today = date('Y-m-d');
+        $sisaHari = null;
+
+        if ($checkOut !== '') {
+            $sisaHari = max(0, (int) ((strtotime($checkOut) - strtotime($today)) / 86400));
+        }
+
+        return $this->adminView('admin/penitipan/monitoring/form', 'Monitoring Penitipan', [
             'booking' => $booking,
-            'monitoringList' => $this->monitoringRepo->findByBookingId($bookingId),
+            'monitoringList' => $monitoringList,
+            'lastMonitoring' => $lastMonitoring,
+            'sisaHari' => $sisaHari,
+            'canInput' => $canInput,
+            'activeTab' => $tab,
             'errors' => Session::getFlash('errors', []),
         ]);
     }
@@ -470,7 +580,11 @@ final class PenitipanController
 
         Session::flash('success', 'Monitoring harian tersimpan.');
 
-        return Response::redirect('/admin/penitipan/monitoring/tambah?booking_id=' . urlencode($bookingId));
+        return Response::redirect(
+            '/admin/penitipan/booking?status='
+            . urlencode(StatusPenitipan::SEDANG_DITITIPKAN->value)
+            . '&monitoring=belum_input',
+        );
     }
 
     public function perpanjanganIndex(Request $request): Response
@@ -518,8 +632,25 @@ final class PenitipanController
 
     public function pembayaranIndex(Request $request): Response
     {
+        $pendingList = $this->transaksiRepo->findPendingVerificationPenitipan();
+
+        usort($pendingList, static function (array $a, array $b): int {
+            $today = date('Y-m-d');
+            $tomorrow = date('Y-m-d', strtotime('+1 day'));
+            $checkInA = (string) ($a['check_in'] ?? '');
+            $checkInB = (string) ($b['check_in'] ?? '');
+            $urgentA = $checkInA !== '' && $checkInA <= $tomorrow && empty($a['perpanjangan_penitipan_id']);
+            $urgentB = $checkInB !== '' && $checkInB <= $tomorrow && empty($b['perpanjangan_penitipan_id']);
+
+            if ($urgentA !== $urgentB) {
+                return $urgentB <=> $urgentA;
+            }
+
+            return strcmp((string) ($a['bukti_uploaded_at'] ?? ''), (string) ($b['bukti_uploaded_at'] ?? ''));
+        });
+
         return $this->adminView('admin/penitipan/pembayaran/index', 'Verifikasi Bukti Penitipan', [
-            'pendingList' => $this->transaksiRepo->findPendingVerificationPenitipan(),
+            'pendingList' => $pendingList,
         ]);
     }
 
@@ -533,7 +664,23 @@ final class PenitipanController
             (string) $request->input('bukti_id', ''),
             (string) $this->auth->currentStaffId(),
         );
-        Session::flash($result['success'] ? 'success' : 'error', $result['success'] ? 'Bukti disetujui.' : ($result['error'] ?? 'Gagal menyetujui.'));
+
+        if ($result['success']) {
+            Session::flash('success', 'Bukti disetujui. Pembayaran lunas.');
+
+            if (!empty($result['bookingId']) && empty($result['isPerpanjangan']) && !empty($result['checkIn'])) {
+                Session::flash('success_cta_label', 'Lanjut Check-in');
+                Session::flash(
+                    'success_cta_href',
+                    '/admin/penitipan/booking?status='
+                    . urlencode(StatusPenitipan::MENUNGGU_VERIFIKASI_BUKTI->value)
+                    . '&check_in='
+                    . urlencode((string) $result['checkIn']),
+                );
+            }
+        } else {
+            Session::flash('error', $result['error'] ?? 'Gagal menyetujui.');
+        }
 
         return Response::redirect('/admin/penitipan/pembayaran');
     }
@@ -559,6 +706,52 @@ final class PenitipanController
         Session::flash('error', 'Token CSRF tidak valid.');
 
         return Response::redirect($redirect);
+    }
+
+    /** @param array<string, array{count: int, has_today: bool, last_tanggal: ?string}> $monitoringSummary */
+    private function enrichBookingRow(array &$booking, array $monitoringSummary): void
+    {
+        $bookingId = (string) $booking['id'];
+        $summary = $monitoringSummary[$bookingId] ?? ['count' => 0, 'has_today' => false, 'last_tanggal' => null];
+        $booking['monitoring_count'] = $summary['count'];
+        $booking['monitoring_has_today'] = $summary['has_today'];
+        $booking['monitoring_last_tanggal'] = $summary['last_tanggal'];
+        $transaksi = $this->transaksiRepo->findByPenitipanBooking($bookingId);
+        $booking['transaksi_id'] = $transaksi['id'] ?? null;
+        $booking['transaksi_lunas'] = $transaksi
+            && (string) $transaksi['status_pembayaran'] === StatusPembayaran::LUNAS->value;
+        $booking['status_refund'] = $transaksi['status_refund'] ?? StatusRefund::TIDAK_ADA->value;
+        $booking['total_bayar'] = $transaksi
+            ? (float) $transaksi['total_bayar']
+            : (float) $booking['subtotal_penitipan'] - (float) $booking['potongan_promo'] + (float) $booking['biaya_antar_jemput'];
+        $statusEnum = StatusPenitipan::tryFrom((string) $booking['status']);
+        $booking['status_label'] = $statusEnum
+            ? $statusEnum->displayLabel((bool) $booking['transaksi_lunas'])
+            : (string) $booking['status'];
+        $booking['vaksin_count'] = $this->vaksinRepo->countLengkapByKucingId((string) $booking['kucing_id']);
+        $booking['vaksin_list'] = $this->vaksinRepo->findByKucingId((string) $booking['kucing_id']);
+        $booking['can_staff_cancel_refund'] = $this->refundService->canStaffCancelPenitipanWithRefund(
+            $booking,
+            $transaksi,
+        );
+        $booking['can_mark_refund'] = $this->refundService->canMarkRefundCompleted($transaksi, $booking);
+    }
+
+    private function bookingRedirectWithFilters(Request $request): Response
+    {
+        $params = array_filter([
+            'status' => trim((string) $request->input('filter_status', '')),
+            'check_in' => trim((string) $request->input('filter_check_in', '')),
+            'monitoring' => trim((string) $request->input('filter_monitoring', '')),
+        ], static fn (string $value): bool => $value !== '');
+
+        $url = '/admin/penitipan/booking';
+
+        if ($params !== []) {
+            $url .= '?' . http_build_query($params);
+        }
+
+        return Response::redirect($url);
     }
 
     /**

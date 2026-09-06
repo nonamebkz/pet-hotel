@@ -46,6 +46,14 @@ final class MonitoringPenitipanService
             $errors['tanggal'] = 'Tanggal tidak valid.';
         }
 
+        if ($catatanMakan === null && $kondisi === null && $aktivitas === null) {
+            $errors['general'] = 'Isi minimal satu catatan: makan, kondisi, atau aktivitas harian.';
+        }
+
+        if ($errors === [] && $this->monitoringRepo->existsByBookingAndDate($bookingId, $tanggal)) {
+            $errors['tanggal'] = 'Monitoring untuk tanggal ini sudah diinput. Lihat tab Riwayat.';
+        }
+
         if ($errors !== []) {
             return ['success' => false, 'errors' => $errors];
         }

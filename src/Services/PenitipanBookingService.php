@@ -129,6 +129,23 @@ final class PenitipanBookingService
 
             $pdo->commit();
 
+            $kucing = $this->kucingRepo->findById((string) $data['kucing_id']);
+            $pelanggan = $this->pelangganRepo->findById($pelangganId);
+            $checkInFormatted = date('d/m/Y', strtotime((string) $data['check_in']));
+
+            $this->notifikasiService->notifyAllActiveStaff(
+                JenisNotifikasi::BOOKING_PENITIPAN_MENUNGGU_KONFIRMASI,
+                'Booking penitipan baru',
+                sprintf(
+                    '%s mengajukan penitipan untuk %s (check-in %s).',
+                    (string) ($pelanggan['nama'] ?? 'Pelanggan'),
+                    (string) ($kucing['nama'] ?? 'kucing'),
+                    $checkInFormatted,
+                ),
+                $bookingId,
+                'booking_penitipan',
+            );
+
             return ['success' => true, 'bookingId' => $bookingId];
         } catch (\Throwable) {
             if ($pdo->inTransaction()) {
@@ -231,7 +248,7 @@ final class PenitipanBookingService
     }
 
     /** @return array{success: bool, error?: string} */
-    public function rejectByStaff(string $bookingId): array
+    public function rejectByStaff(string $bookingId, ?string $alasan = null): array
     {
         $booking = $this->bookingRepo->findById($bookingId);
 
@@ -246,11 +263,18 @@ final class PenitipanBookingService
         $result = $this->cancelBooking($booking);
 
         if ($result['success']) {
+            $pesan = 'Permintaan penitipan Anda ditolak oleh staff petshop.';
+            $alasan = trim((string) ($alasan ?? ''));
+
+            if ($alasan !== '') {
+                $pesan .= ' Alasan: ' . $alasan;
+            }
+
             $this->notifikasiService->notifyPelanggan(
                 (string) $booking['pelanggan_id'],
                 JenisNotifikasi::BOOKING_DITOLAK,
                 'Booking penitipan ditolak',
-                'Permintaan penitipan Anda ditolak oleh staff petshop.',
+                $pesan,
                 (string) $booking['id'],
                 'booking_penitipan',
             );
@@ -281,7 +305,7 @@ final class PenitipanBookingService
 
         try {
             $pdo->beginTransaction();
-            $this->bookingRepo->updateStatus($bookingId, StatusPenitipan::CHECK_IN->value, $pdo);
+            $this->bookingRepo->updateStatus($bookingId, StatusPenitipan::SEDANG_DITITIPKAN->value, $pdo);
             $pdo->commit();
 
             return ['success' => true];

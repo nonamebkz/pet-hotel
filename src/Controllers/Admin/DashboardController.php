@@ -37,6 +37,10 @@ final class DashboardController
             'penitipanAktif' => $summary['penitipanAktif'],
             'pendapatan' => $summary['pendapatan'],
             'pendingVerificationPreview' => $summary['pendingVerificationPreview'],
+            'pendingPenitipanConfirmation' => $summary['pendingPenitipanConfirmation'],
+            'pendingPenitipanConfirmationPreview' => $summary['pendingPenitipanConfirmationPreview'],
+            'pendingMonitoringPenitipan' => $summary['pendingMonitoringPenitipan'],
+            'pendingMonitoringPenitipanPreview' => $summary['pendingMonitoringPenitipanPreview'],
         ]);
 
         return Response::html($html);

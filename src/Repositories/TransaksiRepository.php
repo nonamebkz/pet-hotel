@@ -203,20 +203,24 @@ final class TransaksiRepository
     {
         $stmt = Database::connection()->query(
             "SELECT t.*,
+                    b.id AS booking_penitipan_id,
                     b.check_in,
                     b.check_out,
                     b.lama_hari,
                     p.nama AS paket_nama,
                     pl.nama AS pelanggan_nama,
+                    k.nama AS kucing_nama,
                     bt.id AS bukti_id,
                     bt.file_url AS bukti_file_url,
                     bt.status_verifikasi,
                     bt.uploaded_at AS bukti_uploaded_at,
-                    pp.check_out_baru AS perpanjangan_check_out_baru
+                    pp.check_out_baru AS perpanjangan_check_out_baru,
+                    pp.tambah_hari AS perpanjangan_tambah_hari
              FROM transaksi t
              INNER JOIN booking_penitipan b ON b.id = t.booking_id AND t.jenis_layanan = 'PENITIPAN'
              INNER JOIN paket_penitipan p ON p.id = b.paket_penitipan_id
              INNER JOIN pelanggan pl ON pl.id = t.pelanggan_id
+             INNER JOIN kucing k ON k.id = b.kucing_id
              LEFT JOIN perpanjangan_penitipan pp ON pp.id = t.perpanjangan_penitipan_id
              INNER JOIN bukti_transfer bt ON bt.transaksi_id = t.id
              WHERE t.status_pembayaran = 'MENUNGGU_VERIFIKASI'

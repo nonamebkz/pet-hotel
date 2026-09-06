@@ -16,6 +16,7 @@ use App\Repositories\BookingGroomingRepository;
 use App\Repositories\BookingPenitipanRepository;
 use App\Repositories\BuktiTransferRepository;
 use App\Repositories\InvoiceRepository;
+use App\Repositories\KucingRepository;
 use App\Repositories\PelangganRepository;
 use App\Repositories\PerpanjanganPenitipanRepository;
 use App\Repositories\TransaksiRepository;
@@ -30,6 +31,7 @@ final class PembayaranService
         private readonly BookingPenitipanRepository $penitipanBookingRepo = new BookingPenitipanRepository(),
         private readonly PerpanjanganPenitipanRepository $perpanjanganRepo = new PerpanjanganPenitipanRepository(),
         private readonly PelangganRepository $pelangganRepo = new PelangganRepository(),
+        private readonly KucingRepository $kucingRepo = new KucingRepository(),
         private readonly InvoiceRepository $invoiceRepo = new InvoiceRepository(),
         private readonly FileUploadService $fileUpload = new FileUploadService(),
         private readonly PerpanjanganPenitipanService $perpanjanganService = new PerpanjanganPenitipanService(),
@@ -116,6 +118,10 @@ final class PembayaranService
 
             $pdo->commit();
 
+            if ($jenis === JenisLayanan::PENITIPAN->value) {
+                $this->notifyStaffPenitipanBuktiUploaded($transaksi);
+            }
+
             return ['success' => true];
         } catch (\Throwable) {
             if ($pdo->inTransaction()) {
@@ -128,7 +134,7 @@ final class PembayaranService
         }
     }
 
-    /** @return array{success: bool, error?: string} */
+    /** @return array{success: bool, error?: string, bookingId?: string, checkIn?: string, isPerpanjangan?: bool} */
     public function setujuiBukti(string $buktiId, string $staffId): array
     {
         $bukti = $this->buktiRepo->findById($buktiId);
@@ -236,7 +242,22 @@ final class PembayaranService
                 );
             }
 
-            return ['success' => true];
+            $isPerpanjangan = $jenis === JenisLayanan::PENITIPAN->value && !empty($transaksi['perpanjangan_penitipan_id']);
+            $penitipanBookingId = null;
+            $penitipanCheckIn = null;
+
+            if ($jenis === JenisLayanan::PENITIPAN->value && !$isPerpanjangan) {
+                $penitipanBookingId = (string) $transaksi['booking_id'];
+                $penitipanBooking = $this->penitipanBookingRepo->findById($penitipanBookingId);
+                $penitipanCheckIn = $penitipanBooking ? (string) $penitipanBooking['check_in'] : null;
+            }
+
+            return [
+                'success' => true,
+                'bookingId' => $penitipanBookingId,
+                'checkIn' => $penitipanCheckIn,
+                'isPerpanjangan' => $isPerpanjangan,
+            ];
         } catch (\Throwable) {
             if ($pdo->inTransaction()) {
                 $pdo->rollBack();
@@ -261,13 +282,19 @@ final class PembayaranService
             return ['success' => false, 'error' => 'Transaksi tidak ditemukan.'];
         }
 
+        $catatanTrimmed = trim((string) ($catatan ?? ''));
+
+        if (mb_strlen($catatanTrimmed) < 10) {
+            return ['success' => false, 'error' => 'Catatan penolakan wajib diisi (minimal 10 karakter).'];
+        }
+
         $jenis = (string) $transaksi['jenis_layanan'];
         $pdo = Database::connection();
 
         try {
             $pdo->beginTransaction();
 
-            $this->buktiRepo->tolak($buktiId, $staffId, $catatan, $pdo);
+            $this->buktiRepo->tolak($buktiId, $staffId, $catatanTrimmed, $pdo);
             $this->transaksiRepo->updateStatusPembayaran(
                 (string) $transaksi['id'],
                 StatusPembayaran::MENUNGGU_PEMBAYARAN->value,
@@ -296,6 +323,18 @@ final class PembayaranService
 
             $pdo->commit();
 
+            if ($jenis === JenisLayanan::PENITIPAN->value) {
+                $total = number_format((float) $transaksi['total_bayar'], 0, ',', '.');
+                $this->notifikasiService->notifyPelanggan(
+                    (string) $transaksi['pelanggan_id'],
+                    JenisNotifikasi::BUKTI_PENITIPAN_DITOLAK,
+                    'Bukti transfer ditolak',
+                    "Bukti transfer sebesar Rp {$total} ditolak. Alasan: {$catatanTrimmed}. Silakan upload ulang bukti transfer.",
+                    (string) $transaksi['id'],
+                    'transaksi',
+                );
+            }
+
             return ['success' => true];
         } catch (\Throwable) {
             if ($pdo->inTransaction()) {
@@ -321,6 +360,36 @@ final class PembayaranService
         }
 
         return ['success' => true];
+    }
+
+    /** @param array<string, mixed> $transaksi */
+    private function notifyStaffPenitipanBuktiUploaded(array $transaksi): void
+    {
+        $booking = $this->penitipanBookingRepo->findById((string) $transaksi['booking_id']);
+
+        if (!$booking) {
+            return;
+        }
+
+        $pelanggan = $this->pelangganRepo->findById((string) $transaksi['pelanggan_id']);
+        $kucing = $this->kucingRepo->findById((string) $booking['kucing_id']);
+        $total = number_format((float) $transaksi['total_bayar'], 0, ',', '.');
+        $isPerpanjangan = !empty($transaksi['perpanjangan_penitipan_id']);
+        $jenisLabel = $isPerpanjangan ? 'perpanjangan penitipan' : 'penitipan';
+
+        $this->notifikasiService->notifyAllActiveStaff(
+            JenisNotifikasi::BUKTI_PENITIPAN_MENUNGGU_VERIFIKASI,
+            'Bukti transfer penitipan baru',
+            sprintf(
+                '%s mengupload bukti %s untuk %s (Rp %s).',
+                (string) ($pelanggan['nama'] ?? 'Pelanggan'),
+                $jenisLabel,
+                (string) ($kucing['nama'] ?? 'kucing'),
+                $total,
+            ),
+            (string) $transaksi['id'],
+            'transaksi',
+        );
     }
 
     /** @param array<string, mixed> $transaksi */

@@ -102,7 +102,8 @@ $btnDanger = 'cursor-pointer inline-flex items-center justify-center rounded-xl 
                                       data-confirm="Tolak bukti transfer ini? Pelanggan perlu mengunggah ulang.">
                                     <?= Csrf::field() ?>
                                     <input type="hidden" name="bukti_id" value="<?= e((string) $item['bukti_id']) ?>">
-                                    <input type="text" name="catatan" placeholder="Catatan penolakan"
+                                    <input type="text" name="catatan" required minlength="10"
+                                           placeholder="Catatan penolakan (min. 10 karakter)"
                                            class="<?= e($inputClass) ?> flex-1 min-w-[10rem]">
                                     <button type="submit" class="<?= e($btnDanger) ?>">
                                         Tolak

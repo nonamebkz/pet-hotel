@@ -13,6 +13,7 @@ use App\Controllers\Admin\PetCareController as AdminPetCareController;
 use App\Controllers\Admin\StaffManagementController as AdminStaffManagementController;
 use App\Controllers\Admin\TransaksiController as AdminTransaksiController;
 use App\Controllers\Auth\StaffAuthController;
+use App\Core\Response;
 use App\Core\Router;
 
 /** @var Router $router */
@@ -82,6 +83,7 @@ $router->post('/admin/grooming/transaksi/refund-selesai', [AdminGroomingControll
 $router->get('/admin/grooming/pembayaran', [AdminGroomingController::class, 'pembayaranIndex'], ['auth:staff']);
 $router->post('/admin/grooming/pembayaran/setujui', [AdminGroomingController::class, 'pembayaranSetujui'], ['auth:staff']);
 $router->post('/admin/grooming/pembayaran/tolak', [AdminGroomingController::class, 'pembayaranTolak'], ['auth:staff']);
+$router->get('/admin/penitipan', static fn () => Response::redirect('/admin/penitipan/booking'), ['auth:staff']);
 $router->get('/admin/penitipan/paket', [AdminPenitipanController::class, 'paketIndex'], ['auth:staff']);
 $router->get('/admin/penitipan/paket/tambah', [AdminPenitipanController::class, 'paketCreate'], ['auth:staff']);
 $router->post('/admin/penitipan/paket/tambah', [AdminPenitipanController::class, 'paketStore'], ['auth:staff']);

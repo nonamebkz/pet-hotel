@@ -19,6 +19,9 @@ $resolveKategori = static function (string $jenis): string {
     $bookingTypes = [
         JenisNotifikasi::BOOKING_DISETUJUI->value,
         JenisNotifikasi::BOOKING_DITOLAK->value,
+        JenisNotifikasi::BOOKING_PENITIPAN_MENUNGGU_KONFIRMASI->value,
+        JenisNotifikasi::BUKTI_PENITIPAN_MENUNGGU_VERIFIKASI->value,
+        JenisNotifikasi::BUKTI_PENITIPAN_DITOLAK->value,
         JenisNotifikasi::JAM_GROOMING_DIUPDATE->value,
         JenisNotifikasi::LAYANAN_SELESAI->value,
         JenisNotifikasi::BOOKING_DIBATALKAN->value,
@@ -31,6 +34,8 @@ $resolveKategori = static function (string $jenis): string {
     $pembayaranTypes = [
         JenisNotifikasi::PEMBAYARAN_JATUH_TEMPO->value,
         JenisNotifikasi::STATUS_REFUND->value,
+        JenisNotifikasi::BUKTI_PENITIPAN_MENUNGGU_VERIFIKASI->value,
+        JenisNotifikasi::BUKTI_PENITIPAN_DITOLAK->value,
     ];
     $reminderTypes = [
         JenisNotifikasi::REMINDER_PEMBAYARAN->value,
@@ -113,6 +118,10 @@ $btnSecondary = 'cursor-pointer inline-flex items-center justify-center rounded-
 
                 if ($jenis === JenisNotifikasi::PERPANJANGAN_PENITIPAN_MENUNGGU_KONFIRMASI->value) {
                     $actionUrl = '/admin/penitipan/perpanjangan';
+                } elseif ($jenis === JenisNotifikasi::BOOKING_PENITIPAN_MENUNGGU_KONFIRMASI->value) {
+                    $actionUrl = '/admin/penitipan/booking?status=MENUNGGU_KONFIRMASI';
+                } elseif ($jenis === JenisNotifikasi::BUKTI_PENITIPAN_MENUNGGU_VERIFIKASI->value) {
+                    $actionUrl = '/admin/penitipan/pembayaran';
                 } elseif (in_array($kat, ['pembayaran', 'reminder'], true)) {
                     $actionUrl = '/admin/grooming/pembayaran';
                 } elseif ($kat === 'booking') {

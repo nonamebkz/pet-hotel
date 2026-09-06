@@ -74,7 +74,7 @@ $badge = nav_badge_classes(true);
                             <p class="px-4 pt-1.5 pb-2 text-[11px] font-semibold uppercase tracking-wider text-content-secondary">Kelola Layanan</p>
                             <a href="/admin/pet-care/layanan" class="<?= nav_dropdown_link_classes(nav_is_active('/admin/pet-care', true), true) ?>">Pet Care</a>
                             <a href="/admin/grooming/layanan" class="<?= nav_dropdown_link_classes(nav_is_active('/admin/grooming', true), true) ?>">Grooming</a>
-                            <a href="/admin/penitipan/paket" class="<?= nav_dropdown_link_classes(nav_is_active('/admin/penitipan', true), true) ?>">Penitipan</a>
+                            <a href="/admin/penitipan/booking" class="<?= nav_dropdown_link_classes(nav_is_active('/admin/penitipan', true), true) ?>">Penitipan</a>
                             <div class="my-1.5 mx-3 border-t border-border"></div>
                             <p class="px-4 pt-1 pb-2 text-[11px] font-semibold uppercase tracking-wider text-content-secondary">Verifikasi</p>
                             <a href="/admin/grooming/pembayaran" class="<?= nav_dropdown_link_classes(nav_is_active('/admin/grooming/pembayaran', true), true) ?>">Verifikasi Grooming</a>
@@ -171,7 +171,7 @@ $badge = nav_badge_classes(true);
                     <div class="space-y-0.5">
                         <a href="/admin/pet-care/layanan" class="<?= nav_mobile_link_classes(nav_is_active('/admin/pet-care', true), true) ?>">Pet Care</a>
                         <a href="/admin/grooming/layanan" class="<?= nav_mobile_link_classes(nav_is_active('/admin/grooming', true), true) ?>">Grooming</a>
-                        <a href="/admin/penitipan/paket" class="<?= nav_mobile_link_classes(nav_is_active('/admin/penitipan', true), true) ?>">Penitipan</a>
+                        <a href="/admin/penitipan/booking" class="<?= nav_mobile_link_classes(nav_is_active('/admin/penitipan', true), true) ?>">Penitipan</a>
                         <a href="/admin/grooming/pembayaran" class="<?= nav_mobile_link_classes(nav_is_active('/admin/grooming/pembayaran', true), true) ?>">Verifikasi Grooming</a>
                         <a href="/admin/penitipan/pembayaran" class="<?= nav_mobile_link_classes(nav_is_active('/admin/penitipan/pembayaran', true), true) ?>">Verifikasi Penitipan</a>
                     </div>
