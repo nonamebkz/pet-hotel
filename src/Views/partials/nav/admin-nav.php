@@ -24,23 +24,23 @@ $akunActive = nav_is_active([
 
 $badge = nav_badge_classes(true);
 ?>
-<a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:rounded-xl focus:bg-admin focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white">
+<a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:rounded-xl focus:bg-primary focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white">
     Lewati ke konten
 </a>
 
-<nav class="sticky top-0 z-40 print:hidden bg-card/90 backdrop-blur-md border-b border-white/80 shadow-soft" data-nav>
+<nav class="sticky top-0 z-40 print:hidden bg-card/90 backdrop-blur-md border-b border-border shadow-sm" data-nav>
     <div class="max-w-7xl mx-auto px-4 sm:px-6">
         <div class="flex items-center justify-between h-16 gap-3">
             <div class="flex items-center gap-4 min-w-0">
                 <a href="/admin/dashboard"
-                   class="group flex items-center gap-2.5 shrink-0 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin focus-visible:ring-offset-2">
-                    <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-admin text-white shadow-soft transition duration-soft group-hover:scale-[1.03]">
+                   class="group flex items-center gap-2.5 shrink-0 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                    <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm transition duration-soft group-hover:scale-[1.03]">
                         <svg class="h-[18px] w-[18px]" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/>
                         </svg>
                     </span>
                     <span class="hidden sm:block">
-                        <span class="block font-heading text-base leading-tight text-admin">Petshop</span>
+                        <span class="block font-heading text-base leading-tight text-primary">Petshop</span>
                         <span class="block text-[10px] font-semibold uppercase tracking-wider text-content-secondary">Admin</span>
                     </span>
                 </a>
@@ -86,7 +86,7 @@ $badge = nav_badge_classes(true);
 
             <div class="flex items-center gap-1.5 sm:gap-2">
                 <a href="/admin/notifikasi"
-                   class="lg:hidden relative cursor-pointer inline-flex items-center justify-center min-h-10 min-w-10 rounded-xl text-content-secondary transition duration-soft hover:bg-admin-soft hover:text-admin focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin"
+                   class="lg:hidden relative cursor-pointer inline-flex items-center justify-center min-h-10 min-w-10 rounded-xl text-content-secondary transition duration-soft hover:bg-muted hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                    aria-label="Notifikasi<?= $navUnreadCount > 0 ? ' (' . $navUnreadCount . ' belum dibaca)' : '' ?>">
                     <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"/>
@@ -112,7 +112,7 @@ $badge = nav_badge_classes(true);
                     </button>
                     <div data-nav-dropdown-panel class="<?= nav_dropdown_panel_classes('right') ?>">
                         <div class="px-4 py-3 border-b border-border mb-1">
-                            <span class="inline-flex rounded-lg bg-admin-soft px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-admin"><?= e($roleLabel ?? 'Staff') ?></span>
+                            <span class="inline-flex rounded-lg bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary"><?= e($roleLabel ?? 'Staff') ?></span>
                             <p class="text-sm font-semibold text-content-primary truncate mt-1.5"><?= e($navName) ?></p>
                         </div>
                         <?php if ($isOwner): ?>
@@ -136,7 +136,7 @@ $badge = nav_badge_classes(true);
                     aria-expanded="false"
                     aria-controls="admin-mobile-nav"
                     aria-label="Buka menu navigasi"
-                    class="lg:hidden cursor-pointer inline-flex items-center justify-center min-h-10 min-w-10 rounded-xl text-content-secondary transition duration-soft hover:bg-admin-soft hover:text-admin focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin"
+                    class="lg:hidden cursor-pointer inline-flex items-center justify-center min-h-10 min-w-10 rounded-xl text-content-secondary transition duration-soft hover:bg-muted hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
                     <svg data-nav-icon-open class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/>
@@ -150,7 +150,7 @@ $badge = nav_badge_classes(true);
 
         <div id="admin-mobile-nav" data-nav-mobile-panel class="hidden lg:hidden border-t border-border/80 pb-4">
             <div class="pt-3 space-y-3">
-                <div class="rounded-2xl bg-page/70 p-2 shadow-soft-inset">
+                <div class="rounded-2xl bg-muted/40 p-2 ring-1 ring-border">
                     <p class="px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-content-secondary">Menu Utama</p>
                     <div class="space-y-0.5">
                         <a href="/admin/dashboard" class="<?= nav_mobile_link_classes(nav_is_active('/admin/dashboard'), true) ?>">Dashboard</a>
@@ -166,7 +166,7 @@ $badge = nav_badge_classes(true);
                     </div>
                 </div>
 
-                <div class="rounded-2xl bg-page/70 p-2 shadow-soft-inset">
+                <div class="rounded-2xl bg-muted/40 p-2 ring-1 ring-border">
                     <p class="px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-content-secondary">Layanan</p>
                     <div class="space-y-0.5">
                         <a href="/admin/pet-care/layanan" class="<?= nav_mobile_link_classes(nav_is_active('/admin/pet-care', true), true) ?>">Pet Care</a>
@@ -177,7 +177,7 @@ $badge = nav_badge_classes(true);
                     </div>
                 </div>
 
-                <div class="rounded-2xl bg-page/70 p-2 shadow-soft-inset md:hidden">
+                <div class="rounded-2xl bg-muted/40 p-2 ring-1 ring-border md:hidden">
                     <p class="px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-content-secondary">Akun</p>
                     <div class="px-3 py-2 mb-1 flex items-center gap-3">
                         <span class="<?= nav_avatar_classes(true) ?>"><?= e($navInitials) ?></span>

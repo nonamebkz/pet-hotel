@@ -20,24 +20,24 @@ $selectedCheckOut = (string) old('check_out', '');
 $selectedOpsi = (string) old('opsi_pengantaran', OpsiPengantaran::ANTAR_SENDIRI->value);
 $selectedCatatan = (string) old('catatan_makan', '');
 ?>
-<div>
+<div class="<?= e(design_cn(ui_page_content_shell_classes(), design_page_layout('formLg'))) ?>">
     <div class="mb-6">
-        <a href="/penitipan" class="text-sm text-gray-500 hover:text-primary">&larr; Kembali</a>
-        <h1 class="text-2xl font-bold text-gray-800 mt-2">Booking Penitipan</h1>
-        <p class="text-sm text-gray-500 mt-1">Pilih kucing eligible, tanggal, paket, dan opsi pengantaran.</p>
+        <a href="/penitipan" class="<?= e(ui_back_link_class()) ?>">&larr; Kembali</a>
+        <h1 class="mt-2 text-2xl font-bold tracking-tight text-foreground md:text-3xl">Booking Penitipan</h1>
+        <p class="text-sm text-muted-foreground mt-1">Pilih kucing eligible, tanggal, paket, dan opsi pengantaran.</p>
     </div>
 
-    <form method="POST" action="/penitipan/booking" class="bg-white rounded-xl border p-6 space-y-5 max-w-xl" id="booking-form">
+    <form method="POST" action="/penitipan/booking" class="<?= e(design_cn(design_surface('metric'), 'p-6 space-y-5 max-w-xl')) ?>" id="booking-form">
         <?= Csrf::field() ?>
 
         <?php if (!empty($errors['general'])): ?>
-            <p class="text-sm text-red-600"><?= e((string) $errors['general']) ?></p>
+            <p class="text-sm text-destructive"><?= e((string) $errors['general']) ?></p>
         <?php endif; ?>
 
         <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Paket Penitipan</label>
+            <label class="block text-sm font-medium text-foreground mb-1">Paket Penitipan</label>
             <select name="paket_penitipan_id" id="paket-select"
-                    class="w-full border rounded-lg px-3 py-2 text-sm <?= !empty($errors['paket_penitipan_id']) ? 'border-red-400' : 'border-gray-300' ?>"
+                    class="<?= e(ui_form_input_class(!empty($errors['paket_penitipan_id']))) ?> text-sm py-2"
                     required>
                 <option value="">— Pilih paket —</option>
                 <?php foreach ($paketList as $paket): ?>
@@ -49,14 +49,14 @@ $selectedCatatan = (string) old('catatan_makan', '');
                 <?php endforeach; ?>
             </select>
             <?php if (!empty($errors['paket_penitipan_id'])): ?>
-                <p class="text-xs text-red-600 mt-1"><?= e((string) $errors['paket_penitipan_id']) ?></p>
+                <p class="text-xs text-destructive mt-1"><?= e((string) $errors['paket_penitipan_id']) ?></p>
             <?php endif; ?>
         </div>
 
         <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Kucing</label>
+            <label class="block text-sm font-medium text-foreground mb-1">Kucing</label>
             <select name="kucing_id" id="kucing-select"
-                    class="w-full border rounded-lg px-3 py-2 text-sm <?= !empty($errors['kucing_id']) ? 'border-red-400' : 'border-gray-300' ?>"
+                    class="<?= e(ui_form_input_class(!empty($errors['kucing_id']))) ?> text-sm py-2"
                     required>
                 <option value="">— Pilih kucing —</option>
                 <?php foreach ($kucingList as $kucing): ?>
@@ -70,9 +70,9 @@ $selectedCatatan = (string) old('catatan_makan', '');
                 <?php endforeach; ?>
             </select>
             <?php if (!empty($errors['kucing_id'])): ?>
-                <p class="text-xs text-red-600 mt-1"><?= e((string) $errors['kucing_id']) ?></p>
+                <p class="text-xs text-destructive mt-1"><?= e((string) $errors['kucing_id']) ?></p>
             <?php endif; ?>
-            <p class="text-xs text-gray-500 mt-1">
+            <p class="text-xs text-muted-foreground mt-1">
                 Kucing belum eligible? <a href="/kucing" class="text-primary underline">Lengkapi riwayat vaksin</a>
             </p>
         </div>
@@ -84,43 +84,43 @@ $selectedCatatan = (string) old('catatan_makan', '');
 
         <div class="grid sm:grid-cols-2 gap-4">
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Check-in</label>
+                <label class="block text-sm font-medium text-foreground mb-1">Check-in</label>
                 <input type="date" name="check_in" id="check-in"
                        value="<?= e($selectedCheckIn) ?>"
                        min="<?= e(date('Y-m-d')) ?>"
-                       class="w-full border rounded-lg px-3 py-2 text-sm <?= !empty($errors['check_in']) ? 'border-red-400' : 'border-gray-300' ?>"
+                       class="<?= e(ui_form_input_class(!empty($errors['check_in']))) ?> text-sm py-2"
                        required>
                 <?php if (!empty($errors['check_in'])): ?>
-                    <p class="text-xs text-red-600 mt-1"><?= e((string) $errors['check_in']) ?></p>
+                    <p class="text-xs text-destructive mt-1"><?= e((string) $errors['check_in']) ?></p>
                 <?php endif; ?>
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Check-out</label>
+                <label class="block text-sm font-medium text-foreground mb-1">Check-out</label>
                 <input type="date" name="check_out" id="check-out"
                        value="<?= e($selectedCheckOut) ?>"
-                       class="w-full border rounded-lg px-3 py-2 text-sm <?= !empty($errors['check_out']) ? 'border-red-400' : 'border-gray-300' ?>"
+                       class="<?= e(ui_form_input_class(!empty($errors['check_out']))) ?> text-sm py-2"
                        required>
                 <?php if (!empty($errors['check_out'])): ?>
-                    <p class="text-xs text-red-600 mt-1"><?= e((string) $errors['check_out']) ?></p>
+                    <p class="text-xs text-destructive mt-1"><?= e((string) $errors['check_out']) ?></p>
                 <?php endif; ?>
             </div>
         </div>
 
         <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Catatan Makan & Kebiasaan (opsional)</label>
+            <label class="block text-sm font-medium text-foreground mb-1">Catatan Makan & Kebiasaan (opsional)</label>
             <textarea name="catatan_makan" rows="2"
-                      class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"><?= e($selectedCatatan) ?></textarea>
+                      class="<?= e(ui_form_input_class()) ?> text-sm py-2"><?= e($selectedCatatan) ?></textarea>
         </div>
 
         <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Opsi Pengantaran</label>
+            <label class="block text-sm font-medium text-foreground mb-2">Opsi Pengantaran</label>
             <div class="space-y-2">
                 <?php foreach ($opsiLabels as $value => $label): ?>
                     <label class="flex items-center gap-2 cursor-pointer">
                         <input type="radio" name="opsi_pengantaran" value="<?= e($value) ?>"
                                class="text-primary opsi-radio"
                                <?= $selectedOpsi === $value ? 'checked' : '' ?> required>
-                        <span class="text-sm text-gray-700"><?= e($label) ?></span>
+                        <span class="text-sm text-foreground"><?= e($label) ?></span>
                     </label>
                 <?php endforeach; ?>
             </div>
@@ -132,20 +132,21 @@ $selectedCatatan = (string) old('catatan_makan', '');
             <div id="pickup-estimasi" class="hidden mt-3 p-3 bg-blue-50 border border-blue-100 rounded-lg text-sm text-blue-900"></div>
         </div>
 
-        <div class="bg-gray-50 rounded-lg p-4 text-sm" id="ringkasan-biaya">
-            <div class="font-medium text-gray-800 mb-2">Ringkasan Biaya</div>
-            <div class="text-gray-600" id="line-lama">Lama penitipan: —</div>
-            <div class="text-gray-600" id="line-subtotal">Subtotal penitipan: —</div>
+        <div class="bg-muted/50 rounded-lg p-4 text-sm" id="ringkasan-biaya">
+            <div class="font-medium text-foreground mb-2">Ringkasan Biaya</div>
+            <div class="text-muted-foreground" id="line-lama">Lama penitipan: —</div>
+            <div class="text-muted-foreground" id="line-subtotal">Subtotal penitipan: —</div>
             <div class="text-green-700 hidden" id="line-promo">Potongan promo: —</div>
-            <div class="text-gray-600" id="line-pickup">Biaya antar-jemput: Rp 0</div>
-            <div class="font-medium text-gray-800 mt-2 pt-2 border-t" id="line-total">Total: —</div>
+            <div class="text-muted-foreground" id="line-pickup">Biaya antar-jemput: Rp 0</div>
+            <div class="font-medium text-foreground mt-2 pt-2 border-t" id="line-total">Total: —</div>
         </div>
 
         <button type="submit"
-                class="w-full bg-primary text-white rounded-lg py-2.5 text-sm font-medium hover:bg-primary-hover">
+                class="<?= e(design_cn(ui_btn_primary(), 'hidden w-full md:inline-flex')) ?>">
             Ajukan Penitipan
         </button>
     </form>
+    <?php ui_form_footer_mobile('Ajukan Penitipan', 'booking-form'); ?>
 </div>
 
 <script>

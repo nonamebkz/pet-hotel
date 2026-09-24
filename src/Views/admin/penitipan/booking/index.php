@@ -32,15 +32,21 @@ foreach ($bookingList as $statRow) {
 }
 $countAktif = $countSedangDitipkanGlobal;
 
-$inputClass = 'w-full rounded-xl border border-border bg-white px-3.5 py-2.5 text-sm text-content-primary shadow-soft-inset transition duration-soft hover:border-admin/30 focus:border-admin focus:outline-none focus:ring-2 focus:ring-admin/25';
-$btnPrimary = 'cursor-pointer inline-flex items-center justify-center rounded-xl bg-admin px-3.5 py-2 text-xs font-semibold text-white shadow-soft transition duration-soft hover:bg-admin-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-admin disabled:opacity-60';
+$heroClass = design_cn(design_surface('panel'), 'relative overflow-hidden p-6 sm:p-8');
+$filterFormClass = design_cn(design_surface('metric'), 'p-5 sm:p-6');
+$metricCardClass = design_cn(design_surface('metric'), 'p-5');
+$metricLinkClass = design_cn(design_interactive('cardLink'), 'p-5 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring');
+$heroIconClass = design_cn('flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-sm', '');
+
+$inputClass = 'w-full rounded-lg border border-input bg-background px-3.5 py-2.5 text-base sm:text-sm text-foreground transition hover:border-primary/30 focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/25';
+$btnPrimary = design_cn(ui_btn_primary(), 'cursor-pointer text-xs px-3.5 py-2 disabled:opacity-60');
 
 $renderCard = static function (array $booking) use ($statusLabels, $opsiLabels, $refundLabels, $minVaksin, $filterStatus, $filterCheckIn, $filterMonitoring): void {
     require __DIR__ . '/_card.php';
 };
 ?>
 <div class="font-body space-y-6">
-    <section class="relative overflow-hidden rounded-2xl border border-white/80 bg-card p-6 sm:p-8 shadow-soft">
+    <section class="<?= e($heroClass) ?>">
         <div class="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-success/10 blur-2xl" aria-hidden="true"></div>
         <div class="relative flex flex-wrap items-start justify-between gap-4">
             <div>
@@ -59,7 +65,7 @@ $renderCard = static function (array $booking) use ($statusLabels, $opsiLabels, 
                     </p>
                 <?php endif; ?>
             </div>
-            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-admin text-white shadow-soft" aria-hidden="true">
+            <div class="<?= e($heroIconClass) ?>" aria-hidden="true">
                 <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 21v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21m0 0h4.5V3.545M12.75 21h7.5V10.75M2.25 21h1.5m18 0h-18M2.25 9l4.5-1.636M18.75 3l-1.5.545m0 6.205l3 1m1.5.5l-1.5-.5M6.75 7.364V3h-3v18m3-13.636l10.5-3.819"/>
                 </svg>
@@ -72,7 +78,7 @@ $renderCard = static function (array $booking) use ($statusLabels, $opsiLabels, 
     <?php if ($bookingList !== [] || $hasFilter || $countMenungguGlobal > 0 || $countMenungguVerifikasi > 0 || $countBelumMonitoringGlobal > 0): ?>
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
             <a href="/admin/penitipan/booking?status=<?= e(StatusPenitipan::MENUNGGU_KONFIRMASI->value) ?>"
-               class="block rounded-2xl border <?= $countMenungguGlobal > 0 ? 'border-amber-200 bg-warning-bg/40' : 'border-white/80 bg-card' ?> p-5 shadow-soft transition duration-soft hover:border-amber-400 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-admin cursor-pointer">
+               class="<?= e(design_cn($metricLinkClass, $countMenungguGlobal > 0 ? 'border-amber-200 bg-warning-bg/40 hover:border-amber-400' : '')) ?>">
                 <p class="text-sm text-content-secondary">Menunggu Konfirmasi</p>
                 <p class="mt-1 font-heading text-2xl <?= $countMenungguGlobal > 0 ? 'text-amber-700' : 'text-admin' ?>"><?= e((string) $countMenungguGlobal) ?></p>
                 <?php if ($countMenungguGlobal > 0): ?>
@@ -80,19 +86,19 @@ $renderCard = static function (array $booking) use ($statusLabels, $opsiLabels, 
                 <?php endif; ?>
             </a>
             <a href="/admin/penitipan/pembayaran"
-               class="block rounded-2xl border <?= $countMenungguVerifikasi > 0 ? 'border-amber-200 bg-warning-bg/40' : 'border-white/80 bg-card' ?> p-5 shadow-soft transition duration-soft hover:border-amber-400 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-admin cursor-pointer">
+               class="<?= e(design_cn($metricLinkClass, $countMenungguVerifikasi > 0 ? 'border-amber-200 bg-warning-bg/40 hover:border-amber-400' : '')) ?>">
                 <p class="text-sm text-content-secondary">Menunggu Verifikasi Bukti</p>
                 <p class="mt-1 font-heading text-2xl <?= $countMenungguVerifikasi > 0 ? 'text-amber-700' : 'text-admin' ?>"><?= e((string) $countMenungguVerifikasi) ?></p>
                 <?php if ($countMenungguVerifikasi > 0): ?>
                     <p class="mt-1 text-xs text-content-secondary">Klik untuk verifikasi</p>
                 <?php endif; ?>
             </a>
-            <article class="rounded-2xl border border-white/80 bg-card p-5 shadow-soft">
+            <article class="<?= e($metricCardClass) ?>">
                 <p class="text-sm text-content-secondary">Siap / Check-in</p>
                 <p class="mt-1 font-heading text-2xl text-admin"><?= e((string) $countCheckIn) ?></p>
             </article>
             <a href="/admin/penitipan/booking?status=<?= e(StatusPenitipan::SEDANG_DITITIPKAN->value) ?>"
-               class="block rounded-2xl border border-white/80 bg-card p-5 shadow-soft transition duration-soft hover:border-success/40 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-admin cursor-pointer">
+               class="<?= e(design_cn($metricLinkClass, 'hover:border-emerald-500/40')) ?>">
                 <p class="text-sm text-content-secondary">Sedang Dititipkan</p>
                 <p class="mt-1 font-heading text-2xl text-success"><?= e((string) $countAktif) ?></p>
                 <?php if ($countAktif > 0): ?>
@@ -100,7 +106,7 @@ $renderCard = static function (array $booking) use ($statusLabels, $opsiLabels, 
                 <?php endif; ?>
             </a>
             <a href="/admin/penitipan/booking?status=<?= e(StatusPenitipan::SEDANG_DITITIPKAN->value) ?>&monitoring=belum_input"
-               class="block rounded-2xl border <?= $countBelumMonitoringGlobal > 0 ? 'border-amber-200 bg-warning-bg/40' : 'border-white/80 bg-card' ?> p-5 shadow-soft transition duration-soft hover:border-amber-400 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-admin cursor-pointer">
+               class="<?= e(design_cn($metricLinkClass, $countBelumMonitoringGlobal > 0 ? 'border-amber-200 bg-warning-bg/40 hover:border-amber-400' : '')) ?>">
                 <p class="text-sm text-content-secondary">Belum Input Monitoring</p>
                 <p class="mt-1 font-heading text-2xl <?= $countBelumMonitoringGlobal > 0 ? 'text-amber-700' : 'text-admin' ?>"><?= e((string) $countBelumMonitoringGlobal) ?></p>
                 <?php if ($countBelumMonitoringGlobal > 0): ?>
@@ -110,7 +116,7 @@ $renderCard = static function (array $booking) use ($statusLabels, $opsiLabels, 
         </div>
     <?php endif; ?>
 
-    <form method="GET" action="/admin/penitipan/booking" class="rounded-2xl border border-white/80 bg-card p-5 sm:p-6 shadow-soft">
+    <form method="GET" action="/admin/penitipan/booking" class="<?= e($filterFormClass) ?>">
         <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
             <h2 class="font-heading text-lg text-content-primary">Filter</h2>
             <?php if ($hasFilter): ?>
@@ -145,7 +151,7 @@ $renderCard = static function (array $booking) use ($statusLabels, $opsiLabels, 
             $description = 'Coba ubah tanggal check-in atau status.';
             $ctaLabel = 'Reset Filter';
             $ctaHref = '/admin/penitipan/booking?status=&check_in=&monitoring=';
-            $ctaClass = 'cursor-pointer inline-flex items-center justify-center rounded-xl bg-admin px-4 py-2.5 text-sm font-semibold text-white shadow-soft transition duration-soft hover:bg-admin-hover';
+            $ctaClass = ui_btn_primary();
         } else {
             $variant = 'empty';
             $title = 'Belum ada booking penitipan';

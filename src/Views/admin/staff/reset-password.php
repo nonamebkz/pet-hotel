@@ -9,7 +9,7 @@ $errors = $errors ?? [];
 $action = $action ?? '';
 
 $inputClass = static function (string $field, array $errors): string {
-    $base = 'w-full rounded-xl border bg-page/60 px-3.5 py-3 text-sm text-content-primary placeholder:text-content-secondary/60 shadow-soft-inset transition duration-soft focus:bg-white focus:outline-none focus:ring-2 pr-24';
+    $base = 'w-full rounded-xl border bg-page/60 px-3.5 py-3 text-sm text-content-primary placeholder:text-content-secondary/60 transition duration-soft focus:bg-white focus:outline-none focus:ring-2 pr-24';
     if (!empty($errors[$field])) {
         return $base . ' border-red-400 focus:border-red-400 focus:ring-red-200';
     }
@@ -42,7 +42,7 @@ $inputClass = static function (string $field, array $errors): string {
         </div>
     <?php endif; ?>
 
-    <form method="POST" action="<?= e($action) ?>" class="rounded-2xl border border-white/80 bg-card p-5 sm:p-6 shadow-soft space-y-5" data-loading-submit>
+    <form method="POST" action="<?= e($action) ?>" class="<?= e(design_cn(design_surface('panel'), 'p-5 sm:p-6 space-y-5')) ?>" data-loading-submit>
         <?= Csrf::field() ?>
         <input type="hidden" name="id" value="<?= e((string) ($staff['id'] ?? '')) ?>">
 
@@ -113,7 +113,7 @@ $inputClass = static function (string $field, array $errors): string {
 
         <div class="flex flex-wrap items-center gap-3 pt-1">
             <button type="submit"
-                    class="cursor-pointer inline-flex items-center justify-center rounded-xl bg-admin px-5 py-3 text-sm font-semibold text-white shadow-soft transition duration-soft hover:bg-admin-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-admin focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60">
+                    class="cursor-pointer inline-flex items-center justify-center rounded-xl bg-admin px-5 py-3 text-sm font-semibold text-white transition duration-soft hover:bg-admin-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-admin focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60">
                 Reset Password
             </button>
             <a href="/admin/staff"

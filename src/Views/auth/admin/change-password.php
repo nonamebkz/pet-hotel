@@ -6,36 +6,36 @@ use App\Core\Csrf;
 
 $error = $error ?? null;
 
-$inputClass = 'w-full rounded-xl border border-border bg-page/60 px-3.5 py-3 text-sm text-content-primary placeholder:text-content-secondary/60 shadow-soft-inset transition duration-soft hover:border-admin/30 focus:border-admin focus:bg-white focus:outline-none focus:ring-2 focus:ring-admin/25';
+$inputClass = 'w-full rounded-lg border border-border bg-background px-3.5 py-3 text-base text-foreground placeholder:text-muted-foreground transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/25';
 ?>
-<div class="font-body max-w-xl space-y-6">
-    <section class="relative overflow-hidden rounded-2xl border border-white/80 bg-card p-6 sm:p-8 shadow-soft">
-        <div class="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-admin/5 blur-2xl" aria-hidden="true"></div>
+<div class="<?= e(design_cn('font-body max-w-xl', ui_page_shell_classes())) ?>">
+    <section class="<?= e(design_cn(design_surface('metric'), 'relative overflow-hidden p-6 sm:p-8')) ?>">
+        <div class="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-primary/5 blur-2xl" aria-hidden="true"></div>
         <div class="relative flex flex-wrap items-start gap-4">
-            <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-admin text-white shadow-soft" aria-hidden="true">
+            <span class="<?= e(design_cn(design_icon_badge('default'), 'flex h-12 w-12 shrink-0 items-center justify-center')) ?>" aria-hidden="true">
                 <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/>
                 </svg>
             </span>
             <div>
-                <p class="text-xs font-semibold uppercase tracking-wider text-content-secondary">Keamanan akun</p>
-                <h1 class="mt-1 font-heading text-2xl sm:text-3xl text-content-primary">Ubah Password</h1>
-                <p class="mt-2 text-sm text-content-secondary">
+                <p class="text-xs font-semibold uppercase tracking-[0.18em] text-primary">Keamanan akun</p>
+                <h1 class="mt-1 font-heading text-2xl sm:text-3xl text-foreground">Ubah Password</h1>
+                <p class="mt-2 text-sm text-muted-foreground">
                     Perbarui password login staff/owner. Pilih kombinasi yang kuat dan mudah Anda ingat.
                 </p>
             </div>
         </div>
     </section>
 
-    <aside class="flex items-start gap-3 rounded-2xl border border-amber-200/80 bg-warning-bg/70 px-4 py-3.5 shadow-soft">
-        <span class="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white text-amber-700 shadow-soft">
+    <aside class="<?= e(design_cn(design_alert_inline('warning'), 'items-start gap-3 px-4 py-3.5 text-sm')) ?>">
+        <span class="<?= e(design_cn(design_icon_badge('warning'), 'mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center')) ?>">
             <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
             </svg>
         </span>
-        <div class="text-sm text-amber-950">
+        <div>
             <p class="font-semibold">Tips keamanan</p>
-            <p class="mt-0.5 text-xs leading-relaxed text-amber-900/90">
+            <p class="mt-0.5 text-xs leading-relaxed opacity-90">
                 Jangan bagikan password ke siapa pun. Hindari password yang sama dengan akun lain.
             </p>
         </div>
@@ -50,14 +50,14 @@ $inputClass = 'w-full rounded-xl border border-border bg-page/60 px-3.5 py-3 tex
         </div>
     <?php endif; ?>
 
-    <form method="POST" action="/admin/change-password" class="rounded-2xl border border-white/80 bg-card p-5 sm:p-6 shadow-soft space-y-5" data-loading-submit>
+    <form method="POST" action="/admin/change-password" class="<?= e(design_cn(design_surface('metric'), 'space-y-5 p-5 sm:p-6')) ?>" data-loading-submit>
         <?= Csrf::field() ?>
 
         <div data-password-field>
             <div class="mb-1.5 flex items-center justify-between gap-3">
-                <label for="current_password" class="block text-sm font-semibold text-content-primary">Password lama</label>
+                <label for="current_password" class="block text-sm font-semibold text-foreground">Password lama</label>
                 <button type="button" data-password-toggle="current_password"
-                        class="cursor-pointer text-xs font-medium text-admin transition duration-soft hover:text-admin-hover focus:outline-none focus-visible:underline">
+                        class="cursor-pointer text-xs font-medium text-primary transition hover:opacity-90 focus:outline-none focus-visible:underline">
                     Tampilkan
                 </button>
             </div>
@@ -67,11 +67,11 @@ $inputClass = 'w-full rounded-xl border border-border bg-page/60 px-3.5 py-3 tex
                    class="<?= e($inputClass) ?>">
         </div>
 
-        <div data-password-field class="rounded-xl border border-border bg-page/40 p-4 space-y-2">
+        <div data-password-field class="<?= e(design_cn(design_interactive('metricCellOutlined'), 'space-y-2 p-4')) ?>">
             <div class="mb-1 flex items-center justify-between gap-3">
-                <label for="password" class="block text-sm font-semibold text-content-primary">Password baru</label>
+                <label for="password" class="block text-sm font-semibold text-foreground">Password baru</label>
                 <button type="button" data-password-toggle="password"
-                        class="cursor-pointer text-xs font-medium text-admin transition duration-soft hover:text-admin-hover focus:outline-none focus-visible:underline">
+                        class="cursor-pointer text-xs font-medium text-primary transition hover:opacity-90 focus:outline-none focus-visible:underline">
                     Tampilkan
                 </button>
             </div>
@@ -81,18 +81,18 @@ $inputClass = 'w-full rounded-xl border border-border bg-page/60 px-3.5 py-3 tex
                    placeholder="Minimal 8 karakter"
                    class="<?= e($inputClass) ?>">
             <div id="password-strength-meter" class="pt-1">
-                <div class="h-1.5 overflow-hidden rounded-full bg-admin-soft">
-                    <div data-strength-bar class="h-full rounded-full transition-all duration-soft" style="width: 0%"></div>
+                <div class="h-1.5 overflow-hidden rounded-full bg-muted">
+                    <div data-strength-bar class="h-full rounded-full bg-primary transition-all duration-300" style="width: 0%"></div>
                 </div>
-                <p data-strength-label class="mt-1.5 text-xs text-content-secondary"></p>
+                <p data-strength-label class="mt-1.5 text-xs text-muted-foreground"></p>
             </div>
-            <ul class="mt-2 space-y-1 text-xs text-content-secondary">
+            <ul class="mt-2 space-y-1 text-xs text-muted-foreground">
                 <li class="flex items-center gap-1.5">
-                    <span class="h-1 w-1 rounded-full bg-admin" aria-hidden="true"></span>
+                    <span class="h-1 w-1 rounded-full bg-primary" aria-hidden="true"></span>
                     Minimal 8 karakter
                 </li>
                 <li class="flex items-center gap-1.5">
-                    <span class="h-1 w-1 rounded-full bg-admin" aria-hidden="true"></span>
+                    <span class="h-1 w-1 rounded-full bg-primary" aria-hidden="true"></span>
                     Lebih aman jika ada huruf besar, angka, dan simbol
                 </li>
             </ul>
@@ -100,9 +100,9 @@ $inputClass = 'w-full rounded-xl border border-border bg-page/60 px-3.5 py-3 tex
 
         <div data-password-field>
             <div class="mb-1.5 flex items-center justify-between gap-3">
-                <label for="password_confirmation" class="block text-sm font-semibold text-content-primary">Konfirmasi password baru</label>
+                <label for="password_confirmation" class="block text-sm font-semibold text-foreground">Konfirmasi password baru</label>
                 <button type="button" data-password-toggle="password_confirmation"
-                        class="cursor-pointer text-xs font-medium text-admin transition duration-soft hover:text-admin-hover focus:outline-none focus-visible:underline">
+                        class="cursor-pointer text-xs font-medium text-primary transition hover:opacity-90 focus:outline-none focus-visible:underline">
                     Tampilkan
                 </button>
             </div>
@@ -111,16 +111,14 @@ $inputClass = 'w-full rounded-xl border border-border bg-page/60 px-3.5 py-3 tex
                    data-password-match="password"
                    placeholder="Ulangi password baru"
                    class="<?= e($inputClass) ?>">
-            <p data-match-hint class="mt-1.5 text-xs text-content-secondary"></p>
+            <p data-match-hint class="mt-1.5 text-xs text-muted-foreground"></p>
         </div>
 
         <div class="flex flex-wrap items-center gap-3 pt-1">
-            <button type="submit"
-                    class="cursor-pointer inline-flex items-center justify-center rounded-xl bg-admin px-5 py-3 text-sm font-semibold text-white shadow-soft transition duration-soft hover:bg-admin-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-admin focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60">
+            <button type="submit" class="<?= e(ui_btn_primary()) ?>">
                 Simpan Password
             </button>
-            <a href="/admin/dashboard"
-               class="cursor-pointer inline-flex items-center justify-center rounded-xl px-4 py-3 text-sm font-semibold text-content-secondary transition duration-soft hover:text-admin focus:outline-none focus-visible:underline">
+            <a href="/admin/dashboard" class="<?= e(ui_btn_secondary()) ?>">
                 Batal
             </a>
         </div>

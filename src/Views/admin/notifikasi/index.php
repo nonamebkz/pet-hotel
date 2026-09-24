@@ -63,11 +63,13 @@ if ($kategori !== '') {
     ));
 }
 
-$btnSecondary = 'cursor-pointer inline-flex items-center justify-center rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-semibold text-admin shadow-soft transition duration-soft hover:bg-admin-soft focus:outline-none focus-visible:ring-2 focus-visible:ring-admin';
+$btnSecondary = ui_btn_secondary();
+$tabActiveClass = design_cn(ui_btn_primary(), 'rounded-xl px-4 py-2 text-sm font-semibold');
+$tabInactiveClass = design_cn(ui_btn_secondary(), 'rounded-xl px-4 py-2 text-sm font-semibold text-muted-foreground');
 ?>
 <div class="font-body space-y-6">
-    <section class="relative overflow-hidden rounded-2xl border border-white/80 bg-card p-6 sm:p-8 shadow-soft">
-        <div class="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-admin/5 blur-2xl" aria-hidden="true"></div>
+    <section class="<?= e(design_cn(design_surface('panel'), 'relative overflow-hidden p-6 sm:p-8')) ?>">
+        <div class="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-primary/10 blur-2xl" aria-hidden="true"></div>
         <div class="relative flex flex-wrap items-start justify-between gap-4">
             <div>
                 <p class="text-xs font-semibold uppercase tracking-wider text-content-secondary">Operasional</p>
@@ -76,7 +78,7 @@ $btnSecondary = 'cursor-pointer inline-flex items-center justify-center rounded-
                     Semua pemberitahuan operasional untuk akun Anda.
                 </p>
             </div>
-            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-admin text-white shadow-soft" aria-hidden="true">
+            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-sm" aria-hidden="true">
                 <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"/>
                 </svg>
@@ -88,9 +90,7 @@ $btnSecondary = 'cursor-pointer inline-flex items-center justify-center rounded-
         <?php foreach ($kategoriTabs as $key => $label): ?>
             <?php $isActive = $kategori === $key; ?>
             <a href="/admin/notifikasi<?= $key !== '' ? '?kategori=' . urlencode($key) : '' ?>"
-               class="cursor-pointer inline-flex items-center rounded-xl px-4 py-2 text-sm font-semibold transition duration-soft focus:outline-none focus-visible:ring-2 focus-visible:ring-admin <?= $isActive
-                   ? 'bg-admin text-white shadow-soft'
-                   : 'border border-border bg-card text-content-secondary shadow-soft hover:bg-admin-soft hover:text-admin' ?>">
+               class="cursor-pointer inline-flex items-center focus:outline-none focus-visible:ring-2 focus-visible:ring-ring <?= e($isActive ? $tabActiveClass : $tabInactiveClass) ?>">
                 <?= e($label) ?>
             </a>
         <?php endforeach; ?>
@@ -136,7 +136,7 @@ $btnSecondary = 'cursor-pointer inline-flex items-center justify-center rounded-
                 ];
                 $isUnread = empty($notif['sudah_dibaca']);
                 ?>
-                <article class="rounded-2xl border border-white/80 border-l-4 <?= e($katColors[$kat] ?? $katColors['sistem']) ?> bg-card p-4 sm:p-5 shadow-soft transition duration-soft hover:shadow-soft-lg <?= $isUnread ? 'bg-admin-soft/30' : '' ?>">
+                <article class="<?= e(design_cn(design_interactive('listArticle'), design_interactive('listArticleHover'), 'border-l-4 p-4 sm:p-5', $katColors[$kat] ?? $katColors['sistem'], $isUnread ? 'bg-primary/5' : '')) ?>">
                     <div class="flex items-start justify-between gap-3">
                         <div class="min-w-0">
                             <div class="flex items-center gap-2">

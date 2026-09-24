@@ -6,24 +6,28 @@ $notifikasiList = $notifikasiList ?? [];
 ?>
 <div>
     <div class="mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">Notifikasi</h1>
-        <p class="text-sm text-gray-500 mt-1">Semua pemberitahuan untuk akun Anda.</p>
+        <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-foreground">Notifikasi</h1>
+        <p class="text-sm text-muted-foreground mt-1">Semua pemberitahuan untuk akun Anda.</p>
     </div>
 
     <?php if ($notifikasiList === []): ?>
-        <div class="bg-white rounded-xl border p-8 text-center text-gray-500">
+        <div class="<?= e(design_cn(design_surface('metric'), 'p-8 text-center text-muted-foreground')) ?>">
             Belum ada notifikasi.
         </div>
     <?php else: ?>
         <div class="space-y-3">
             <?php foreach ($notifikasiList as $notif): ?>
-                <div class="bg-white rounded-xl border p-4 <?= empty($notif['sudah_dibaca']) ? 'border-primary-muted bg-primary-soft/30' : '' ?>">
+                <div class="<?= e(design_cn(
+                    design_surface('metric'),
+                    'p-4',
+                    empty($notif['sudah_dibaca']) ? 'border-primary/30 bg-primary/5' : '',
+                )) ?>">
                     <div class="flex items-start justify-between gap-3">
                         <div>
-                            <div class="font-medium text-gray-800"><?= e((string) $notif['judul']) ?></div>
-                            <p class="text-sm text-gray-600 mt-1"><?= e((string) $notif['pesan']) ?></p>
+                            <div class="font-medium text-foreground"><?= e((string) $notif['judul']) ?></div>
+                            <p class="text-sm text-muted-foreground mt-1"><?= e((string) $notif['pesan']) ?></p>
                         </div>
-                        <time class="text-xs text-gray-400 shrink-0">
+                        <time class="text-xs text-muted-foreground/70 shrink-0">
                             <?= e(date('d/m/Y H:i', strtotime((string) $notif['created_at']))) ?>
                         </time>
                     </div>

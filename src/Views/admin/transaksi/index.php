@@ -31,7 +31,12 @@ foreach ($rows as $statRow) {
     }
 }
 
-$inputClass = 'w-full rounded-xl border border-border bg-white px-3.5 py-2.5 text-sm text-content-primary shadow-soft-inset transition duration-soft hover:border-admin/30 focus:border-admin focus:outline-none focus:ring-2 focus:ring-admin/25';
+$btnPrimary = design_cn(ui_btn_primary(), 'gap-2');
+$btnSecondary = ui_btn_secondary();
+$inputClass = design_cn(
+    'w-full rounded-xl border border-input bg-background px-3.5 py-2.5 text-base sm:text-sm text-foreground transition',
+    'hover:border-primary/30 focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/25',
+);
 
 $jenisBadge = static function (string $label): string {
     return match (true) {
@@ -45,8 +50,8 @@ $periodeLabel = date('d/m/Y', strtotime($mulai)) . ' — ' . date('d/m/Y', strto
 $advancedOpen = $filterJenis !== '' || $filterQ !== '';
 ?>
 <div class="font-body space-y-6">
-    <section class="relative overflow-hidden rounded-2xl border border-white/80 bg-card p-6 sm:p-8 shadow-soft">
-        <div class="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-admin/5 blur-2xl" aria-hidden="true"></div>
+    <section class="<?= e(design_cn(design_surface('panel'), 'relative overflow-hidden p-6 sm:p-8')) ?>">
+        <div class="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-primary/10 blur-2xl" aria-hidden="true"></div>
         <div class="relative flex flex-wrap items-start justify-between gap-4">
             <div>
                 <p class="text-xs font-semibold uppercase tracking-wider text-content-secondary">Keuangan</p>
@@ -56,7 +61,7 @@ $advancedOpen = $filterJenis !== '' || $filterQ !== '';
                     Periode: <span class="font-medium text-content-primary"><?= e($periodeLabel) ?></span>
                 </p>
             </div>
-            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-admin text-white shadow-soft" aria-hidden="true">
+            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-sm" aria-hidden="true">
                 <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/>
                 </svg>
@@ -66,33 +71,33 @@ $advancedOpen = $filterJenis !== '' || $filterQ !== '';
 
     <nav class="flex flex-wrap gap-2" aria-label="Navigasi pembayaran">
         <a href="/admin/grooming/pembayaran"
-           class="cursor-pointer inline-flex items-center rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium text-content-secondary shadow-soft transition duration-soft hover:bg-admin-soft hover:text-admin focus:outline-none focus-visible:ring-2 focus-visible:ring-admin">
+           class="<?= e(design_cn(ui_btn_secondary(), 'rounded-xl px-4 py-2.5 text-sm font-medium text-muted-foreground')) ?>">
             Verifikasi Grooming
         </a>
         <a href="/admin/penitipan/pembayaran"
-           class="cursor-pointer inline-flex items-center rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium text-content-secondary shadow-soft transition duration-soft hover:bg-admin-soft hover:text-admin focus:outline-none focus-visible:ring-2 focus-visible:ring-admin">
+           class="<?= e(design_cn(ui_btn_secondary(), 'rounded-xl px-4 py-2.5 text-sm font-medium text-muted-foreground')) ?>">
             Verifikasi Penitipan
         </a>
-        <span class="inline-flex items-center rounded-xl bg-admin px-4 py-2.5 text-sm font-semibold text-white shadow-soft">
+        <span class="inline-flex items-center rounded-xl px-4 py-2.5 text-sm font-semibold <?= e(design_cn(ui_btn_primary())) ?>">
             Riwayat Transaksi
         </span>
     </nav>
 
     <?php if ($rows !== [] || $hasActiveFilter): ?>
         <div class="grid sm:grid-cols-3 gap-4">
-            <article class="rounded-2xl border border-white/80 bg-card p-5 shadow-soft">
+            <article class="<?= e(design_surface('metric')) ?>">
                 <p class="text-sm text-content-secondary">Ditampilkan</p>
                 <p class="mt-1 font-heading text-2xl text-admin"><?= e((string) count($rows)) ?></p>
                 <p class="mt-1 text-xs text-content-secondary">transaksi pada filter aktif</p>
             </article>
-            <article class="rounded-2xl border border-white/80 bg-card p-5 shadow-soft">
+            <article class="<?= e(design_surface('metric')) ?>">
                 <p class="text-sm text-content-secondary">Lunas</p>
                 <p class="mt-1 font-heading text-2xl text-success"><?= e((string) $countLunas) ?></p>
                 <p class="mt-1 text-xs text-content-secondary">
                     Rp <?= e(number_format($revenueLunas, 0, ',', '.')) ?>
                 </p>
             </article>
-            <article class="rounded-2xl border border-white/80 bg-card p-5 shadow-soft <?= $countPending > 0 ? 'border-amber-200 bg-warning-bg/30' : '' ?>">
+            <article class="rounded-2xl border bg-card p-5 <?= $countPending > 0 ? 'border-amber-200 bg-warning-bg/30' : '' ?>">
                 <p class="text-sm text-content-secondary">Menunggu Verifikasi</p>
                 <p class="mt-1 font-heading text-2xl <?= $countPending > 0 ? 'text-amber-700' : 'text-admin' ?>"><?= e((string) $countPending) ?></p>
                 <?php if ($countPending > 0): ?>
@@ -106,7 +111,7 @@ $advancedOpen = $filterJenis !== '' || $filterQ !== '';
         </div>
     <?php endif; ?>
 
-    <form method="GET" action="/admin/transaksi" class="rounded-2xl border border-white/80 bg-card p-5 sm:p-6 shadow-soft space-y-4">
+    <form method="GET" action="/admin/transaksi" class="rounded-2xl border bg-card p-5 sm:p-6 space-y-4">
         <div class="flex flex-wrap items-center justify-between gap-2">
             <h2 class="font-heading text-lg text-content-primary">Filter</h2>
             <?php if ($hasActiveFilter): ?>
@@ -139,7 +144,7 @@ $advancedOpen = $filterJenis !== '' || $filterQ !== '';
             </div>
             <div class="flex items-end">
                 <button type="submit"
-                        class="w-full cursor-pointer inline-flex items-center justify-center gap-2 rounded-xl bg-admin px-4 py-2.5 text-sm font-semibold text-white shadow-soft transition duration-soft hover:bg-admin-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-admin focus-visible:ring-offset-2">
+                        class="<?= e(design_cn($btnPrimary, 'w-full')) ?>">
                     <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.474.09.917.424.917.933v.25a1 1 0 01-.553.894A21.04 21.04 0 0112 8.5a21.04 21.04 0 01-8.447-2.745A1 1 0 013 4.861v-.25c0-.509.443-.843.917-.933A48.35 48.35 0 0112 3z"/>
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 8.5v12.25"/>
@@ -205,7 +210,7 @@ $advancedOpen = $filterJenis !== '' || $filterQ !== '';
             $description = 'Coba ubah periode, status, jenis layanan, atau kata kunci pencarian.';
             $ctaLabel = 'Reset Filter';
             $ctaHref = '/admin/transaksi';
-            $ctaClass = 'cursor-pointer inline-flex items-center justify-center rounded-xl bg-admin px-4 py-2.5 text-sm font-semibold text-white shadow-soft transition duration-soft hover:bg-admin-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-admin focus-visible:ring-offset-2';
+            $ctaClass = $btnPrimary;
         } else {
             $variant = 'empty';
             $title = 'Belum ada transaksi tercatat';
@@ -216,7 +221,7 @@ $advancedOpen = $filterJenis !== '' || $filterQ !== '';
         require __DIR__ . '/../../partials/ui/empty-state.php';
         ?>
     <?php else: ?>
-        <div class="hidden md:block rounded-2xl border border-white/80 bg-card shadow-soft overflow-hidden">
+        <div class="<?= e(design_cn(design_surface('panel'), 'hidden overflow-hidden md:block')) ?>">
             <div class="overflow-x-auto">
                 <table class="w-full text-sm">
                     <thead>
@@ -318,7 +323,7 @@ $advancedOpen = $filterJenis !== '' || $filterQ !== '';
                 $refundEnum = StatusRefund::tryFrom((string) ($row['status_refund'] ?? StatusRefund::TIDAK_ADA->value));
                 $jenisLabel = (string) $row['tagihan_jenis'];
                 ?>
-                <article class="rounded-2xl border border-white/80 bg-card p-4 shadow-soft space-y-3">
+                <article class="<?= e(design_cn(design_interactive('listArticle'), 'space-y-3')) ?>">
                     <div class="flex items-start justify-between gap-3">
                         <div class="min-w-0">
                             <p class="font-semibold text-content-primary truncate"><?= e((string) $row['pelanggan_nama']) ?></p>
@@ -366,7 +371,7 @@ $advancedOpen = $filterJenis !== '' || $filterQ !== '';
                             </a>
                         <?php endif; ?>
                         <a href="<?= e((string) $row['admin_booking_url']) ?>"
-                           class="cursor-pointer inline-flex flex-1 items-center justify-center rounded-xl bg-admin px-3 py-2 text-xs font-semibold text-white shadow-soft transition duration-soft hover:bg-admin-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-admin">
+                           class="<?= e(design_cn($btnPrimary, 'flex-1 text-xs')) ?>">
                             Lihat booking
                         </a>
                     </div>

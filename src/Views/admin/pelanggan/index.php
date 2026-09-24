@@ -5,6 +5,13 @@ declare(strict_types=1);
 $pelangganList = $pelangganList ?? [];
 $search = $search ?? '';
 
+$btnPrimary = design_cn(ui_btn_primary(), 'gap-2');
+$btnSecondary = ui_btn_secondary();
+$inputClass = design_cn(
+    'w-full rounded-xl border border-input bg-background px-3.5 py-2.5 text-base sm:text-sm text-foreground transition',
+    'hover:border-primary/30 focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/25',
+);
+
 $segmentBadges = [
     'baru' => 'bg-blue-100 text-blue-800',
     'aktif' => 'bg-success-bg text-success',
@@ -15,11 +22,10 @@ $segmentLabels = [
     'aktif' => 'Aktif',
     'dormant' => 'Dormant',
 ];
-$inputClass = 'w-full rounded-xl border border-border bg-white px-3.5 py-2.5 text-sm text-content-primary shadow-soft-inset transition duration-soft hover:border-admin/30 focus:border-admin focus:outline-none focus:ring-2 focus:ring-admin/25';
 ?>
 <div class="font-body space-y-6">
-    <section class="relative overflow-hidden rounded-2xl border border-white/80 bg-card p-6 sm:p-8 shadow-soft">
-        <div class="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-admin/5 blur-2xl" aria-hidden="true"></div>
+    <section class="<?= e(design_cn(design_surface('panel'), 'relative overflow-hidden p-6 sm:p-8')) ?>">
+        <div class="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-primary/10 blur-2xl" aria-hidden="true"></div>
         <div class="relative">
             <p class="text-xs font-semibold uppercase tracking-wider text-content-secondary">CRM</p>
             <h1 class="mt-1 font-heading text-2xl sm:text-3xl text-content-primary">Manajemen Pelanggan</h1>
@@ -29,7 +35,7 @@ $inputClass = 'w-full rounded-xl border border-border bg-white px-3.5 py-2.5 tex
         </div>
     </section>
 
-    <form method="GET" action="/admin/pelanggan" class="rounded-2xl border border-white/80 bg-card p-5 shadow-soft">
+    <form method="GET" action="/admin/pelanggan" class="<?= e(design_surface('metric')) ?>">
         <div class="grid gap-4 sm:grid-cols-3">
             <div class="sm:col-span-2">
                 <label for="q" class="mb-1.5 block text-sm font-semibold text-content-primary">Cari</label>
@@ -39,7 +45,7 @@ $inputClass = 'w-full rounded-xl border border-border bg-white px-3.5 py-2.5 tex
             </div>
             <div class="flex items-end">
                 <button type="submit"
-                        class="w-full cursor-pointer rounded-xl bg-admin px-4 py-2.5 text-sm font-semibold text-white shadow-soft transition duration-soft hover:bg-admin-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-admin">
+                        class="<?= e(design_cn($btnPrimary, 'w-full')) ?>">
                     Cari
                 </button>
             </div>
@@ -65,7 +71,7 @@ $inputClass = 'w-full rounded-xl border border-border bg-white px-3.5 py-2.5 tex
             $description = 'Coba kata kunci lain atau reset filter.';
             $ctaLabel = 'Reset Filter';
             $ctaHref = '/admin/pelanggan';
-            $ctaClass = 'cursor-pointer inline-flex items-center justify-center rounded-xl bg-admin px-4 py-2.5 text-sm font-semibold text-white shadow-soft hover:bg-admin-hover';
+            $ctaClass = $btnPrimary;
         } else {
             $variant = 'empty';
             $title = 'Belum ada pelanggan terdaftar';
@@ -76,7 +82,7 @@ $inputClass = 'w-full rounded-xl border border-border bg-white px-3.5 py-2.5 tex
         require __DIR__ . '/../../partials/ui/empty-state.php';
         ?>
     <?php else: ?>
-        <div class="hidden md:block rounded-2xl border border-white/80 bg-card shadow-soft overflow-hidden">
+        <div class="<?= e(design_cn(design_surface('panel'), 'hidden overflow-hidden md:block')) ?>">
             <table class="w-full text-sm">
                 <thead>
                     <tr class="border-b border-border bg-admin-soft/40">
@@ -124,7 +130,7 @@ $inputClass = 'w-full rounded-xl border border-border bg-white px-3.5 py-2.5 tex
                 $badgeClass = $segmentBadges[$segment] ?? $segmentBadges['aktif'];
                 $segmentLabel = $segmentLabels[$segment] ?? ucfirst($segment);
                 ?>
-                <article class="rounded-2xl border border-white/80 bg-card p-4 shadow-soft space-y-3">
+                <article class="<?= e(design_cn(design_interactive('listArticle'), 'space-y-3')) ?>">
                     <div class="flex items-start justify-between gap-3">
                         <div>
                             <h2 class="font-semibold text-content-primary"><?= e((string) $pelanggan['nama']) ?></h2>
@@ -137,7 +143,7 @@ $inputClass = 'w-full rounded-xl border border-border bg-white px-3.5 py-2.5 tex
                         · <?= (int) ($pelanggan['jumlah_kucing'] ?? 0) ?> kucing
                     </p>
                     <a href="/admin/pelanggan/detail?id=<?= e(urlencode((string) $pelanggan['id'])) ?>"
-                       class="cursor-pointer flex w-full items-center justify-center rounded-xl bg-admin px-3 py-2 text-xs font-semibold text-white shadow-soft hover:bg-admin-hover">
+                       class="<?= e(design_cn($btnPrimary, 'flex w-full text-xs')) ?>">
                         Lihat detail
                     </a>
                 </article>

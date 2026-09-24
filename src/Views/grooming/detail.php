@@ -25,15 +25,15 @@ $statusRefund = $transaksi ? StatusRefund::tryFrom((string) ($transaksi['status_
 ?>
 <div>
     <div class="mb-6">
-        <a href="/grooming/riwayat" class="text-sm text-gray-500 hover:text-primary">&larr; Riwayat</a>
-        <h1 class="text-2xl font-bold text-gray-800 mt-2">Detail Booking Grooming</h1>
+        <a href="/grooming/riwayat" class="<?= e(ui_back_link_class()) ?>">&larr; Riwayat</a>
+        <h1 class="text-2xl font-bold text-foreground mt-2">Detail Booking Grooming</h1>
     </div>
 
-    <div class="bg-white rounded-xl border p-6 space-y-4 max-w-2xl">
+    <div class="<?= e(design_cn(design_surface('metric'), 'p-6 space-y-4 max-w-2xl')) ?>">
         <div class="flex items-start justify-between gap-3">
             <div>
-                <div class="font-semibold text-lg text-gray-800"><?= e((string) $booking['jenis_nama']) ?></div>
-                <div class="text-sm text-gray-500">Kucing: <?= e((string) $booking['kucing_nama']) ?></div>
+                <div class="font-semibold text-lg text-foreground"><?= e((string) $booking['jenis_nama']) ?></div>
+                <div class="text-sm text-muted-foreground">Kucing: <?= e((string) $booking['kucing_nama']) ?></div>
             </div>
             <?php if ($statusEnum): ?>
                 <span class="text-xs px-2 py-1 rounded-full <?= e($statusEnum->badgeClass()) ?>">
@@ -42,7 +42,7 @@ $statusRefund = $transaksi ? StatusRefund::tryFrom((string) ($transaksi['status_
             <?php endif; ?>
         </div>
 
-        <div class="grid sm:grid-cols-2 gap-3 text-sm text-gray-600">
+        <div class="grid sm:grid-cols-2 gap-3 text-sm text-muted-foreground">
             <div>Tanggal: <?= e(date('d/m/Y', strtotime((string) $booking['tanggal']))) ?></div>
             <?php if (!empty($booking['jam_grooming'])): ?>
                 <div>Jam grooming: <?= e(substr((string) $booking['jam_grooming'], 0, 5)) ?> WIB</div>
@@ -54,21 +54,21 @@ $statusRefund = $transaksi ? StatusRefund::tryFrom((string) ($transaksi['status_
         </div>
 
         <?php if (!empty($booking['catatan'])): ?>
-            <p class="text-sm text-gray-500">Catatan: <?= e((string) $booking['catatan']) ?></p>
+            <p class="text-sm text-muted-foreground">Catatan: <?= e((string) $booking['catatan']) ?></p>
         <?php endif; ?>
 
         <?php if ($transaksi): ?>
-            <div class="bg-gray-50 rounded-lg p-4 text-sm">
-                <div class="font-medium text-gray-800 mb-2">Rincian Tagihan</div>
-                <div class="flex justify-between text-gray-600">
+            <div class="bg-muted/50 rounded-lg p-4 text-sm">
+                <div class="font-medium text-foreground mb-2">Rincian Tagihan</div>
+                <div class="flex justify-between text-muted-foreground">
                     <span>Subtotal layanan</span>
                     <span>Rp <?= e(number_format((float) $transaksi['subtotal_layanan'], 0, ',', '.')) ?></span>
                 </div>
-                <div class="flex justify-between text-gray-600">
+                <div class="flex justify-between text-muted-foreground">
                     <span>Biaya antar-jemput</span>
                     <span>Rp <?= e(number_format((float) $transaksi['biaya_antar_jemput'], 0, ',', '.')) ?></span>
                 </div>
-                <div class="flex justify-between font-medium text-gray-800 mt-2 pt-2 border-t">
+                <div class="flex justify-between font-medium text-foreground mt-2 pt-2 border-t">
                     <span>Total bayar</span>
                     <span>Rp <?= e(number_format((float) $transaksi['total_bayar'], 0, ',', '.')) ?></span>
                 </div>
@@ -95,13 +95,13 @@ $statusRefund = $transaksi ? StatusRefund::tryFrom((string) ($transaksi['status_
         <div class="flex flex-wrap gap-3 pt-2">
             <?php if ((string) ($booking['status'] ?? '') === StatusBookingGrooming::MENUNGGU_PEMBAYARAN->value): ?>
                 <a href="/grooming/pembayaran?id=<?= e((string) $booking['id']) ?>"
-                   class="bg-primary text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-primary-hover">
+                   class="<?= e(ui_btn_primary()) ?>">
                     Upload Bukti Transfer
                 </a>
             <?php endif; ?>
             <?php if ($invoice && (string) ($transaksi['status_pembayaran'] ?? '') === StatusPembayaran::LUNAS->value): ?>
                 <a href="/grooming/invoice?id=<?= e((string) $booking['id']) ?>"
-                   class="border border-gray-300 rounded-lg px-4 py-2 text-sm hover:bg-gray-50">
+                   class="<?= e(ui_btn_secondary()) ?>">
                     Lihat Invoice
                 </a>
             <?php endif; ?>
@@ -110,7 +110,7 @@ $statusRefund = $transaksi ? StatusRefund::tryFrom((string) ($transaksi['status_
                       onsubmit="return confirm('Batalkan booking ini?')">
                     <?= Csrf::field() ?>
                     <input type="hidden" name="id" value="<?= e((string) $booking['id']) ?>">
-                    <button type="submit" class="text-sm text-red-600 hover:underline">Batalkan Booking</button>
+                    <button type="submit" class="text-sm text-destructive hover:underline">Batalkan Booking</button>
                 </form>
             <?php elseif ($transaksiLunas && !$canCancel): ?>
                 <?php

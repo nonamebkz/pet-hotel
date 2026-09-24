@@ -38,12 +38,12 @@ function nav_is_active(string|array $paths, bool $prefixMatch = false): bool
 
 function nav_link_classes(bool $active, bool $inline = true, bool $adminTheme = false): string
 {
-    $accentText = $adminTheme ? 'text-admin' : 'text-primary';
-    $accentBg = $adminTheme ? 'bg-admin-soft' : 'bg-primary-soft';
-    $accentHover = $adminTheme ? 'hover:text-admin hover:bg-admin-soft/70' : 'hover:text-primary hover:bg-primary-soft/70';
-    $accentRing = $adminTheme ? 'focus-visible:ring-admin' : 'focus-visible:ring-primary';
+    $accentText = 'text-primary';
+    $accentBg = 'bg-primary/10';
+    $accentHover = 'hover:text-primary hover:bg-muted';
+    $accentRing = 'focus-visible:ring-ring';
 
-    $base = 'cursor-pointer text-sm font-medium rounded-xl transition duration-soft focus-visible:outline-none focus-visible:ring-2 '
+    $base = 'cursor-pointer text-sm font-medium rounded-xl transition focus-visible:outline-none focus-visible:ring-2 '
         . $accentRing . ' focus-visible:ring-offset-2';
 
     if ($inline) {
@@ -53,86 +53,54 @@ function nav_link_classes(bool $active, bool $inline = true, bool $adminTheme = 
     }
 
     if ($active) {
-        return $base . ' ' . $accentText . ' ' . $accentBg . ' font-semibold shadow-soft-inset';
+        return $base . ' ' . $accentText . ' ' . $accentBg . ' font-semibold';
     }
 
-    return $base . ' text-content-secondary ' . $accentHover;
+    return $base . ' text-muted-foreground ' . $accentHover;
 }
 
 function nav_dropdown_trigger_classes(bool $active, bool $adminTheme = false): string
 {
-    $accentText = $adminTheme ? 'text-admin' : 'text-primary';
-    $accentBg = $adminTheme ? 'bg-admin-soft' : 'bg-primary-soft';
-    $accentHover = $adminTheme ? 'hover:text-admin hover:bg-admin-soft/70' : 'hover:text-primary hover:bg-primary-soft/70';
-    $accentRing = $adminTheme ? 'focus-visible:ring-admin' : 'focus-visible:ring-primary';
-
-    $base = 'cursor-pointer inline-flex items-center gap-1.5 min-h-10 px-3 text-sm font-medium rounded-xl transition duration-soft focus-visible:outline-none focus-visible:ring-2 '
-        . $accentRing . ' focus-visible:ring-offset-2';
-
-    if ($active) {
-        return $base . ' ' . $accentText . ' ' . $accentBg . ' font-semibold shadow-soft-inset';
-    }
-
-    return $base . ' text-content-secondary ' . $accentHover;
+    return nav_link_classes($active, true, $adminTheme);
 }
 
 function nav_dropdown_panel_classes(string $align = 'left'): string
 {
     $position = $align === 'right' ? 'right-0' : 'left-0';
 
-    return 'hidden absolute ' . $position . ' top-full mt-2 min-w-[14rem] bg-card/95 backdrop-blur-md border border-white/80 rounded-2xl shadow-soft-lg py-2 z-50';
+    return 'hidden absolute ' . $position . ' top-full mt-2 min-w-[14rem] bg-card/95 backdrop-blur-md border border-border rounded-2xl shadow-md py-2 z-50';
 }
 
 function nav_dropdown_link_classes(bool $active, bool $adminTheme = false): string
 {
-    $base = 'cursor-pointer flex items-center mx-2 px-3 py-2.5 text-sm rounded-xl transition duration-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset';
-    $accentText = $adminTheme ? 'text-admin' : 'text-primary';
-    $accentHover = $adminTheme ? 'hover:text-admin' : 'hover:text-primary';
-    $accentBg = $adminTheme ? 'bg-admin-soft' : 'bg-primary-soft';
-    $accentBgHover = $adminTheme ? 'hover:bg-admin-soft/80' : 'hover:bg-primary-soft/70';
-    $accentRing = $adminTheme ? 'focus-visible:ring-admin' : 'focus-visible:ring-primary';
-
-    $base .= ' ' . $accentRing;
+    $base = 'cursor-pointer flex items-center mx-2 px-3 py-2.5 text-sm rounded-xl transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring';
 
     if ($active) {
-        return $base . ' ' . $accentText . ' font-semibold ' . $accentBg;
+        return $base . ' text-primary font-semibold bg-primary/10';
     }
 
-    return $base . ' text-content-primary ' . $accentBgHover . ' ' . $accentHover;
+    return $base . ' text-foreground hover:bg-muted hover:text-primary';
 }
 
 function nav_mobile_link_classes(bool $active, bool $adminTheme = false): string
 {
-    $base = 'cursor-pointer flex items-center min-h-11 px-3.5 py-2.5 text-sm rounded-xl transition duration-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset';
-    $accentText = $adminTheme ? 'text-admin' : 'text-primary';
-    $accentHover = $adminTheme ? 'hover:text-admin' : 'hover:text-primary';
-    $accentBg = $adminTheme ? 'bg-admin-soft' : 'bg-primary-soft';
-    $accentBgHover = $adminTheme ? 'hover:bg-admin-soft/80' : 'hover:bg-primary-soft/50';
-    $accentRing = $adminTheme ? 'focus-visible:ring-admin' : 'focus-visible:ring-primary';
-
-    $base .= ' ' . $accentRing;
+    $base = 'cursor-pointer flex items-center min-h-11 px-3.5 py-2.5 text-sm rounded-xl transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring';
 
     if ($active) {
-        return $base . ' ' . $accentText . ' font-semibold ' . $accentBg . ' shadow-soft-inset';
+        return $base . ' text-primary font-semibold bg-primary/10';
     }
 
-    return $base . ' text-content-secondary ' . $accentHover . ' ' . $accentBgHover;
+    return $base . ' text-muted-foreground hover:text-primary hover:bg-muted';
 }
 
 function nav_avatar_classes(bool $adminTheme = false): string
 {
-    if ($adminTheme) {
-        return 'inline-flex items-center justify-center w-8 h-8 rounded-xl bg-admin text-white text-xs font-semibold shrink-0 shadow-soft';
-    }
-
-    return 'inline-flex items-center justify-center w-8 h-8 rounded-xl bg-primary text-white text-xs font-semibold shrink-0 shadow-soft';
+    return 'inline-flex items-center justify-center w-8 h-8 rounded-xl bg-primary text-primary-foreground text-xs font-semibold shrink-0 shadow-sm';
 }
 
 function nav_badge_classes(bool $adminTheme = false): string
 {
-    $bg = $adminTheme ? 'bg-primary' : 'bg-primary';
-
-    return 'inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-lg ' . $bg . ' text-white text-[10px] font-bold leading-none';
+    return 'inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-lg bg-primary text-primary-foreground text-[10px] font-bold leading-none';
 }
 
 function nav_initials(string $name): string

@@ -8,18 +8,22 @@ $kuotaList = $kuotaList ?? [];
 $kamarList = $kamarList ?? [];
 $filterKamarId = $filterKamarId ?? '';
 $hasFilter = $filterKamarId !== '';
-$inputClass = 'w-full rounded-xl border border-border bg-white px-3.5 py-2.5 text-sm text-content-primary shadow-soft-inset transition duration-soft hover:border-admin/30 focus:border-admin focus:outline-none focus:ring-2 focus:ring-admin/25';
+$heroClass = design_cn(design_surface('panel'), 'relative overflow-hidden p-6 sm:p-8');
+$filterFormClass = design_cn(design_surface('metric'), 'p-5');
+$tableWrapClass = design_cn(design_surface('panel'), 'hidden md:block overflow-hidden');
+$listArticleClass = design_cn(design_interactive('listArticle'), design_interactive('listArticleHover'), 'p-4 space-y-3');
+$inputClass = 'w-full rounded-lg border border-input bg-background px-3.5 py-2.5 text-base sm:text-sm text-foreground transition hover:border-primary/30 focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/25';
 ?>
 <div class="font-body space-y-6">
-    <section class="relative overflow-hidden rounded-2xl border border-white/80 bg-card p-6 sm:p-8 shadow-soft">
+    <section class="<?= e($heroClass) ?>">
         <div class="relative flex flex-wrap items-start justify-between gap-4">
             <div>
-                <p class="text-xs font-semibold uppercase tracking-wider text-content-secondary">Penitipan</p>
-                <h1 class="mt-1 font-heading text-2xl sm:text-3xl text-content-primary">Kuota Harian</h1>
-                <p class="mt-2 text-sm text-content-secondary">Atur slot maksimal per kamar per tanggal.</p>
+                <p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Penitipan</p>
+                <h1 class="mt-1 font-heading text-2xl sm:text-3xl text-foreground">Kuota Harian</h1>
+                <p class="mt-2 text-sm text-muted-foreground">Atur slot maksimal per kamar per tanggal.</p>
             </div>
             <a href="/admin/penitipan/kuota/tambah"
-               class="cursor-pointer inline-flex items-center gap-2 rounded-xl bg-admin px-4 py-2.5 text-sm font-semibold text-white shadow-soft transition duration-soft hover:bg-admin-hover">
+               class="<?= e(design_cn(ui_btn_primary(), 'cursor-pointer gap-2')) ?>">
                 <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
                 Tambah Kuota
             </a>
@@ -28,10 +32,10 @@ $inputClass = 'w-full rounded-xl border border-border bg-white px-3.5 py-2.5 tex
 
     <?php require __DIR__ . '/../_nav.php'; ?>
 
-    <form method="GET" action="/admin/penitipan/kuota" class="rounded-2xl border border-white/80 bg-card p-5 shadow-soft">
+    <form method="GET" action="/admin/penitipan/kuota" class="<?= e($filterFormClass) ?>">
         <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <div>
-                <label for="kamar_id" class="mb-1.5 block text-sm font-semibold text-content-primary">Kamar</label>
+                <label for="kamar_id" class="mb-1.5 block text-sm font-semibold text-foreground">Kamar</label>
                 <select id="kamar_id" name="kamar_id" class="<?= e($inputClass) ?>">
                     <option value="">Semua kamar</option>
                     <?php foreach ($kamarList as $k): ?>
@@ -42,9 +46,9 @@ $inputClass = 'w-full rounded-xl border border-border bg-white px-3.5 py-2.5 tex
                 </select>
             </div>
             <div class="flex items-end gap-2">
-                <button type="submit" class="cursor-pointer rounded-xl bg-admin px-4 py-2.5 text-sm font-semibold text-white shadow-soft hover:bg-admin-hover">Filter</button>
+                <button type="submit" class="<?= e(ui_btn_primary()) ?>">Filter</button>
                 <?php if ($hasFilter): ?>
-                    <a href="/admin/penitipan/kuota" class="cursor-pointer rounded-xl px-3 py-2.5 text-sm font-semibold text-content-secondary hover:text-admin">Reset</a>
+                    <a href="/admin/penitipan/kuota" class="cursor-pointer rounded-lg px-3 py-2.5 text-sm font-semibold text-muted-foreground hover:text-primary">Reset</a>
                 <?php endif; ?>
             </div>
         </div>
@@ -57,18 +61,18 @@ $inputClass = 'w-full rounded-xl border border-border bg-white px-3.5 py-2.5 tex
         $description = $hasFilter ? 'Coba pilih kamar lain atau reset filter.' : 'Tambahkan kuota harian agar pelanggan bisa booking.';
         $ctaLabel = $hasFilter ? 'Reset Filter' : 'Tambah Kuota';
         $ctaHref = $hasFilter ? '/admin/penitipan/kuota' : '/admin/penitipan/kuota/tambah';
-        $ctaClass = 'cursor-pointer inline-flex items-center justify-center rounded-xl bg-admin px-4 py-2.5 text-sm font-semibold text-white shadow-soft hover:bg-admin-hover';
+        $ctaClass = ui_btn_primary();
         require __DIR__ . '/../../../partials/ui/empty-state.php';
         ?>
     <?php else: ?>
-        <div class="hidden md:block rounded-2xl border border-white/80 bg-card shadow-soft overflow-hidden">
+        <div class="<?= e($tableWrapClass) ?>">
             <table class="w-full text-sm">
                 <thead>
-                    <tr class="border-b border-border bg-admin-soft/40">
-                        <th class="text-left px-4 py-3.5 font-semibold text-content-secondary text-xs uppercase tracking-wider">Kamar</th>
-                        <th class="text-left px-4 py-3.5 font-semibold text-content-secondary text-xs uppercase tracking-wider">Tanggal</th>
-                        <th class="text-left px-4 py-3.5 font-semibold text-content-secondary text-xs uppercase tracking-wider">Slot</th>
-                        <th class="text-right px-4 py-3.5 font-semibold text-content-secondary text-xs uppercase tracking-wider">Aksi</th>
+                    <tr class="border-b border-border bg-muted/50">
+                        <th class="text-left px-4 py-3.5 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Kamar</th>
+                        <th class="text-left px-4 py-3.5 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Tanggal</th>
+                        <th class="text-left px-4 py-3.5 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Slot</th>
+                        <th class="text-right px-4 py-3.5 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-border/80">
@@ -79,25 +83,25 @@ $inputClass = 'w-full rounded-xl border border-border bg-white px-3.5 py-2.5 tex
                         $penuh = $maks > 0 && $terisi >= $maks;
                         $pct = $maks > 0 ? min(100, (int) round(($terisi / $maks) * 100)) : 0;
                         ?>
-                        <tr class="transition duration-soft hover:bg-admin-soft/30">
-                            <td class="px-4 py-3.5 font-semibold text-content-primary"><?= e((string) $q['nama_kamar']) ?></td>
-                            <td class="px-4 py-3.5 text-content-primary"><?= e(date('d/m/Y', strtotime((string) $q['tanggal']))) ?></td>
+                        <tr class="transition hover:bg-muted/30">
+                            <td class="px-4 py-3.5 font-semibold text-foreground"><?= e((string) $q['nama_kamar']) ?></td>
+                            <td class="px-4 py-3.5 text-foreground"><?= e(date('d/m/Y', strtotime((string) $q['tanggal']))) ?></td>
                             <td class="px-4 py-3.5">
                                 <div class="flex items-center gap-3">
-                                    <span class="font-medium <?= $penuh ? 'text-amber-700' : 'text-content-primary' ?>"><?= $terisi ?> / <?= $maks ?></span>
-                                    <div class="h-1.5 w-20 overflow-hidden rounded-full bg-admin-soft">
-                                        <div class="h-full rounded-full <?= $penuh ? 'bg-amber-500' : 'bg-success' ?>" style="width: <?= e((string) $pct) ?>%"></div>
+                                    <span class="font-medium <?= $penuh ? 'text-amber-700 dark:text-amber-300' : 'text-foreground' ?>"><?= $terisi ?> / <?= $maks ?></span>
+                                    <div class="h-1.5 w-20 overflow-hidden rounded-full bg-muted">
+                                        <div class="h-full rounded-full <?= $penuh ? 'bg-amber-500' : 'bg-emerald-500' ?>" style="width: <?= e((string) $pct) ?>%"></div>
                                     </div>
                                 </div>
                             </td>
                             <td class="px-4 py-3.5 text-right">
                                 <div class="inline-flex items-center gap-2">
                                     <a href="/admin/penitipan/kuota/edit?id=<?= e(urlencode((string) $q['id'])) ?>"
-                                       class="cursor-pointer rounded-xl border border-border bg-page/60 px-3 py-1.5 text-xs font-semibold text-admin hover:bg-admin-soft">Edit</a>
+                                       class="cursor-pointer rounded-lg border border-border bg-muted/60 px-3 py-1.5 text-xs font-semibold text-primary hover:bg-muted">Edit</a>
                                     <form method="POST" action="/admin/penitipan/kuota/hapus" data-confirm="Hapus kuota ini?">
                                         <?= Csrf::field() ?>
                                         <input type="hidden" name="id" value="<?= e((string) $q['id']) ?>">
-                                        <button type="submit" class="cursor-pointer rounded-xl border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100">Hapus</button>
+                                        <button type="submit" class="cursor-pointer rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-1.5 text-xs font-semibold text-destructive hover:bg-destructive/15">Hapus</button>
                                     </form>
                                 </div>
                             </td>
@@ -113,18 +117,18 @@ $inputClass = 'w-full rounded-xl border border-border bg-white px-3.5 py-2.5 tex
                 $terisi = (int) $q['slot_terisi'];
                 $maks = (int) $q['slot_maksimal'];
                 ?>
-                <article class="rounded-2xl border border-white/80 bg-card p-4 shadow-soft space-y-3">
+                <article class="<?= e($listArticleClass) ?>">
                     <div>
-                        <h2 class="font-semibold text-content-primary"><?= e((string) $q['nama_kamar']) ?></h2>
-                        <p class="text-sm text-content-secondary mt-0.5"><?= e(date('d/m/Y', strtotime((string) $q['tanggal']))) ?> · <?= $terisi ?>/<?= $maks ?> slot</p>
+                        <h2 class="font-semibold text-foreground"><?= e((string) $q['nama_kamar']) ?></h2>
+                        <p class="text-sm text-muted-foreground mt-0.5"><?= e(date('d/m/Y', strtotime((string) $q['tanggal']))) ?> · <?= $terisi ?>/<?= $maks ?> slot</p>
                     </div>
                     <div class="flex gap-2">
                         <a href="/admin/penitipan/kuota/edit?id=<?= e(urlencode((string) $q['id'])) ?>"
-                           class="flex-1 cursor-pointer text-center rounded-xl border border-border bg-page/60 px-3 py-2 text-xs font-semibold text-admin hover:bg-admin-soft">Edit</a>
+                           class="flex-1 cursor-pointer text-center rounded-lg border border-border bg-muted/60 px-3 py-2 text-xs font-semibold text-primary hover:bg-muted">Edit</a>
                         <form method="POST" action="/admin/penitipan/kuota/hapus" class="flex-1" data-confirm="Hapus kuota ini?">
                             <?= Csrf::field() ?>
                             <input type="hidden" name="id" value="<?= e((string) $q['id']) ?>">
-                            <button type="submit" class="w-full cursor-pointer rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700">Hapus</button>
+                            <button type="submit" class="w-full cursor-pointer rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs font-semibold text-destructive">Hapus</button>
                         </form>
                     </div>
                 </article>

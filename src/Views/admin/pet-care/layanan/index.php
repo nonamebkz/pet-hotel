@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 $layananList = $layananList ?? [];
 $statusLabels = $statusLabels ?? [];
-$btnPrimary = 'cursor-pointer inline-flex items-center gap-2 rounded-xl bg-admin px-4 py-2.5 text-sm font-semibold text-white shadow-soft transition duration-soft hover:bg-admin-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-admin';
+$btnPrimary = design_cn(ui_btn_primary(), 'gap-2');
 ?>
 <div class="font-body space-y-6">
-    <section class="relative overflow-hidden rounded-2xl border border-white/80 bg-card p-6 sm:p-8 shadow-soft">
+    <section class="<?= e(design_cn(design_surface('panel'), 'relative overflow-hidden p-6 sm:p-8')) ?>">
         <div class="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-primary/10 blur-2xl" aria-hidden="true"></div>
         <div class="relative flex flex-wrap items-start justify-between gap-4">
             <div>
-                <p class="text-xs font-semibold uppercase tracking-wider text-content-secondary">Pet Care</p>
-                <h1 class="mt-1 font-heading text-2xl sm:text-3xl text-content-primary">Layanan Pet Care</h1>
-                <p class="mt-2 text-sm text-content-secondary max-w-xl">
+                <p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Pet Care</p>
+                <h1 class="mt-1 font-heading text-2xl sm:text-3xl text-foreground">Layanan Pet Care</h1>
+                <p class="mt-2 text-sm text-muted-foreground max-w-xl">
                     Kelola layanan konsultasi yang ditawarkan ke pelanggan.
                 </p>
             </div>
@@ -40,36 +40,36 @@ $btnPrimary = 'cursor-pointer inline-flex items-center gap-2 rounded-xl bg-admin
         require __DIR__ . '/../../../partials/ui/empty-state.php';
         ?>
     <?php else: ?>
-        <div class="hidden md:block rounded-2xl border border-white/80 bg-card shadow-soft overflow-hidden">
+        <div class="<?= e(design_cn(design_surface('panel'), 'hidden overflow-hidden md:block')) ?>">
             <table class="w-full text-sm">
                 <thead>
-                    <tr class="border-b border-border bg-admin-soft/40">
-                        <th class="text-left px-4 py-3.5 font-semibold text-content-secondary text-xs uppercase tracking-wider">Nama</th>
-                        <th class="text-left px-4 py-3.5 font-semibold text-content-secondary text-xs uppercase tracking-wider">Harga</th>
-                        <th class="text-left px-4 py-3.5 font-semibold text-content-secondary text-xs uppercase tracking-wider">Durasi</th>
-                        <th class="text-left px-4 py-3.5 font-semibold text-content-secondary text-xs uppercase tracking-wider">Status</th>
-                        <th class="text-right px-4 py-3.5 font-semibold text-content-secondary text-xs uppercase tracking-wider w-16">Aksi</th>
+                    <tr class="border-b border-border bg-muted/40">
+                        <th class="text-left px-4 py-3.5 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Nama</th>
+                        <th class="text-left px-4 py-3.5 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Harga</th>
+                        <th class="text-left px-4 py-3.5 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Durasi</th>
+                        <th class="text-left px-4 py-3.5 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Status</th>
+                        <th class="text-right px-4 py-3.5 font-semibold text-muted-foreground text-xs uppercase tracking-wider w-16">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-border/80">
                     <?php foreach ($layananList as $layanan): ?>
                         <?php $deleted = !empty($layanan['deleted_at']); ?>
-                        <tr class="transition duration-soft hover:bg-admin-soft/30 <?= $deleted ? 'opacity-50' : '' ?>">
+                        <tr class="<?= e(design_interactive('listRowHover')) ?> transition hover:bg-muted/30 <?= $deleted ? 'opacity-50' : '' ?>">
                             <td class="px-4 py-3.5">
-                                <div class="font-semibold text-content-primary"><?= e((string) $layanan['nama']) ?></div>
+                                <div class="font-semibold text-foreground"><?= e((string) $layanan['nama']) ?></div>
                                 <?php if (!empty($layanan['deskripsi'])): ?>
-                                    <div class="text-xs text-content-secondary mt-0.5 line-clamp-1"><?= e((string) $layanan['deskripsi']) ?></div>
+                                    <div class="text-xs text-muted-foreground mt-0.5 line-clamp-1"><?= e((string) $layanan['deskripsi']) ?></div>
                                 <?php endif; ?>
                             </td>
-                            <td class="px-4 py-3.5 font-medium text-admin whitespace-nowrap">
+                            <td class="px-4 py-3.5 font-medium text-primary whitespace-nowrap">
                                 Rp <?= e(number_format((float) $layanan['harga'], 0, ',', '.')) ?>
                             </td>
-                            <td class="px-4 py-3.5 text-content-primary"><?= (int) $layanan['estimasi_durasi_menit'] ?> menit</td>
+                            <td class="px-4 py-3.5 text-foreground"><?= (int) $layanan['estimasi_durasi_menit'] ?> menit</td>
                             <td class="px-4 py-3.5">
                                 <?php if ($deleted): ?>
-                                    <span class="text-xs px-2 py-0.5 rounded-lg font-semibold bg-page text-content-secondary">Dihapus</span>
+                                    <span class="<?= e(design_status_badge('muted')) ?>">Dihapus</span>
                                 <?php else: ?>
-                                    <span class="text-xs px-2 py-0.5 rounded-lg font-semibold <?= ($layanan['status'] ?? '') === 'AKTIF' ? 'bg-success-bg text-success' : 'bg-page text-content-secondary' ?>">
+                                    <span class="<?= e(design_status_badge(($layanan['status'] ?? '') === 'AKTIF' ? 'success' : 'muted')) ?>">
                                         <?= e($statusLabels[$layanan['status']] ?? (string) $layanan['status']) ?>
                                     </span>
                                 <?php endif; ?>
@@ -89,7 +89,7 @@ $btnPrimary = 'cursor-pointer inline-flex items-center gap-2 rounded-xl bg-admin
                                             'formAction' => '/admin/pet-care/layanan/hapus',
                                             'formFields' => ['id' => (string) $layanan['id']],
                                             'confirm' => 'Nonaktifkan/hapus layanan "' . (string) $layanan['nama'] . '"?',
-                                            'class' => 'text-red-600',
+                                            'class' => 'text-destructive',
                                         ],
                                     ];
                                     require __DIR__ . '/../../../partials/ui/action-menu.php';
@@ -105,19 +105,19 @@ $btnPrimary = 'cursor-pointer inline-flex items-center gap-2 rounded-xl bg-admin
         <div class="md:hidden space-y-3">
             <?php foreach ($layananList as $layanan): ?>
                 <?php $deleted = !empty($layanan['deleted_at']); ?>
-                <article class="rounded-2xl border border-white/80 bg-card p-4 shadow-soft space-y-3 <?= $deleted ? 'opacity-50' : '' ?>">
+                <article class="<?= e(design_cn(design_interactive('listArticle'), 'space-y-3', $deleted ? 'opacity-50' : '')) ?>">
                     <div class="flex items-start justify-between gap-3">
                         <div class="min-w-0">
-                            <h2 class="font-semibold text-content-primary"><?= e((string) $layanan['nama']) ?></h2>
-                            <p class="mt-1 font-heading text-admin">
+                            <h2 class="font-semibold text-foreground"><?= e((string) $layanan['nama']) ?></h2>
+                            <p class="mt-1 font-heading text-primary tabular-nums">
                                 Rp <?= e(number_format((float) $layanan['harga'], 0, ',', '.')) ?>
                             </p>
-                            <p class="mt-0.5 text-xs text-content-secondary"><?= (int) $layanan['estimasi_durasi_menit'] ?> menit</p>
+                            <p class="mt-0.5 text-xs text-muted-foreground"><?= (int) $layanan['estimasi_durasi_menit'] ?> menit</p>
                         </div>
                         <?php if ($deleted): ?>
-                            <span class="shrink-0 text-xs px-2 py-0.5 rounded-lg font-semibold bg-page text-content-secondary">Dihapus</span>
+                            <span class="<?= e(design_status_badge('muted')) ?> shrink-0">Dihapus</span>
                         <?php else: ?>
-                            <span class="shrink-0 text-xs px-2 py-0.5 rounded-lg font-semibold <?= ($layanan['status'] ?? '') === 'AKTIF' ? 'bg-success-bg text-success' : 'bg-page text-content-secondary' ?>">
+                            <span class="<?= e(design_status_badge(($layanan['status'] ?? '') === 'AKTIF' ? 'success' : 'muted')) ?> shrink-0">
                                 <?= e($statusLabels[$layanan['status']] ?? (string) $layanan['status']) ?>
                             </span>
                         <?php endif; ?>
@@ -137,7 +137,7 @@ $btnPrimary = 'cursor-pointer inline-flex items-center gap-2 rounded-xl bg-admin
                                     'formAction' => '/admin/pet-care/layanan/hapus',
                                     'formFields' => ['id' => (string) $layanan['id']],
                                     'confirm' => 'Nonaktifkan/hapus layanan "' . (string) $layanan['nama'] . '"?',
-                                    'class' => 'text-red-600',
+                                    'class' => 'text-destructive',
                                 ],
                             ];
                             require __DIR__ . '/../../../partials/ui/action-menu.php';

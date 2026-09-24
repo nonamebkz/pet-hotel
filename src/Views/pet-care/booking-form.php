@@ -25,23 +25,23 @@ foreach ($layananList as $layanan) {
     }
 }
 ?>
-<div>
+<div class="<?= e(design_cn(ui_page_content_shell_classes(), design_page_layout('formLg'))) ?>">
     <div class="mb-6">
-        <a href="/pet-care" class="text-sm text-gray-500 hover:text-primary">&larr; Kembali</a>
-        <h1 class="text-2xl font-bold text-gray-800 mt-2">Booking Pet Care</h1>
-        <p class="text-sm text-gray-500 mt-1">Pilih tanggal, slot waktu, layanan, dan kucing Anda.</p>
+        <a href="/pet-care" class="<?= e(ui_back_link_class()) ?>">&larr; Kembali</a>
+        <h1 class="mt-2 text-2xl font-bold tracking-tight text-foreground md:text-3xl">Booking Pet Care</h1>
+        <p class="text-sm text-muted-foreground mt-1">Pilih tanggal, slot waktu, layanan, dan kucing Anda.</p>
     </div>
 
     <?php if ($availableDates === []): ?>
-        <div class="bg-white rounded-xl border p-8 text-center">
-            <p class="text-gray-600 mb-2">Tidak ada jadwal slot tersedia saat ini.</p>
-            <p class="text-sm text-gray-500">Silakan coba lagi nanti atau hubungi petshop.</p>
+        <div class="<?= e(design_cn(design_surface('metric'), 'p-8 text-center')) ?>">
+            <p class="text-muted-foreground mb-2">Tidak ada jadwal slot tersedia saat ini.</p>
+            <p class="text-sm text-muted-foreground">Silakan coba lagi nanti atau hubungi petshop.</p>
         </div>
     <?php else: ?>
         <form method="GET" action="/pet-care/booking" class="mb-6 flex items-end gap-3">
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal</label>
-                <select name="tanggal" class="border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                <label class="block text-sm font-medium text-foreground mb-1">Tanggal</label>
+                <select name="tanggal" class="<?= e(ui_form_input_class()) ?> text-sm py-2"
                         onchange="this.form.submit()">
                     <?php foreach ($availableDates as $date): ?>
                         <option value="<?= e($date) ?>" <?= $tanggal === $date ? 'selected' : '' ?>>
@@ -53,20 +53,20 @@ foreach ($layananList as $layanan) {
         </form>
 
         <?php if ($slots === []): ?>
-            <div class="bg-white rounded-xl border p-6 text-center text-gray-600">
+            <div class="<?= e(design_cn(design_surface('metric'), 'p-6 text-center text-muted-foreground')) ?>">
                 Tidak ada slot kosong untuk tanggal ini. Pilih tanggal lain.
             </div>
         <?php else: ?>
-            <form method="POST" action="/pet-care/booking" class="bg-white rounded-xl border p-6 space-y-5 max-w-xl">
+            <form method="POST" action="/pet-care/booking" id="booking-form" class="<?= e(design_cn(design_surface('metric'), 'p-6 space-y-5 max-w-xl')) ?>">
                 <?= Csrf::field() ?>
                 <input type="hidden" name="tanggal" value="<?= e($tanggal) ?>">
 
                 <?php if (!empty($errors['general'])): ?>
-                    <p class="text-sm text-red-600"><?= e((string) $errors['general']) ?></p>
+                    <p class="text-sm text-destructive"><?= e((string) $errors['general']) ?></p>
                 <?php endif; ?>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Slot Waktu</label>
+                    <label class="block text-sm font-medium text-foreground mb-2">Slot Waktu</label>
                     <div class="grid grid-cols-3 gap-2">
                         <?php foreach ($slots as $slot): ?>
                             <label class="cursor-pointer">
@@ -81,14 +81,14 @@ foreach ($layananList as $layanan) {
                         <?php endforeach; ?>
                     </div>
                     <?php if (!empty($errors['kuota_pet_care_id'])): ?>
-                        <p class="text-xs text-red-600 mt-1"><?= e((string) $errors['kuota_pet_care_id']) ?></p>
+                        <p class="text-xs text-destructive mt-1"><?= e((string) $errors['kuota_pet_care_id']) ?></p>
                     <?php endif; ?>
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Layanan</label>
+                    <label class="block text-sm font-medium text-foreground mb-1">Layanan</label>
                     <select name="layanan_pet_care_id" id="layanan-select"
-                            class="w-full border rounded-lg px-3 py-2 text-sm <?= !empty($errors['layanan_pet_care_id']) ? 'border-red-400' : 'border-gray-300' ?>"
+                            class="<?= e(ui_form_input_class(!empty($errors['layanan_pet_care_id']))) ?> text-sm py-2"
                             required>
                         <option value="">— Pilih layanan —</option>
                         <?php foreach ($layananList as $layanan): ?>
@@ -100,14 +100,14 @@ foreach ($layananList as $layanan) {
                         <?php endforeach; ?>
                     </select>
                     <?php if (!empty($errors['layanan_pet_care_id'])): ?>
-                        <p class="text-xs text-red-600 mt-1"><?= e((string) $errors['layanan_pet_care_id']) ?></p>
+                        <p class="text-xs text-destructive mt-1"><?= e((string) $errors['layanan_pet_care_id']) ?></p>
                     <?php endif; ?>
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Kucing</label>
+                    <label class="block text-sm font-medium text-foreground mb-1">Kucing</label>
                     <select name="kucing_id"
-                            class="w-full border rounded-lg px-3 py-2 text-sm <?= !empty($errors['kucing_id']) ? 'border-red-400' : 'border-gray-300' ?>"
+                            class="<?= e(ui_form_input_class(!empty($errors['kucing_id']))) ?> text-sm py-2"
                             required>
                         <option value="">— Pilih kucing —</option>
                         <?php foreach ($kucingList as $kucing): ?>
@@ -118,20 +118,20 @@ foreach ($layananList as $layanan) {
                         <?php endforeach; ?>
                     </select>
                     <?php if (!empty($errors['kucing_id'])): ?>
-                        <p class="text-xs text-red-600 mt-1"><?= e((string) $errors['kucing_id']) ?></p>
+                        <p class="text-xs text-destructive mt-1"><?= e((string) $errors['kucing_id']) ?></p>
                     <?php endif; ?>
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Catatan Khusus (opsional)</label>
+                    <label class="block text-sm font-medium text-foreground mb-1">Catatan Khusus (opsional)</label>
                     <textarea name="catatan" rows="2"
-                              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"><?= e($selectedCatatan) ?></textarea>
+                              class="<?= e(ui_form_input_class()) ?> text-sm py-2"><?= e($selectedCatatan) ?></textarea>
                 </div>
 
-                <div class="bg-gray-50 rounded-lg p-4 text-sm">
-                    <div class="font-medium text-gray-800 mb-1">Ringkasan</div>
-                    <div class="text-gray-600">Tanggal: <?= e(date('d/m/Y', strtotime($tanggal))) ?></div>
-                    <div class="text-gray-600" id="harga-ringkasan">
+                <div class="bg-muted/50 rounded-lg p-4 text-sm">
+                    <div class="font-medium text-foreground mb-1">Ringkasan</div>
+                    <div class="text-muted-foreground">Tanggal: <?= e(date('d/m/Y', strtotime($tanggal))) ?></div>
+                    <div class="text-muted-foreground" id="harga-ringkasan">
                         Estimasi biaya:
                         <?php if ($selectedLayananData): ?>
                             Rp <?= e(number_format((float) $selectedLayananData['harga'], 0, ',', '.')) ?>
@@ -139,16 +139,17 @@ foreach ($layananList as $layanan) {
                             — pilih layanan —
                         <?php endif; ?>
                     </div>
-                    <div class="text-xs text-gray-500 mt-2">
+                    <div class="text-xs text-muted-foreground mt-2">
                         Pengantaran: antar sendiri · Pembayaran di loket saat kunjungan
                     </div>
                 </div>
 
                 <button type="submit"
-                        class="w-full bg-primary text-white rounded-lg py-2.5 text-sm font-medium hover:bg-primary-hover">
+                        class="<?= e(design_cn(ui_btn_primary(), 'hidden w-full md:inline-flex')) ?>">
                     Konfirmasi Booking
                 </button>
             </form>
+            <?php ui_form_footer_mobile('Konfirmasi Booking', 'booking-form'); ?>
         <?php endif; ?>
     <?php endif; ?>
 </div>

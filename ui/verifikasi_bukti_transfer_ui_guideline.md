@@ -7,11 +7,11 @@
 > **View:** [`src/Views/admin/grooming/pembayaran/index.php`](../src/Views/admin/grooming/pembayaran/index.php)  
 > **Controller:** `Admin\GroomingController`  
 > **Related:** [`booking_grooming_ui_guideline.md`](./booking_grooming_ui_guideline.md), [`dashboard_owner_ui_guideline.md`](./dashboard_owner_ui_guideline.md)  
-> **Master:** [`MASTER_UI_GUIDELINE.md`](./MASTER_UI_GUIDELINE.md)
+> **Standar:** [Standar UI/UX](../.cursor/rules/pencatatan-ui-ux-standards.mdc)
 
 ## 0. Cara Eksekusi
 
-- Baca [`MASTER_UI_GUIDELINE.md`](./MASTER_UI_GUIDELINE.md) untuk tokens & pola global
+- Baca [Standar UI/UX](../.cursor/rules/pencatatan-ui-ux-standards.mdc) untuk §3–§4 (token) dan §18 (pola global)
 - Implementasi dimulai dari section 8 (Acceptance Criteria) item **CRITICAL**
 - Jangan ubah route/controller kecuali state UI baru membutuhkannya
 - Target file utama: [`src/Views/admin/grooming/pembayaran/index.php`](../src/Views/admin/grooming/pembayaran/index.php)
@@ -207,10 +207,10 @@ Tambahkan:
 
 ### Pola Global yang Berlaku
 
-- Admin Table — lihat MASTER section C
-- Destructive Action — lihat MASTER section C
-- Tab Navigation — lihat MASTER section C
-- Status Badge — lihat MASTER section C
-- Status Badge — lihat MASTER section C
-- Tab Navigation — lihat MASTER section C
+- Admin Table — lihat MASTER §18 Pola UX global
+- Destructive Action — lihat MASTER §18 Pola UX global
+- Tab Navigation — lihat MASTER §18 Pola UX global
+- Status Badge — lihat MASTER §18 Pola UX global
+- Status Badge — lihat MASTER §18 Pola UX global
+- Tab Navigation — lihat MASTER §18 Pola UX global
 

@@ -15,13 +15,13 @@ $statusPembayaranLunas = $statusPembayaranLunas ?? 'LUNAS';
 $activeTab = $activeTab ?? 'penitipan';
 $totalPendapatan = (float) ($metrics['pendapatan_awal'] ?? 0) + (float) ($metrics['pendapatan_perpanjangan'] ?? 0);
 
-$inputClass = 'w-full rounded-xl border border-border bg-white px-3.5 py-2.5 text-sm text-content-primary shadow-soft-inset transition duration-soft hover:border-admin/30 focus:border-admin focus:outline-none focus:ring-2 focus:ring-admin/25';
-$btnPrimary = 'cursor-pointer inline-flex items-center justify-center gap-2 rounded-xl bg-admin px-4 py-2.5 text-sm font-semibold text-white shadow-soft transition duration-soft hover:bg-admin-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-admin focus-visible:ring-offset-2';
-$btnSecondary = 'cursor-pointer inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-semibold text-content-secondary shadow-soft transition duration-soft hover:bg-admin-soft hover:text-admin focus:outline-none focus-visible:ring-2 focus-visible:ring-admin';
+$inputClass = 'w-full rounded-xl border border-border bg-white px-3.5 py-2.5 text-sm text-content-primary transition duration-soft hover:border-admin/30 focus:border-admin focus:outline-none focus:ring-2 focus:ring-admin/25';
+$btnPrimary = 'cursor-pointer inline-flex items-center justify-center gap-2 rounded-xl bg-admin px-4 py-2.5 text-sm font-semibold text-white transition duration-soft hover:bg-admin-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-admin focus-visible:ring-offset-2';
+$btnSecondary = 'cursor-pointer inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-semibold text-content-secondary transition duration-soft hover:bg-admin-soft hover:text-admin focus:outline-none focus-visible:ring-2 focus-visible:ring-admin';
 $periodeLabel = date('d/m/Y', strtotime($mulai)) . ' — ' . date('d/m/Y', strtotime($akhir));
 ?>
 <div class="font-body space-y-6">
-    <section class="relative overflow-hidden rounded-2xl border border-white/80 bg-card p-6 sm:p-8 shadow-soft print:hidden">
+    <section class="<?= e(design_cn(design_surface('panel'), 'relative overflow-hidden p-6 sm:p-8 print:hidden')) ?>">
         <div class="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-success/10 blur-2xl" aria-hidden="true"></div>
         <div class="relative flex flex-wrap items-start justify-between gap-4">
             <div>
@@ -31,7 +31,7 @@ $periodeLabel = date('d/m/Y', strtotime($mulai)) . ' — ' . date('d/m/Y', strto
                     Periode: <span class="font-medium text-content-primary"><?= e($periodeLabel) ?></span>
                 </p>
             </div>
-            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-admin text-white shadow-soft" aria-hidden="true">
+            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-sm" aria-hidden="true">
                 <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/>
                 </svg>
@@ -41,7 +41,7 @@ $periodeLabel = date('d/m/Y', strtotime($mulai)) . ' — ' . date('d/m/Y', strto
 
     <?php require __DIR__ . '/_subnav.php'; ?>
 
-    <form method="GET" action="/admin/laporan/penitipan" class="rounded-2xl border border-white/80 bg-card p-5 sm:p-6 shadow-soft print:hidden">
+    <form method="GET" action="/admin/laporan/penitipan" class="<?= e(design_cn(design_surface('panel'), 'p-5 sm:p-6 print:hidden')) ?>">
         <div class="flex flex-wrap items-end gap-4">
             <div class="min-w-[10rem] flex-1">
                 <label for="mulai" class="mb-1.5 block text-sm font-semibold text-content-primary">Tanggal Mulai</label>
@@ -80,15 +80,15 @@ $periodeLabel = date('d/m/Y', strtotime($mulai)) . ' — ' . date('d/m/Y', strto
         </div>
 
         <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <article class="rounded-2xl border border-white/80 bg-card p-5 shadow-soft print:border print:shadow-none">
+            <article class="<?= e(design_cn(design_surface('metric'), 'print:border print:shadow-none')) ?>">
                 <p class="text-sm text-content-secondary">Jumlah Booking</p>
                 <p class="mt-1 font-heading text-2xl text-admin"><?= e((string) ($metrics['jumlah_booking'] ?? 0)) ?></p>
             </article>
-            <article class="rounded-2xl border border-white/80 bg-card p-5 shadow-soft print:border print:shadow-none">
+            <article class="<?= e(design_cn(design_surface('metric'), 'print:border print:shadow-none')) ?>">
                 <p class="text-sm text-content-secondary">Total Hari Dititipkan</p>
                 <p class="mt-1 font-heading text-2xl text-admin"><?= e((string) ($metrics['total_hari'] ?? 0)) ?> hari</p>
             </article>
-            <article class="rounded-2xl border border-white/80 bg-card p-5 shadow-soft print:border print:shadow-none">
+            <article class="<?= e(design_cn(design_surface('metric'), 'print:border print:shadow-none')) ?>">
                 <p class="text-sm text-content-secondary">Total Pendapatan (Lunas)</p>
                 <p class="mt-1 font-heading text-2xl text-success">
                     Rp <?= e(number_format($totalPendapatan, 0, ',', '.')) ?>
@@ -98,7 +98,7 @@ $periodeLabel = date('d/m/Y', strtotime($mulai)) . ' — ' . date('d/m/Y', strto
                     · Perpanjangan: Rp <?= e(number_format((float) ($metrics['pendapatan_perpanjangan'] ?? 0), 0, ',', '.')) ?>
                 </p>
             </article>
-            <article class="rounded-2xl border border-white/80 bg-card p-5 shadow-soft print:border print:shadow-none">
+            <article class="<?= e(design_cn(design_surface('metric'), 'print:border print:shadow-none')) ?>">
                 <p class="text-sm text-content-secondary mb-2">Promo &amp; Antar-jemput</p>
                 <p class="text-sm text-content-primary">
                     Promo: <?= e((string) ($metrics['promo_jumlah'] ?? 0)) ?> booking
@@ -111,7 +111,7 @@ $periodeLabel = date('d/m/Y', strtotime($mulai)) . ' — ' . date('d/m/Y', strto
             </article>
         </div>
 
-        <div class="rounded-2xl border border-white/80 bg-card shadow-soft overflow-hidden print:border print:shadow-none">
+        <div class="<?= e(design_cn(design_surface('panel'), 'overflow-hidden print:border print:shadow-none')) ?>">
             <div class="px-5 py-4 border-b border-border bg-admin-soft/40">
                 <h2 class="font-heading text-lg text-content-primary">Detail Penitipan</h2>
             </div>

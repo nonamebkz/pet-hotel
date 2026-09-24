@@ -15,7 +15,7 @@ $isEdit = $staff !== null && !empty($staff['id']);
 $defaultStatus = (string) ($staff['status'] ?? old('status', StatusAkun::NONAKTIF->value));
 
 $inputClass = static function (string $field, array $errors): string {
-    $base = 'w-full rounded-xl border bg-page/60 px-3.5 py-3 text-sm text-content-primary placeholder:text-content-secondary/60 shadow-soft-inset transition duration-soft focus:bg-white focus:outline-none focus:ring-2';
+    $base = 'w-full rounded-xl border bg-page/60 px-3.5 py-3 text-sm text-content-primary placeholder:text-content-secondary/60 transition duration-soft focus:bg-white focus:outline-none focus:ring-2';
     if (!empty($errors[$field])) {
         return $base . ' border-red-400 focus:border-red-400 focus:ring-red-200';
     }
@@ -66,7 +66,7 @@ if (!$isEdit && $errors !== []) {
             <?= Csrf::field() ?>
             <input type="hidden" name="id" value="<?= e((string) ($staff['id'] ?? '')) ?>">
 
-            <section class="rounded-2xl border border-white/80 bg-card p-5 sm:p-6 shadow-soft space-y-5">
+            <section class="<?= e(design_cn(design_surface('panel'), 'p-5 sm:p-6 space-y-5')) ?>">
                 <div class="flex items-center gap-3">
                     <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-admin-soft text-admin">
                         <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24" aria-hidden="true">
@@ -111,7 +111,7 @@ if (!$isEdit && $errors !== []) {
                 </div>
             </section>
 
-            <aside class="rounded-2xl border border-border bg-admin-soft/50 px-4 py-3.5 text-sm text-content-secondary shadow-soft-inset">
+            <aside class="rounded-2xl border border-border bg-admin-soft/50 px-4 py-3.5 text-sm text-content-secondary">
                 Status akun &amp; password tidak diubah di sini.
                 <a href="/admin/staff/reset-password?id=<?= e(urlencode((string) ($staff['id'] ?? ''))) ?>"
                    class="ml-1 cursor-pointer font-semibold text-admin hover:underline focus:outline-none focus-visible:underline">Reset password</a>
@@ -120,7 +120,7 @@ if (!$isEdit && $errors !== []) {
 
             <div class="flex flex-wrap items-center gap-3">
                 <button type="submit"
-                        class="cursor-pointer inline-flex items-center justify-center rounded-xl bg-admin px-5 py-3 text-sm font-semibold text-white shadow-soft transition duration-soft hover:bg-admin-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-admin focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60">
+                        class="cursor-pointer inline-flex items-center justify-center rounded-xl bg-admin px-5 py-3 text-sm font-semibold text-white transition duration-soft hover:bg-admin-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-admin focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60">
                     <?= e($submitLabel) ?>
                 </button>
                 <a href="/admin/staff"
@@ -134,7 +134,7 @@ if (!$isEdit && $errors !== []) {
             <?= Csrf::field() ?>
             <input type="hidden" name="role" value="<?= e(StaffRole::STAFF->value) ?>">
 
-            <ol class="grid grid-cols-3 gap-2 rounded-2xl border border-white/80 bg-card p-3 sm:p-4 shadow-soft" aria-label="Langkah penambahan staff">
+            <ol class="grid grid-cols-3 gap-2 rounded-2xl border bg-card p-3 sm:p-4" aria-label="Langkah penambahan staff">
                 <?php
                 $stepsMeta = [
                     ['Identitas', 'Nama & kontak'],
@@ -156,7 +156,7 @@ if (!$isEdit && $errors !== []) {
                 <?php endforeach; ?>
             </ol>
 
-            <section data-step-panel class="rounded-2xl border border-white/80 bg-card p-5 sm:p-6 shadow-soft space-y-5">
+            <section data-step-panel class="<?= e(design_cn(design_surface('panel'), 'p-5 sm:p-6 space-y-5')) ?>">
                 <div>
                     <h2 class="font-heading text-lg text-content-primary">Identitas staff</h2>
                     <p class="mt-1 text-sm text-content-secondary">Data yang dipakai untuk login dan ditampilkan di sistem.</p>
@@ -198,14 +198,14 @@ if (!$isEdit && $errors !== []) {
                 <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
                     <a href="/admin/staff" class="cursor-pointer text-sm font-semibold text-content-secondary hover:text-admin focus:outline-none focus-visible:underline">Batal</a>
                     <button type="button" data-step-next
-                            class="cursor-pointer inline-flex items-center gap-2 rounded-xl bg-admin px-5 py-2.5 text-sm font-semibold text-white shadow-soft transition duration-soft hover:bg-admin-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-admin focus-visible:ring-offset-2">
+                            class="cursor-pointer inline-flex items-center gap-2 rounded-xl bg-admin px-5 py-2.5 text-sm font-semibold text-white transition duration-soft hover:bg-admin-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-admin focus-visible:ring-offset-2">
                         Lanjut
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
                     </button>
                 </div>
             </section>
 
-            <section data-step-panel class="hidden rounded-2xl border border-white/80 bg-card p-5 sm:p-6 shadow-soft space-y-5">
+            <section data-step-panel class="hidden rounded-2xl border bg-card p-5 sm:p-6 space-y-5">
                 <div class="flex flex-wrap items-start justify-between gap-3">
                     <div>
                         <h2 class="font-heading text-lg text-content-primary">Password awal</h2>
@@ -269,20 +269,20 @@ if (!$isEdit && $errors !== []) {
                         ← Kembali
                     </button>
                     <button type="button" data-step-next
-                            class="cursor-pointer inline-flex items-center gap-2 rounded-xl bg-admin px-5 py-2.5 text-sm font-semibold text-white shadow-soft transition duration-soft hover:bg-admin-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-admin focus-visible:ring-offset-2">
+                            class="cursor-pointer inline-flex items-center gap-2 rounded-xl bg-admin px-5 py-2.5 text-sm font-semibold text-white transition duration-soft hover:bg-admin-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-admin focus-visible:ring-offset-2">
                         Lanjut
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
                     </button>
                 </div>
             </section>
 
-            <section data-step-panel class="hidden rounded-2xl border border-white/80 bg-card p-5 sm:p-6 shadow-soft space-y-5">
+            <section data-step-panel class="hidden rounded-2xl border bg-card p-5 sm:p-6 space-y-5">
                 <div>
                     <h2 class="font-heading text-lg text-content-primary">Status akses</h2>
                     <p class="mt-1 text-sm text-content-secondary">Role tetap Staff. Pilih kapan akun boleh login.</p>
                 </div>
 
-                <div class="rounded-xl border border-border bg-page/50 px-4 py-3 shadow-soft-inset">
+                <div class="rounded-xl border border-border bg-page/50 px-4 py-3">
                     <p class="text-xs font-semibold uppercase tracking-wider text-content-secondary">Role</p>
                     <p class="mt-1 text-sm font-semibold text-admin">Staff</p>
                     <p class="mt-0.5 text-xs text-content-secondary">Owner tidak dapat dibuat dari halaman ini.</p>
@@ -310,7 +310,7 @@ if (!$isEdit && $errors !== []) {
                         foreach ($statusOptions as $value => $meta):
                             $checked = $defaultStatus === $value;
                         ?>
-                            <label class="relative cursor-pointer rounded-xl border p-4 shadow-soft-inset transition duration-soft has-[:checked]:border-admin has-[:checked]:bg-admin-soft/60 has-[:checked]:shadow-soft <?= $checked ? 'border-admin bg-admin-soft/60' : 'border-border bg-page/40 hover:border-admin/30' ?>">
+                            <label class="relative cursor-pointer rounded-xl border p-4 transition duration-soft has-[:checked]:border-admin has-[:checked]:bg-admin-soft/60 <?= $checked ? 'border-admin bg-admin-soft/60' : 'border-border bg-page/40 hover:border-admin/30' ?>">
                                 <input type="radio" name="status" value="<?= e($value) ?>" class="sr-only" <?= $checked ? 'checked' : '' ?> required>
                                 <div class="flex items-start justify-between gap-2">
                                     <span class="font-semibold text-content-primary"><?= e($meta['label']) ?></span>
@@ -338,7 +338,7 @@ if (!$isEdit && $errors !== []) {
                         ← Kembali
                     </button>
                     <button type="submit"
-                            class="cursor-pointer inline-flex items-center justify-center rounded-xl bg-admin px-5 py-2.5 text-sm font-semibold text-white shadow-soft transition duration-soft hover:bg-admin-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-admin focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60">
+                            class="cursor-pointer inline-flex items-center justify-center rounded-xl bg-admin px-5 py-2.5 text-sm font-semibold text-white transition duration-soft hover:bg-admin-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-admin focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60">
                         <?= e($submitLabel) ?>
                     </button>
                 </div>

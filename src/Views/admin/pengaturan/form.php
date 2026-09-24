@@ -12,7 +12,7 @@ $field = static function (string $key) use ($settings): string {
 };
 
 $inputClass = static function (string $fieldName, array $errors): string {
-    $base = 'w-full rounded-xl border bg-page/60 px-3.5 py-3 text-sm text-content-primary placeholder:text-content-secondary/60 shadow-soft-inset transition duration-soft focus:bg-white focus:outline-none focus:ring-2';
+    $base = 'w-full rounded-xl border bg-page/60 px-3.5 py-3 text-sm text-content-primary placeholder:text-content-secondary/60 transition duration-soft focus:bg-white focus:outline-none focus:ring-2';
     if (!empty($errors[$fieldName])) {
         return $base . ' border-red-400 focus:border-red-400 focus:ring-red-200';
     }
@@ -21,8 +21,8 @@ $inputClass = static function (string $fieldName, array $errors): string {
 };
 ?>
 <div class="font-body space-y-6 pb-24">
-    <section class="relative overflow-hidden rounded-2xl border border-white/80 bg-card p-6 sm:p-8 shadow-soft">
-        <div class="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-admin/5 blur-2xl" aria-hidden="true"></div>
+    <section class="<?= e(design_cn(design_surface('panel'), 'relative overflow-hidden p-6 sm:p-8')) ?>">
+        <div class="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-primary/10 blur-2xl" aria-hidden="true"></div>
         <div class="relative flex flex-wrap items-start justify-between gap-4">
             <div>
                 <p class="text-xs font-semibold uppercase tracking-wider text-content-secondary">Konfigurasi</p>
@@ -32,7 +32,7 @@ $inputClass = static function (string $fieldName, array $errors): string {
                     Perubahan hanya berlaku untuk booking baru.
                 </p>
             </div>
-            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-admin text-white shadow-soft" aria-hidden="true">
+            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-sm" aria-hidden="true">
                 <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.37-.49l-1.296-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z"/>
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -44,7 +44,7 @@ $inputClass = static function (string $fieldName, array $errors): string {
     <form method="POST" action="/admin/pengaturan" id="pengaturan-form" class="space-y-6">
         <?= Csrf::field() ?>
 
-        <fieldset class="rounded-2xl border border-white/80 bg-card p-5 sm:p-6 shadow-soft space-y-4">
+        <fieldset class="rounded-2xl border bg-card p-5 sm:p-6 space-y-4">
             <legend class="float-left w-full mb-4">
                 <span class="flex items-center gap-3">
                     <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-admin-soft text-admin">
@@ -67,7 +67,7 @@ $inputClass = static function (string $fieldName, array $errors): string {
             ?>
         </fieldset>
 
-        <fieldset class="rounded-2xl border border-white/80 bg-card p-5 sm:p-6 shadow-soft space-y-4">
+        <fieldset class="rounded-2xl border bg-card p-5 sm:p-6 space-y-4">
             <legend class="float-left w-full mb-4">
                 <span class="flex items-center gap-3">
                     <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-admin-soft text-admin">
@@ -102,12 +102,12 @@ $inputClass = static function (string $fieldName, array $errors): string {
                     <?php endif; ?>
                 </div>
             </div>
-            <p class="text-xs text-content-secondary rounded-xl border border-border bg-page/50 px-4 py-3 shadow-soft-inset">
+            <p class="text-xs text-content-secondary rounded-xl border border-border bg-page/50 px-4 py-3">
                 Contoh: radius 3 km → gratis ≤ 3 km; di atas 3 km dikenakan biaya per km tambahan.
             </p>
         </fieldset>
 
-        <fieldset class="rounded-2xl border border-white/80 bg-card p-5 sm:p-6 shadow-soft space-y-4">
+        <fieldset class="rounded-2xl border bg-card p-5 sm:p-6 space-y-4">
             <legend class="float-left w-full mb-4">
                 <span class="flex items-center gap-3">
                     <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-admin-soft text-admin">
@@ -159,7 +159,7 @@ $inputClass = static function (string $fieldName, array $errors): string {
             </div>
         </fieldset>
 
-        <fieldset class="rounded-2xl border border-white/80 bg-card p-5 sm:p-6 shadow-soft space-y-4">
+        <fieldset class="rounded-2xl border bg-card p-5 sm:p-6 space-y-4">
             <legend class="float-left w-full mb-4">
                 <span class="flex items-center gap-3">
                     <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-admin-soft text-admin">
@@ -212,11 +212,11 @@ $inputClass = static function (string $fieldName, array $errors): string {
         </fieldset>
     </form>
 
-    <div class="fixed bottom-0 left-0 right-0 z-30 border-t border-border bg-card/95 backdrop-blur-sm shadow-soft print:hidden">
+    <div class="fixed bottom-0 left-0 right-0 z-30 border-t border-border bg-card/95 backdrop-blur-sm print:hidden">
         <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
             <p class="text-sm text-content-secondary hidden sm:block">Perubahan hanya berlaku untuk booking baru setelah disimpan.</p>
             <button type="submit" form="pengaturan-form"
-                    class="cursor-pointer ml-auto inline-flex items-center justify-center rounded-xl bg-admin px-6 py-2.5 text-sm font-semibold text-white shadow-soft transition duration-soft hover:bg-admin-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-admin focus-visible:ring-offset-2">
+                    class="cursor-pointer ml-auto inline-flex items-center justify-center rounded-xl bg-admin px-6 py-2.5 text-sm font-semibold text-white transition duration-soft hover:bg-admin-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-admin focus-visible:ring-offset-2">
                 Simpan Pengaturan
             </button>
         </div>

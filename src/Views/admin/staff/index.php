@@ -17,10 +17,11 @@ foreach ($staffList as $row) {
     }
 }
 $totalCount = count($staffList);
+$btnPrimary = design_cn(ui_btn_primary(), 'gap-2');
 ?>
 <div class="font-body space-y-6">
-    <section class="relative overflow-hidden rounded-2xl border border-white/80 bg-card p-6 sm:p-8 shadow-soft">
-        <div class="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-admin/5 blur-2xl" aria-hidden="true"></div>
+    <section class="<?= e(design_cn(design_surface('panel'), 'relative overflow-hidden p-6 sm:p-8')) ?>">
+        <div class="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-primary/10 blur-2xl" aria-hidden="true"></div>
         <div class="relative flex flex-wrap items-start justify-between gap-4">
             <div>
                 <p class="text-xs font-semibold uppercase tracking-wider text-content-secondary">Owner only</p>
@@ -36,7 +37,7 @@ $totalCount = count($staffList);
                 <?php endif; ?>
             </div>
             <a href="/admin/staff/tambah"
-               class="cursor-pointer inline-flex items-center gap-2 rounded-xl bg-admin px-4 py-2.5 text-sm font-semibold text-white shadow-soft transition duration-soft hover:bg-admin-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-admin focus-visible:ring-offset-2">
+               class="cursor-pointer inline-flex items-center gap-2 rounded-xl bg-admin px-4 py-2.5 text-sm font-semibold text-white transition duration-soft hover:bg-admin-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-admin focus-visible:ring-offset-2">
                 <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
                 </svg>
@@ -52,7 +53,7 @@ $totalCount = count($staffList);
         $description = 'Buat akun pertama agar tim dapat masuk ke dashboard operasional.';
         $ctaLabel = 'Tambah Staff';
         $ctaHref = '/admin/staff/tambah';
-        $ctaClass = 'cursor-pointer inline-flex items-center justify-center rounded-xl bg-admin px-4 py-2.5 text-sm font-semibold text-white shadow-soft transition duration-soft hover:bg-admin-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-admin focus-visible:ring-offset-2';
+        $ctaClass = 'cursor-pointer inline-flex items-center justify-center rounded-xl bg-admin px-4 py-2.5 text-sm font-semibold text-white transition duration-soft hover:bg-admin-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-admin focus-visible:ring-offset-2';
         require __DIR__ . '/../../partials/ui/empty-state.php';
         ?>
     <?php else: ?>
@@ -71,7 +72,7 @@ $totalCount = count($staffList);
                     $initials = '?';
                 }
                 ?>
-                <article class="rounded-2xl border border-white/80 bg-card p-4 sm:p-5 shadow-soft transition duration-soft hover:shadow-soft-lg">
+                <article class="<?= e(design_cn(design_interactive('listArticle'), design_interactive('listArticleHover'))) ?>">
                     <div class="flex flex-wrap items-start gap-4">
                         <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-admin-soft font-heading text-sm font-semibold text-admin" aria-hidden="true">
                             <?= e($initials) ?>

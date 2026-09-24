@@ -7,11 +7,11 @@
 > **View:** [`src/Views/dashboard/admin.php`](../src/Views/dashboard/admin.php)  
 > **Controller:** `Admin\DashboardController`  
 > **Related:** [`verifikasi_bukti_transfer_ui_guideline.md`](./verifikasi_bukti_transfer_ui_guideline.md), [`laporan_ui_guideline.md`](./laporan_ui_guideline.md)  
-> **Master:** [`MASTER_UI_GUIDELINE.md`](./MASTER_UI_GUIDELINE.md)
+> **Standar:** [Standar UI/UX](../.cursor/rules/pencatatan-ui-ux-standards.mdc)
 
 ## 0. Cara Eksekusi
 
-- Baca [`MASTER_UI_GUIDELINE.md`](./MASTER_UI_GUIDELINE.md) untuk tokens & pola global
+- Baca [Standar UI/UX](../.cursor/rules/pencatatan-ui-ux-standards.mdc) untuk §3–§4 (token) dan §18 (pola global)
 - Implementasi dimulai dari section 8 (Acceptance Criteria) item **CRITICAL**
 - Jangan ubah route/controller kecuali state UI baru membutuhkannya
 - Target file utama: [`src/Views/dashboard/admin.php`](../src/Views/dashboard/admin.php)
@@ -184,6 +184,6 @@ Jika value = 0:
 
 ### Pola Global yang Berlaku
 
-- Priority Layers — lihat MASTER section C
-- Empty State — lihat MASTER section C
+- Priority Layers — lihat MASTER §18 Pola UX global
+- Empty State — lihat MASTER §18 Pola UX global
 

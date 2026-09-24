@@ -1,18 +1,49 @@
+<?php
+/** Tailwind CDN bridge: semantic colors → public/css/index.css. Legacy `admin`/`success` hex: migrate views to `primary` / semantic status. */
+?>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;500;600;700&family=Varela+Round&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/index.css">
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
     tailwind.config = {
+        darkMode: 'class',
         theme: {
             extend: {
                 colors: {
-                    primary: {
-                        DEFAULT: '#E07A5F',
-                        hover: '#C96A52',
-                        soft: '#FDF0EC',
-                        muted: '#F4E4DE',
+                    background: 'var(--background)',
+                    foreground: 'var(--foreground)',
+                    card: {
+                        DEFAULT: 'var(--card)',
+                        foreground: 'var(--card-foreground)',
                     },
+                    primary: {
+                        DEFAULT: 'var(--primary)',
+                        foreground: 'var(--primary-foreground)',
+                        hover: 'var(--primary)',
+                        soft: 'var(--accent)',
+                        muted: 'var(--muted)',
+                    },
+                    secondary: {
+                        DEFAULT: 'var(--secondary)',
+                        foreground: 'var(--secondary-foreground)',
+                    },
+                    muted: {
+                        DEFAULT: 'var(--muted)',
+                        foreground: 'var(--muted-foreground)',
+                    },
+                    accent: {
+                        DEFAULT: 'var(--accent)',
+                        foreground: 'var(--accent-foreground)',
+                    },
+                    destructive: {
+                        DEFAULT: 'var(--destructive)',
+                        foreground: 'var(--background)',
+                    },
+                    border: 'var(--border)',
+                    input: 'var(--input)',
+                    ring: 'var(--ring)',
                     admin: {
                         DEFAULT: '#3D405B',
                         hover: '#2D3142',
@@ -30,21 +61,21 @@
                         DEFAULT: '#E76F51',
                     },
                     content: {
-                        primary: '#264653',
-                        secondary: '#6B7280',
+                        primary: 'var(--foreground)',
+                        secondary: 'var(--muted-foreground)',
                     },
-                    border: {
-                        DEFAULT: '#E8E4DF',
-                    },
-                    page: '#FAFAF8',
-                    card: '#FFFFFF',
+                    page: 'var(--background)',
                 },
                 fontFamily: {
                     heading: ['"Varela Round"', 'sans-serif'],
                     body: ['"Nunito Sans"', 'sans-serif'],
                 },
                 borderRadius: {
-                    DEFAULT: '12px',
+                    DEFAULT: 'var(--radius)',
+                    lg: 'var(--radius)',
+                    md: 'calc(var(--radius) - 2px)',
+                    sm: 'calc(var(--radius) - 4px)',
+                    xl: 'calc(var(--radius) + 4px)',
                     btn: '10px',
                 },
                 boxShadow: {

@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Core\Csrf;
 use App\Core\Session;
 
 $success = Session::getFlash('success');
@@ -11,12 +10,12 @@ $successCtaLabel = Session::getFlash('success_cta_label');
 $successCtaHref = Session::getFlash('success_cta_href');
 ?>
 <?php if ($success): ?>
-    <div class="mb-4 rounded-lg bg-success-bg border border-success/20 px-4 py-3 text-sm text-success">
+    <div class="mb-4 rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-800 dark:text-emerald-200">
         <div class="flex flex-wrap items-center justify-between gap-3">
             <span><?= e((string) $success) ?></span>
             <?php if ($successCtaHref && $successCtaLabel): ?>
                 <a href="<?= e((string) $successCtaHref) ?>"
-                   class="cursor-pointer inline-flex items-center justify-center rounded-lg bg-success px-3 py-1.5 text-xs font-semibold text-white transition duration-soft hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-success">
+                   class="<?= e(ui_btn_primary()) ?> text-xs px-3 py-1.5">
                     <?= e((string) $successCtaLabel) ?>
                 </a>
             <?php endif; ?>
@@ -24,7 +23,7 @@ $successCtaHref = Session::getFlash('success_cta_href');
     </div>
 <?php endif; ?>
 <?php if ($error): ?>
-    <div class="mb-4 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-800">
+    <div class="<?= e(design_cn(design_advice_panel_surface('danger'), 'mb-4 rounded-2xl border px-4 py-3 text-sm text-destructive')) ?>">
         <?= e((string) $error) ?>
     </div>
 <?php endif; ?>

@@ -9,21 +9,21 @@ $opsiLabels = $opsiLabels ?? [];
 ?>
 <div>
     <div class="mb-6">
-        <a href="/penitipan/detail?id=<?= e((string) $booking['id']) ?>" class="text-sm text-gray-500 hover:text-primary">&larr; Detail</a>
-        <h1 class="text-2xl font-bold text-gray-800 mt-2">Invoice Penitipan</h1>
+        <a href="/penitipan/detail?id=<?= e((string) $booking['id']) ?>" class="<?= e(ui_back_link_class()) ?>">&larr; Detail</a>
+        <h1 class="text-2xl font-bold text-foreground mt-2">Invoice Penitipan</h1>
     </div>
 
-    <div class="bg-white rounded-xl border p-8 max-w-lg mx-auto">
+    <div class="<?= e(design_cn(design_surface('metric'), 'p-8 max-w-lg mx-auto')) ?>">
         <div class="text-center mb-6">
-            <div class="text-sm text-gray-500">Petshop</div>
-            <div class="font-bold text-lg text-gray-800">INVOICE</div>
-            <div class="text-sm text-gray-600"><?= e((string) $invoice['nomor_invoice']) ?></div>
-            <div class="text-xs text-gray-500 mt-1">
+            <div class="text-sm text-muted-foreground">Petshop</div>
+            <div class="font-bold text-lg text-foreground">INVOICE</div>
+            <div class="text-sm text-muted-foreground"><?= e((string) $invoice['nomor_invoice']) ?></div>
+            <div class="text-xs text-muted-foreground mt-1">
                 <?= e(date('d/m/Y H:i', strtotime((string) $invoice['issued_at']))) ?>
             </div>
         </div>
 
-        <div class="text-sm space-y-2 text-gray-600 mb-6">
+        <div class="text-sm space-y-2 text-muted-foreground mb-6">
             <div>Kucing: <?= e((string) $booking['kucing_nama']) ?></div>
             <div>Paket: <?= e((string) $booking['paket_nama']) ?></div>
             <div>
@@ -48,7 +48,7 @@ $opsiLabels = $opsiLabels ?? [];
                 <span>Antar-jemput</span>
                 <span>Rp <?= e(number_format((float) $transaksi['biaya_antar_jemput'], 0, ',', '.')) ?></span>
             </div>
-            <div class="flex justify-between font-bold text-gray-800 pt-2 border-t">
+            <div class="flex justify-between font-bold text-foreground pt-2 border-t">
                 <span>Total Lunas</span>
                 <span>Rp <?= e(number_format((float) $transaksi['total_bayar'], 0, ',', '.')) ?></span>
             </div>

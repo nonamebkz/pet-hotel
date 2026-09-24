@@ -11,16 +11,16 @@ $tabs = [
     'booking' => ['label' => 'Booking', 'href' => '/admin/pet-care/booking'],
 ];
 ?>
-<nav class="flex flex-wrap gap-2 mb-6" aria-label="Navigasi pet care">
+<nav class="-mb-px mb-6 flex flex-wrap gap-x-1 gap-y-2 border-b border-border" aria-label="Navigasi pet care">
     <?php foreach ($tabs as $key => $tab): ?>
         <?php $isActive = $activeTab === $key; ?>
         <?php if ($isActive): ?>
-            <span class="inline-flex items-center rounded-xl bg-admin px-4 py-2.5 text-sm font-semibold text-white shadow-soft">
+            <span class="inline-flex items-center border-b-2 border-primary px-4 py-2.5 text-sm font-medium text-foreground">
                 <?= e($tab['label']) ?>
             </span>
         <?php else: ?>
             <a href="<?= e($tab['href']) ?>"
-               class="cursor-pointer inline-flex items-center rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium text-content-secondary shadow-soft transition duration-soft hover:bg-admin-soft hover:text-admin focus:outline-none focus-visible:ring-2 focus-visible:ring-admin">
+               class="inline-flex touch-target items-center border-b-2 border-transparent px-4 py-2.5 text-sm font-medium text-muted-foreground transition hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                 <?= e($tab['label']) ?>
             </a>
         <?php endif; ?>

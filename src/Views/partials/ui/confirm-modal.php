@@ -3,18 +3,18 @@
      role="dialog"
      aria-modal="true"
      aria-labelledby="ui-confirm-title">
-    <div class="rounded-2xl border border-white/80 bg-card shadow-soft-lg max-w-md w-full p-6 font-body">
-        <h3 id="ui-confirm-title" class="font-heading text-lg text-content-primary mb-2">Konfirmasi</h3>
-        <p id="ui-confirm-message" class="text-sm text-content-secondary mb-6"></p>
+    <div class="<?= e(design_cn(design_surface('metric'), 'max-w-md w-full p-6 font-body')) ?>">
+        <h3 id="ui-confirm-title" class="font-heading text-lg text-foreground mb-2">Konfirmasi</h3>
+        <p id="ui-confirm-message" class="text-sm text-muted-foreground mb-6"></p>
         <div class="flex justify-end gap-3">
             <button type="button"
                     id="ui-confirm-cancel"
-                    class="cursor-pointer rounded-xl border border-border bg-page/60 px-4 py-2.5 text-sm font-semibold text-content-secondary transition duration-soft hover:bg-admin-soft hover:text-admin focus:outline-none focus-visible:ring-2 focus-visible:ring-admin">
+                    class="<?= e(ui_btn_secondary()) ?>">
                 Batal
             </button>
             <button type="button"
                     id="ui-confirm-ok"
-                    class="cursor-pointer rounded-xl bg-danger px-4 py-2.5 text-sm font-semibold text-white shadow-soft transition duration-soft hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-danger">
+                    class="cursor-pointer rounded-lg bg-destructive px-4 py-2.5 text-sm font-semibold text-white touch-target transition hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                 Ya, Lanjutkan
             </button>
         </div>

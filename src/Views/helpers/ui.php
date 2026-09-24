@@ -22,3 +22,8 @@ function ui_filter_chips(
 ): void {
     require BASE_PATH . '/src/Views/partials/ui/filter-chips.php';
 }
+
+function ui_form_footer_mobile(string $submitLabel, ?string $formId = null, ?string $buttonClass = null): void
+{
+    require BASE_PATH . '/src/Views/partials/ui/form-footer-mobile.php';
+}

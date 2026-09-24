@@ -1,10 +1,10 @@
 # UI Guidelines – Petshop
 
-Dokumentasi UX/UI untuk implementasi per-halaman. Setiap file bisa dieksekusi terpisah oleh agent.
+Dokumentasi UX/UI per halaman. Setiap file bisa dieksekusi terpisah oleh agent.
 
 ## Mulai Di Sini
 
-1. Baca **[MASTER_UI_GUIDELINE.md](./MASTER_UI_GUIDELINE.md)** — design tokens, pola global, panduan eksekusi
+1. Baca **[Standar UI/UX](../.cursor/rules/pencatatan-ui-ux-standards.mdc)** — token (`index.css`, `design.php`), pola global, panduan eksekusi
 2. Pilih file guideline halaman target di bawah
 3. Jalankan prompt eksekusi
 
@@ -12,11 +12,11 @@ Dokumentasi UX/UI untuk implementasi per-halaman. Setiap file bisa dieksekusi te
 
 ```
 Implementasikan UI guideline @ui/booking_grooming_ui_guideline.md
-sesuai @ui/MASTER_UI_GUIDELINE.md — fokus item CRITICAL di Acceptance Criteria.
+sesuai @.cursor/rules/pencatatan-ui-ux-standards.mdc — fokus item CRITICAL di Acceptance Criteria.
 ```
 
-> Dokumen historis design system pelanggan: [`Petshop Dashboard UI Guideline.md`](../Petshop%20Dashboard%20UI%20Guideline.md)  
-> Sumber eksekusi aktif: **MASTER_UI_GUIDELINE.md** di folder ini.
+> Dokumen historis produk: [`Petshop Dashboard UI Guideline.md`](../Petshop%20Dashboard%20UI%20Guideline.md)  
+> **Sumber eksekusi aktif:** `.cursor/rules/pencatatan-ui-ux-standards.mdc`
 
 ---
 
@@ -78,5 +78,5 @@ sesuai @ui/MASTER_UI_GUIDELINE.md — fokus item CRITICAL di Acceptance Criteria
 
 ## Urutan Eksekusi Disarankan
 
-1. Shared partials (empty state, filter bar) — lihat MASTER section C
+1. Shared partials (empty state, filter bar) — lihat standar UI §18
 2. Auth → Dashboard → Grooming Admin cluster → sisanya

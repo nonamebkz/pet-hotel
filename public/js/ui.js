@@ -216,11 +216,11 @@
                 return;
             }
             if (state === 'active') {
-                dot.className = 'flex h-8 w-8 items-center justify-center rounded-xl bg-admin text-white text-sm font-semibold shadow-soft';
+                dot.className = 'flex h-8 w-8 items-center justify-center rounded-xl bg-primary text-primary-foreground text-sm font-semibold shadow-sm';
             } else if (state === 'done') {
-                dot.className = 'flex h-8 w-8 items-center justify-center rounded-xl bg-success text-white text-sm font-semibold shadow-soft';
+                dot.className = 'flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-600 text-white text-sm font-semibold shadow-sm';
             } else {
-                dot.className = 'flex h-8 w-8 items-center justify-center rounded-xl bg-admin-soft text-admin text-sm font-semibold';
+                dot.className = 'flex h-8 w-8 items-center justify-center rounded-xl bg-muted text-muted-foreground text-sm font-semibold';
             }
         }
 

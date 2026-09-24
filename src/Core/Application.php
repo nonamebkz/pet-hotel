@@ -17,6 +17,8 @@ final class Application
     {
         require_once __DIR__ . '/helpers.php';
         require_once BASE_PATH . '/src/Views/helpers/ui.php';
+        require_once BASE_PATH . '/src/Views/helpers/design.php';
+        require_once BASE_PATH . '/src/Views/helpers/ui-classes.php';
 
         $this->router = new Router();
         $this->registerMiddleware();

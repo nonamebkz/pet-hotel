@@ -44,28 +44,42 @@ foreach ($bookingList as $statRow) {
     }
 }
 
-$inputClass = 'w-full rounded-xl border border-border bg-white px-3.5 py-2.5 text-sm text-content-primary shadow-soft-inset transition duration-soft hover:border-admin/30 focus:border-admin focus:outline-none focus:ring-2 focus:ring-admin/25';
-$btnPrimary = 'cursor-pointer inline-flex items-center justify-center rounded-xl bg-admin px-3 py-2 text-xs font-semibold text-white shadow-soft transition duration-soft hover:bg-admin-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-admin disabled:opacity-60';
-$btnSuccess = 'cursor-pointer inline-flex items-center justify-center rounded-xl bg-success px-3 py-2 text-xs font-semibold text-white shadow-soft transition duration-soft hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-success';
-$btnDanger = 'cursor-pointer inline-flex items-center justify-center rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700 transition duration-soft hover:bg-red-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400';
-$btnGhost = 'cursor-pointer inline-flex items-center justify-center rounded-xl border border-border bg-page/60 px-3 py-2 text-xs font-semibold text-admin transition duration-soft hover:bg-admin-soft focus:outline-none focus-visible:ring-2 focus-visible:ring-admin';
+$inputClass = design_cn(
+    'w-full rounded-xl border border-input bg-background px-3.5 py-2.5 text-base sm:text-sm text-foreground transition',
+    'hover:border-primary/30 focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/25',
+);
+$inputClassSm = design_cn($inputClass, 'flex-1 min-w-[6rem] rounded-lg px-2 py-1.5 text-xs');
+$btnPrimary = design_cn(ui_btn_primary(), 'text-xs px-3 py-2 disabled:opacity-60');
+$btnPrimaryLg = design_cn(ui_btn_primary(), 'min-h-[42px] w-full px-5 sm:w-auto');
+$btnSuccess = design_cn(ui_btn_primary(), 'text-xs px-3 py-2 bg-emerald-600 hover:opacity-90');
+$btnDanger = design_cn(
+    ui_btn_secondary(),
+    'text-xs px-3 py-2 border-destructive/30 bg-destructive/10 text-destructive hover:bg-destructive/15',
+);
+$metricCard = design_surface('metric');
+$metricCardWarning = design_cn(design_surface('metric'), design_advice_panel_surface('warning'));
+$panelForm = design_cn(design_surface('panel'), 'p-5 sm:p-6');
+$panelHero = design_cn(design_surface('panel'), 'relative overflow-hidden p-6 sm:p-8');
+$tableShell = design_cn(design_surface('panel'), 'hidden overflow-hidden lg:block');
+$listArticle = design_cn(design_interactive('listArticle'), 'space-y-3');
+$listArticleWarning = design_cn(design_interactive('listArticle'), design_advice_panel_surface('warning'), 'space-y-3');
 $filterHidden = static function () use ($filterStatus, $filterTanggal): void {
     echo '<input type="hidden" name="filter_status" value="' . e($filterStatus) . '">';
     echo '<input type="hidden" name="filter_tanggal" value="' . e($filterTanggal) . '">';
 };
 ?>
 <div class="font-body space-y-6">
-    <section class="relative overflow-hidden rounded-2xl border border-white/80 bg-card p-6 sm:p-8 shadow-soft">
+    <section class="<?= e($panelHero) ?>">
         <div class="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-primary/10 blur-2xl" aria-hidden="true"></div>
         <div class="relative flex flex-wrap items-start justify-between gap-4">
             <div>
-                <p class="text-xs font-semibold uppercase tracking-wider text-content-secondary">Grooming</p>
-                <h1 class="mt-1 font-heading text-2xl sm:text-3xl text-content-primary">Booking Grooming</h1>
-                <p class="mt-2 text-sm text-content-secondary max-w-xl">
+                <p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Grooming</p>
+                <h1 class="mt-1 font-heading text-2xl sm:text-3xl text-foreground">Booking Grooming</h1>
+                <p class="mt-2 text-sm text-muted-foreground max-w-xl">
                     Konfirmasi jam, lanjutkan proses layanan, dan kelola pembatalan/refund.
                 </p>
             </div>
-            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-admin text-white shadow-soft" aria-hidden="true">
+            <div class="<?= e(design_icon_badge('default', 'flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl')) ?>" aria-hidden="true">
                 <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/>
                 </svg>
@@ -80,41 +94,41 @@ $filterHidden = static function () use ($filterStatus, $filterTanggal): void {
 
     <?php if ($bookingList !== [] || $hasFilter): ?>
         <div class="grid sm:grid-cols-3 gap-4">
-            <article class="rounded-2xl border <?= $countMenunggu > 0 ? 'border-amber-200 bg-warning-bg/40' : 'border-white/80 bg-card' ?> p-5 shadow-soft">
-                <p class="text-sm text-content-secondary">Menunggu Konfirmasi</p>
-                <p class="mt-1 font-heading text-2xl <?= $countMenunggu > 0 ? 'text-amber-700' : 'text-admin' ?>"><?= e((string) $countMenunggu) ?></p>
-                <p class="mt-1 text-xs text-content-secondary">Perlu set jam grooming</p>
+            <article class="<?= e($countMenunggu > 0 ? $metricCardWarning : $metricCard) ?>">
+                <p class="text-sm text-muted-foreground">Menunggu Konfirmasi</p>
+                <p class="mt-1 font-heading text-2xl tabular-nums <?= $countMenunggu > 0 ? 'text-amber-700 dark:text-amber-300' : 'text-primary' ?>"><?= e((string) $countMenunggu) ?></p>
+                <p class="mt-1 text-xs text-muted-foreground">Perlu set jam grooming</p>
             </article>
-            <article class="rounded-2xl border border-white/80 bg-card p-5 shadow-soft">
-                <p class="text-sm text-content-secondary">Terkonfirmasi</p>
-                <p class="mt-1 font-heading text-2xl text-admin"><?= e((string) $countTerkonfirmasi) ?></p>
-                <p class="mt-1 text-xs text-content-secondary">Siap diproses</p>
+            <article class="<?= e($metricCard) ?>">
+                <p class="text-sm text-muted-foreground">Terkonfirmasi</p>
+                <p class="mt-1 font-heading text-2xl tabular-nums text-primary"><?= e((string) $countTerkonfirmasi) ?></p>
+                <p class="mt-1 text-xs text-muted-foreground">Siap diproses</p>
             </article>
-            <article class="rounded-2xl border border-white/80 bg-card p-5 shadow-soft">
-                <p class="text-sm text-content-secondary">Sedang Proses</p>
-                <p class="mt-1 font-heading text-2xl text-admin"><?= e((string) $countProses) ?></p>
-                <p class="mt-1 text-xs text-content-secondary">Dalam pengerjaan</p>
+            <article class="<?= e($metricCard) ?>">
+                <p class="text-sm text-muted-foreground">Sedang Proses</p>
+                <p class="mt-1 font-heading text-2xl tabular-nums text-primary"><?= e((string) $countProses) ?></p>
+                <p class="mt-1 text-xs text-muted-foreground">Dalam pengerjaan</p>
             </article>
         </div>
     <?php endif; ?>
 
-    <form method="GET" action="/admin/grooming/booking" class="rounded-2xl border border-white/80 bg-card p-5 sm:p-6 shadow-soft">
+    <form method="GET" action="/admin/grooming/booking" class="<?= e($panelForm) ?>">
         <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
-            <h2 class="font-heading text-lg text-content-primary">Filter</h2>
+            <h2 class="font-heading text-lg text-foreground">Filter</h2>
             <?php if ($hasFilter): ?>
                 <a href="/admin/grooming/booking"
-                   class="cursor-pointer text-xs font-semibold text-content-secondary transition duration-soft hover:text-admin focus:outline-none focus-visible:underline">
+                   class="text-xs font-semibold text-muted-foreground transition hover:text-primary focus:outline-none focus-visible:underline">
                     Reset filter
                 </a>
             <?php endif; ?>
         </div>
         <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div>
-                <label for="tanggal" class="mb-1.5 block text-sm font-semibold text-content-primary">Tanggal</label>
+                <label for="tanggal" class="mb-1.5 block text-sm font-semibold text-foreground">Tanggal</label>
                 <input type="date" id="tanggal" name="tanggal" value="<?= e($filterTanggal) ?>" class="<?= e($inputClass) ?>">
             </div>
             <div>
-                <label for="status" class="mb-1.5 block text-sm font-semibold text-content-primary">Status</label>
+                <label for="status" class="mb-1.5 block text-sm font-semibold text-foreground">Status</label>
                 <select id="status" name="status" class="<?= e($inputClass) ?>">
                     <option value="">Semua status</option>
                     <?php foreach ($statusLabels as $value => $label): ?>
@@ -125,7 +139,7 @@ $filterHidden = static function () use ($filterStatus, $filterTanggal): void {
                 </select>
             </div>
             <div class="flex items-end sm:col-span-2 lg:col-span-2">
-                <button type="submit" class="<?= e($btnPrimary) ?> w-full sm:w-auto min-h-[42px] px-5">
+                <button type="submit" class="<?= e($btnPrimaryLg) ?>">
                     Terapkan Filter
                 </button>
             </div>
@@ -151,7 +165,7 @@ $filterHidden = static function () use ($filterStatus, $filterTanggal): void {
             $description = 'Coba ubah tanggal atau status, atau reset filter untuk melihat semua booking.';
             $ctaLabel = 'Reset Filter';
             $ctaHref = '/admin/grooming/booking';
-            $ctaClass = 'cursor-pointer inline-flex items-center justify-center rounded-xl bg-admin px-4 py-2.5 text-sm font-semibold text-white shadow-soft transition duration-soft hover:bg-admin-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-admin focus-visible:ring-offset-2';
+            $ctaClass = ui_btn_primary();
         } else {
             $variant = 'empty';
             $title = 'Belum ada booking grooming';
@@ -162,11 +176,11 @@ $filterHidden = static function () use ($filterStatus, $filterTanggal): void {
         require __DIR__ . '/../../../partials/ui/empty-state.php';
         ?>
     <?php else: ?>
-        <div class="hidden lg:block rounded-2xl border border-white/80 bg-card shadow-soft overflow-hidden">
+        <div class="<?= e($tableShell) ?>">
             <div class="overflow-x-auto">
                 <table class="w-full text-sm">
                     <thead>
-                        <tr class="border-b border-border bg-admin-soft/40">
+                        <tr class="border-b border-border bg-muted/40">
                             <th class="text-left px-4 py-3.5 font-semibold text-content-secondary text-xs uppercase tracking-wider">Pelanggan / Kucing</th>
                             <th class="text-left px-4 py-3.5 font-semibold text-content-secondary text-xs uppercase tracking-wider">Layanan</th>
                             <th class="text-left px-4 py-3.5 font-semibold text-content-secondary text-xs uppercase tracking-wider">Jadwal</th>
@@ -185,7 +199,7 @@ $filterHidden = static function () use ($filterStatus, $filterTanggal): void {
                             $refundEnum = StatusRefund::tryFrom((string) ($booking['status_refund'] ?? StatusRefund::TIDAK_ADA->value));
                             $needsConfirm = (string) $booking['status'] === StatusBookingGrooming::MENUNGGU_KONFIRMASI->value;
                             ?>
-                            <tr class="align-top transition duration-soft hover:bg-admin-soft/30 <?= $needsConfirm ? 'bg-warning-bg/20' : '' ?>">
+                            <tr class="align-top transition hover:bg-muted/30 <?= $needsConfirm ? 'bg-amber-500/5' : '' ?>">
                                 <td class="px-4 py-4">
                                     <div class="font-semibold text-content-primary"><?= e((string) $booking['pelanggan_nama']) ?></div>
                                     <div class="text-content-secondary"><?= e((string) $booking['kucing_nama']) ?></div>
@@ -242,7 +256,7 @@ $filterHidden = static function () use ($filterStatus, $filterTanggal): void {
                                                 <label class="block text-[11px] font-semibold text-amber-900">Set jam grooming</label>
                                                 <div class="flex flex-wrap items-center gap-1.5">
                                                     <input type="time" name="jam_grooming" required
-                                                           class="flex-1 min-w-[7rem] rounded-lg border border-border bg-white px-2 py-1.5 text-xs shadow-soft-inset focus:border-admin focus:outline-none focus:ring-2 focus:ring-admin/25">
+                                                           class="<?= e(design_cn($inputClassSm, 'min-w-[7rem]')) ?>">
                                                     <button type="submit" class="<?= e($btnSuccess) ?>">Konfirmasi</button>
                                                 </div>
                                             </form>
@@ -276,7 +290,7 @@ $filterHidden = static function () use ($filterStatus, $filterTanggal): void {
                                                 <label class="block text-[11px] font-semibold text-red-800">Batalkan + refund</label>
                                                 <div class="flex flex-wrap gap-1.5">
                                                     <input type="text" name="alasan" placeholder="Alasan (opsional)"
-                                                           class="flex-1 min-w-[6rem] rounded-lg border border-border bg-white px-2 py-1.5 text-xs shadow-soft-inset focus:border-admin focus:outline-none focus:ring-2 focus:ring-admin/25">
+                                                           class="<?= e($inputClassSm) ?>">
                                                     <button type="submit" class="<?= e($btnDanger) ?>">Refund</button>
                                                 </div>
                                             </form>
@@ -317,7 +331,7 @@ $filterHidden = static function () use ($filterStatus, $filterTanggal): void {
                 $refundEnum = StatusRefund::tryFrom((string) ($booking['status_refund'] ?? StatusRefund::TIDAK_ADA->value));
                 $needsConfirm = (string) $booking['status'] === StatusBookingGrooming::MENUNGGU_KONFIRMASI->value;
                 ?>
-                <article class="rounded-2xl border <?= $needsConfirm ? 'border-amber-200 bg-warning-bg/30' : 'border-white/80 bg-card' ?> p-4 shadow-soft space-y-3">
+                <article class="<?= e($needsConfirm ? $listArticleWarning : $listArticle) ?>">
                     <div class="flex items-start justify-between gap-3">
                         <div class="min-w-0">
                             <p class="font-semibold text-content-primary truncate"><?= e((string) $booking['pelanggan_nama']) ?></p>

@@ -5,21 +5,24 @@ declare(strict_types=1);
 use App\Core\Csrf;
 
 $kuotaList = $kuotaList ?? [];
-$btnDanger = 'cursor-pointer inline-flex items-center justify-center rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 transition duration-soft hover:bg-red-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400 disabled:opacity-40 disabled:cursor-not-allowed';
+$btnPrimary = design_cn(ui_btn_primary(), 'gap-2');
+$btnDanger = design_cn(
+    ui_btn_secondary(),
+    'border-destructive/30 bg-destructive/10 text-destructive hover:bg-destructive/15 disabled:cursor-not-allowed disabled:opacity-40',
+);
 ?>
 <div class="font-body space-y-6">
-    <section class="relative overflow-hidden rounded-2xl border border-white/80 bg-card p-6 sm:p-8 shadow-soft">
+    <section class="<?= e(design_cn(design_surface('panel'), 'relative overflow-hidden p-6 sm:p-8')) ?>">
         <div class="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-primary/10 blur-2xl" aria-hidden="true"></div>
         <div class="relative flex flex-wrap items-start justify-between gap-4">
             <div>
-                <p class="text-xs font-semibold uppercase tracking-wider text-content-secondary">Grooming</p>
-                <h1 class="mt-1 font-heading text-2xl sm:text-3xl text-content-primary">Kuota Grooming</h1>
-                <p class="mt-2 text-sm text-content-secondary max-w-xl">
+                <p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Grooming</p>
+                <h1 class="mt-1 font-heading text-2xl sm:text-3xl text-foreground">Kuota Grooming</h1>
+                <p class="mt-2 text-sm text-muted-foreground max-w-xl">
                     Atur kapasitas harian agar pelanggan dapat melakukan booking grooming.
                 </p>
             </div>
-            <a href="/admin/grooming/kuota/tambah"
-               class="cursor-pointer inline-flex items-center gap-2 rounded-xl bg-admin px-4 py-2.5 text-sm font-semibold text-white shadow-soft transition duration-soft hover:bg-admin-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-admin">
+            <a href="/admin/grooming/kuota/tambah" class="<?= e($btnPrimary) ?>">
                 <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
                 Tambah Kuota
             </a>
@@ -38,7 +41,7 @@ $btnDanger = 'cursor-pointer inline-flex items-center justify-center rounded-xl 
         $description = 'Atur kapasitas harian agar pelanggan dapat melakukan booking grooming.';
         $ctaLabel = 'Tambah Kuota';
         $ctaHref = '/admin/grooming/kuota/tambah';
-        $ctaClass = 'cursor-pointer inline-flex items-center justify-center rounded-xl bg-admin px-4 py-2.5 text-sm font-semibold text-white shadow-soft transition duration-soft hover:bg-admin-hover';
+        $ctaClass = $btnPrimary;
         require __DIR__ . '/../../../partials/ui/empty-state.php';
         ?>
     <?php else: ?>
@@ -47,9 +50,9 @@ $btnDanger = 'cursor-pointer inline-flex items-center justify-center rounded-xl 
             <?= Csrf::field() ?>
 
             <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
-                <label class="inline-flex items-center gap-2 text-sm text-content-secondary cursor-pointer">
+                <label class="inline-flex items-center gap-2 text-sm text-muted-foreground cursor-pointer">
                     <input type="checkbox" id="kuota-select-all"
-                           class="rounded border-border text-admin focus:ring-admin/25">
+                           class="rounded border-border text-primary focus:ring-ring/25">
                     Pilih semua yang dapat dihapus
                 </label>
                 <button type="submit" id="kuota-bulk-delete" disabled
@@ -58,16 +61,16 @@ $btnDanger = 'cursor-pointer inline-flex items-center justify-center rounded-xl 
                 </button>
             </div>
 
-            <div class="rounded-2xl border border-white/80 bg-card shadow-soft overflow-hidden">
+            <div class="<?= e(design_cn(design_surface('panel'), 'overflow-hidden')) ?>">
                 <table class="w-full text-sm">
                     <thead>
-                        <tr class="border-b border-border bg-admin-soft/40">
+                        <tr class="border-b border-border bg-muted/40">
                             <th class="w-10 px-4 py-3.5"></th>
-                            <th class="text-left px-4 py-3.5 font-semibold text-content-secondary text-xs uppercase tracking-wider">Tanggal</th>
-                            <th class="text-left px-4 py-3.5 font-semibold text-content-secondary text-xs uppercase tracking-wider">Okupansi</th>
-                            <th class="text-left px-4 py-3.5 font-semibold text-content-secondary text-xs uppercase tracking-wider">Terisi / Maks</th>
-                            <th class="text-left px-4 py-3.5 font-semibold text-content-secondary text-xs uppercase tracking-wider">Sisa</th>
-                            <th class="text-right px-4 py-3.5 font-semibold text-content-secondary text-xs uppercase tracking-wider w-16">Aksi</th>
+                            <th class="text-left px-4 py-3.5 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Tanggal</th>
+                            <th class="text-left px-4 py-3.5 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Okupansi</th>
+                            <th class="text-left px-4 py-3.5 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Terisi / Maks</th>
+                            <th class="text-left px-4 py-3.5 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Sisa</th>
+                            <th class="text-right px-4 py-3.5 font-semibold text-muted-foreground text-xs uppercase tracking-wider w-16">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-border/80">
@@ -77,30 +80,30 @@ $btnDanger = 'cursor-pointer inline-flex items-center justify-center rounded-xl 
                             $terisi = (int) $kuota['slot_terisi'];
                             $sisa = $maks - $terisi;
                             $pct = $maks > 0 ? min(100, (int) round(($terisi / $maks) * 100)) : 0;
-                            $barColor = $pct >= 90 ? 'bg-red-500' : ($pct >= 70 ? 'bg-amber-500' : 'bg-success');
+                            $barColor = $pct >= 90 ? 'bg-destructive' : ($pct >= 70 ? 'bg-amber-500' : 'bg-emerald-500');
                             $canDelete = $terisi === 0;
                             ?>
-                            <tr class="transition duration-soft hover:bg-admin-soft/30">
+                            <tr class="<?= e(design_interactive('listRowHover')) ?> transition hover:bg-muted/30">
                                 <td class="px-4 py-3.5">
                                     <?php if ($canDelete): ?>
                                         <input type="checkbox" name="ids[]" value="<?= e((string) $kuota['id']) ?>"
-                                               class="kuota-row-check rounded border-border text-admin focus:ring-admin/25">
+                                               class="kuota-row-check rounded border-border text-primary focus:ring-ring/25">
                                     <?php endif; ?>
                                 </td>
-                                <td class="px-4 py-3.5 font-semibold text-content-primary">
+                                <td class="px-4 py-3.5 font-semibold text-foreground">
                                     <?= e(date('d/m/Y', strtotime((string) $kuota['tanggal']))) ?>
                                 </td>
                                 <td class="px-4 py-3.5 min-w-[140px]">
                                     <div class="flex items-center gap-2">
-                                        <div class="flex-1 h-1.5 bg-admin-soft rounded-full overflow-hidden">
+                                        <div class="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">
                                             <div class="h-full rounded-full <?= e($barColor) ?>" style="width: <?= e((string) $pct) ?>%"></div>
                                         </div>
-                                        <span class="text-xs text-content-secondary w-8 text-right"><?= e((string) $pct) ?>%</span>
+                                        <span class="text-xs text-muted-foreground w-8 text-right"><?= e((string) $pct) ?>%</span>
                                     </div>
                                 </td>
-                                <td class="px-4 py-3.5 text-content-primary"><?= $terisi ?> / <?= $maks ?></td>
+                                <td class="px-4 py-3.5 text-foreground"><?= $terisi ?> / <?= $maks ?></td>
                                 <td class="px-4 py-3.5">
-                                    <span class="<?= $sisa === 0 ? 'text-red-600 font-semibold' : 'text-content-primary' ?>">
+                                    <span class="<?= $sisa === 0 ? 'text-destructive font-semibold' : 'text-foreground' ?>">
                                         <?= $sisa ?>
                                     </span>
                                 </td>
@@ -120,7 +123,7 @@ $btnDanger = 'cursor-pointer inline-flex items-center justify-center rounded-xl 
                                             'formAction' => '/admin/grooming/kuota/hapus',
                                             'formFields' => ['id' => (string) $kuota['id']],
                                             'confirm' => 'Hapus kuota tanggal ' . date('d/m/Y', strtotime((string) $kuota['tanggal'])) . '?',
-                                            'class' => 'text-red-600',
+                                            'class' => 'text-destructive',
                                         ];
                                     }
                                     require __DIR__ . '/../../../partials/ui/action-menu.php';

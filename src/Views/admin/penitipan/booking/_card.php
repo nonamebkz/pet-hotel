@@ -22,34 +22,42 @@ $vaksinOk = (int) ($booking['vaksin_count'] ?? 0) >= $minVaksin;
 $needsConfirm = (string) $booking['status'] === StatusPenitipan::MENUNGGU_KONFIRMASI->value;
 $refundEnum = StatusRefund::tryFrom((string) ($booking['status_refund'] ?? StatusRefund::TIDAK_ADA->value));
 
-$btnPrimary = 'cursor-pointer inline-flex items-center justify-center rounded-xl bg-admin px-3.5 py-2 text-xs font-semibold text-white shadow-soft transition duration-soft hover:bg-admin-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-admin disabled:opacity-60';
-$btnSuccess = 'cursor-pointer inline-flex items-center justify-center rounded-xl bg-success px-3.5 py-2 text-xs font-semibold text-white shadow-soft transition duration-soft hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-success';
-$btnDanger = 'cursor-pointer inline-flex items-center justify-center rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700 transition duration-soft hover:bg-red-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400';
-$btnGhost = 'cursor-pointer inline-flex items-center justify-center rounded-xl border border-border bg-page/60 px-3.5 py-2 text-xs font-semibold text-admin transition duration-soft hover:bg-admin-soft focus:outline-none focus-visible:ring-2 focus-visible:ring-admin';
+$btnPrimary = design_cn(ui_btn_primary(), 'cursor-pointer text-xs px-3.5 py-2 disabled:opacity-60');
+$btnSuccess = 'cursor-pointer inline-flex items-center justify-center rounded-lg px-3.5 py-2 text-xs font-medium touch-target bg-emerald-600 text-white hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500';
+$btnDanger = 'cursor-pointer inline-flex items-center justify-center rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs font-semibold text-destructive transition hover:bg-destructive/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-destructive/40';
+$btnGhost = design_cn(ui_btn_secondary(), 'cursor-pointer text-xs px-3.5 py-2 text-primary');
+$metricCellClass = design_cn(design_interactive('metricCell'), 'px-3.5 py-2.5');
+$inputSmClass = 'w-full min-w-[10rem] rounded-lg border border-input bg-background px-3 py-2 text-xs text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/25';
 
 $filterHidden = static function () use ($filterStatus, $filterCheckIn, $filterMonitoring): void {
     echo '<input type="hidden" name="filter_status" value="' . e($filterStatus) . '">';
     echo '<input type="hidden" name="filter_check_in" value="' . e($filterCheckIn) . '">';
     echo '<input type="hidden" name="filter_monitoring" value="' . e($filterMonitoring) . '">';
 };
+
+$articleClass = design_cn(
+    design_interactive('listArticle'),
+    'p-5 sm:p-6 space-y-4',
+    $needsConfirm ? 'border-amber-200 bg-warning-bg/25' : '',
+);
 ?>
-<article class="rounded-2xl border <?= $needsConfirm ? 'border-amber-200 bg-warning-bg/25' : 'border-white/80 bg-card' ?> p-5 sm:p-6 shadow-soft space-y-4">
+<article class="<?= e($articleClass) ?>">
     <div class="flex flex-wrap items-start justify-between gap-3">
         <div class="min-w-0">
-            <h2 class="font-heading text-lg text-content-primary">
+            <h2 class="font-heading text-lg text-foreground">
                 <?= e((string) $booking['pelanggan_nama']) ?>
-                <span class="text-content-secondary font-body text-base">· <?= e((string) $booking['kucing_nama']) ?></span>
+                <span class="font-body text-base text-muted-foreground">· <?= e((string) $booking['kucing_nama']) ?></span>
             </h2>
-            <p class="mt-1 text-sm text-content-secondary">
+            <p class="mt-1 text-sm text-muted-foreground">
                 <?= e((string) $booking['paket_nama']) ?> · <?= e((string) $booking['nama_kamar']) ?>
             </p>
         </div>
         <div class="flex flex-wrap items-center gap-1.5 justify-end">
-            <span class="text-xs px-2.5 py-1 rounded-lg font-medium <?= e($statusEnum?->badgeClass() ?? 'bg-admin-soft text-admin') ?>">
+            <span class="text-xs px-2.5 py-1 rounded-lg font-medium <?= e($statusEnum?->badgeClass() ?? 'bg-primary/10 text-primary') ?>">
                 <?= e((string) ($booking['status_label'] ?? $booking['status'])) ?>
             </span>
             <?php if ($transaksiLunas): ?>
-                <span class="text-[10px] font-semibold uppercase tracking-wide text-success">Lunas</span>
+                <span class="text-[10px] font-semibold uppercase tracking-wide text-emerald-700 dark:text-emerald-300">Lunas</span>
             <?php endif; ?>
             <?php if ($refundEnum && $refundEnum !== StatusRefund::TIDAK_ADA): ?>
                 <span class="text-xs px-2 py-0.5 rounded-lg font-medium <?= e($refundEnum->badgeClass()) ?>">
@@ -60,60 +68,60 @@ $filterHidden = static function () use ($filterStatus, $filterCheckIn, $filterMo
     </div>
 
     <dl class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 text-sm">
-        <div class="rounded-xl bg-page/60 px-3.5 py-2.5 shadow-soft-inset">
-            <dt class="text-xs text-content-secondary">Periode</dt>
-            <dd class="mt-0.5 font-medium text-content-primary">
+        <div class="<?= e($metricCellClass) ?>">
+            <dt class="text-xs text-muted-foreground">Periode</dt>
+            <dd class="mt-0.5 font-medium text-foreground">
                 <?= e(date('d/m/Y', strtotime((string) $booking['check_in']))) ?>
                 — <?= e(date('d/m/Y', strtotime((string) $booking['check_out']))) ?>
-                <span class="text-content-secondary font-normal">(<?= (int) $booking['lama_hari'] ?> hari)</span>
+                <span class="font-normal text-muted-foreground">(<?= (int) $booking['lama_hari'] ?> hari)</span>
             </dd>
         </div>
-        <div class="rounded-xl bg-page/60 px-3.5 py-2.5 shadow-soft-inset">
-            <dt class="text-xs text-content-secondary">Pengantaran</dt>
-            <dd class="mt-0.5 font-medium text-content-primary"><?= e($opsiLabels[$booking['opsi_pengantaran']] ?? '') ?></dd>
+        <div class="<?= e($metricCellClass) ?>">
+            <dt class="text-xs text-muted-foreground">Pengantaran</dt>
+            <dd class="mt-0.5 font-medium text-foreground"><?= e($opsiLabels[$booking['opsi_pengantaran']] ?? '') ?></dd>
         </div>
-        <div class="rounded-xl bg-page/60 px-3.5 py-2.5 shadow-soft-inset">
-            <dt class="text-xs text-content-secondary">Subtotal</dt>
-            <dd class="mt-0.5 font-semibold text-admin">
+        <div class="<?= e($metricCellClass) ?>">
+            <dt class="text-xs text-muted-foreground">Subtotal</dt>
+            <dd class="mt-0.5 font-semibold text-primary">
                 Rp <?= e(number_format((float) $booking['subtotal_penitipan'], 0, ',', '.')) ?>
                 <?php if ((float) $booking['potongan_promo'] > 0): ?>
-                    <span class="block text-xs font-medium text-success">Promo −Rp <?= e(number_format((float) $booking['potongan_promo'], 0, ',', '.')) ?></span>
+                    <span class="block text-xs font-medium text-emerald-700 dark:text-emerald-300">Promo −Rp <?= e(number_format((float) $booking['potongan_promo'], 0, ',', '.')) ?></span>
                 <?php endif; ?>
             </dd>
         </div>
         <?php if ($needsConfirm): ?>
-            <div class="rounded-xl bg-page/60 px-3.5 py-2.5 shadow-soft-inset">
-                <dt class="text-xs text-content-secondary">Total bayar</dt>
-                <dd class="mt-0.5 font-semibold text-admin">
+            <div class="<?= e($metricCellClass) ?>">
+                <dt class="text-xs text-muted-foreground">Total bayar</dt>
+                <dd class="mt-0.5 font-semibold text-primary">
                     Rp <?= e(number_format((float) ($booking['total_bayar'] ?? 0), 0, ',', '.')) ?>
                     <?php if ((float) ($booking['biaya_antar_jemput'] ?? 0) > 0): ?>
-                        <span class="block text-xs font-normal text-content-secondary">
+                        <span class="block text-xs font-normal text-muted-foreground">
                             Termasuk antar-jemput Rp <?= e(number_format((float) $booking['biaya_antar_jemput'], 0, ',', '.')) ?>
                         </span>
                     <?php endif; ?>
                 </dd>
             </div>
         <?php endif; ?>
-        <div class="rounded-xl bg-page/60 px-3.5 py-2.5 shadow-soft-inset sm:col-span-2 lg:col-span-3">
-            <dt class="text-xs text-content-secondary">Syarat vaksin</dt>
+        <div class="<?= e($metricCellClass) ?> sm:col-span-2 lg:col-span-3">
+            <dt class="text-xs text-muted-foreground">Syarat vaksin</dt>
             <dd class="mt-0.5 flex flex-wrap items-center gap-2">
-                <span class="inline-flex rounded-lg px-2 py-0.5 text-xs font-semibold <?= $vaksinOk ? 'bg-success-bg text-success' : 'bg-red-100 text-red-700' ?>">
+                <span class="inline-flex rounded-lg px-2 py-0.5 text-xs font-semibold <?= $vaksinOk ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300' : 'bg-destructive/10 text-destructive' ?>">
                     <?= $vaksinOk ? 'Memenuhi syarat' : 'Belum memenuhi' ?>
                 </span>
-                <span class="text-xs text-content-secondary"><?= (int) $booking['vaksin_count'] ?> entri (min. <?= (int) $minVaksin ?>)</span>
+                <span class="text-xs text-muted-foreground"><?= (int) $booking['vaksin_count'] ?> entri (min. <?= (int) $minVaksin ?>)</span>
             </dd>
         </div>
         <?php if ($needsConfirm && !empty($booking['catatan_makan'])): ?>
-            <div class="rounded-xl bg-page/60 px-3.5 py-2.5 shadow-soft-inset sm:col-span-2 lg:col-span-3">
-                <dt class="text-xs text-content-secondary">Catatan makan</dt>
-                <dd class="mt-0.5 text-content-primary"><?= e((string) $booking['catatan_makan']) ?></dd>
+            <div class="<?= e($metricCellClass) ?> sm:col-span-2 lg:col-span-3">
+                <dt class="text-xs text-muted-foreground">Catatan makan</dt>
+                <dd class="mt-0.5 text-foreground"><?= e((string) $booking['catatan_makan']) ?></dd>
             </div>
         <?php endif; ?>
     </dl>
 
     <?php if (!empty($booking['vaksin_list'])): ?>
-        <details class="rounded-xl border border-border bg-page/40 open:bg-page/70" <?= $needsConfirm ? 'open' : '' ?>>
-            <summary class="cursor-pointer list-none px-4 py-3 text-sm font-semibold text-admin flex items-center justify-between gap-2">
+        <details class="rounded-xl border border-border bg-muted/40 open:bg-muted/60" <?= $needsConfirm ? 'open' : '' ?>>
+            <summary class="cursor-pointer list-none px-4 py-3 text-sm font-semibold text-primary flex items-center justify-between gap-2">
                 <span>Riwayat vaksin</span>
                 <svg class="h-4 w-4 opacity-70" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
             </summary>
@@ -137,15 +145,15 @@ $filterHidden = static function () use ($filterStatus, $filterCheckIn, $filterMo
                         <button type="submit" class="<?= e($btnSuccess) ?>">Konfirmasi</button>
                     </form>
                 <?php else: ?>
-                    <p class="text-xs font-medium text-red-700">Vaksin tidak memenuhi syarat — tolak booking.</p>
+                    <p class="text-xs font-medium text-destructive">Vaksin tidak memenuhi syarat — tolak booking.</p>
                 <?php endif; ?>
                 <form method="POST" action="/admin/penitipan/booking/tolak" class="space-y-2" data-confirm="Tolak booking ini?">
                     <?= Csrf::field() ?>
                     <input type="hidden" name="id" value="<?= e((string) $booking['id']) ?>">
                     <?php $filterHidden(); ?>
-                    <label class="block text-xs font-semibold text-content-secondary">Alasan penolakan <span class="font-normal">(opsional)</span></label>
+                    <label class="block text-xs font-semibold text-muted-foreground">Alasan penolakan <span class="font-normal">(opsional)</span></label>
                     <textarea name="alasan" rows="2" placeholder="Contoh: Jadwal penuh, dokumen vaksin tidak valid"
-                              class="w-full rounded-xl border border-border bg-white px-3 py-2 text-xs shadow-soft-inset focus:border-admin focus:outline-none focus:ring-2 focus:ring-admin/25"></textarea>
+                              class="<?= e($inputSmClass) ?>"></textarea>
                     <button type="submit" class="<?= e($btnDanger) ?>">Tolak</button>
                 </form>
             </div>
@@ -186,11 +194,11 @@ $filterHidden = static function () use ($filterStatus, $filterCheckIn, $filterMo
                class="<?= e($btnGhost) ?> gap-1.5">
                 Monitoring
                 <?php if ($isActiveStay && !empty($booking['monitoring_has_today'])): ?>
-                    <span class="inline-flex rounded-md bg-success-bg px-1.5 py-0.5 text-[10px] font-semibold text-success">Hari ini</span>
+                    <span class="inline-flex rounded-md bg-emerald-500/10 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-700 dark:text-emerald-300">Hari ini</span>
                 <?php elseif ($isActiveStay): ?>
-                    <span class="inline-flex rounded-md bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-800">Belum input</span>
+                    <span class="inline-flex rounded-md bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-800 dark:bg-amber-950/50 dark:text-amber-200">Belum input</span>
                 <?php elseif ((int) ($booking['monitoring_count'] ?? 0) > 0): ?>
-                    <span class="inline-flex rounded-md bg-admin-soft px-1.5 py-0.5 text-[10px] font-semibold text-admin"><?= (int) $booking['monitoring_count'] ?> laporan</span>
+                    <span class="inline-flex rounded-md bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary"><?= (int) $booking['monitoring_count'] ?> laporan</span>
                 <?php endif; ?>
             </a>
         <?php endif; ?>
@@ -203,7 +211,7 @@ $filterHidden = static function () use ($filterStatus, $filterCheckIn, $filterMo
                 <input type="hidden" name="id" value="<?= e((string) $booking['id']) ?>">
                 <?php $filterHidden(); ?>
                 <input type="text" name="alasan" placeholder="Alasan (opsional)"
-                       class="rounded-xl border border-border bg-white px-3 py-2 text-xs shadow-soft-inset focus:border-admin focus:outline-none focus:ring-2 focus:ring-admin/25 min-w-[10rem]">
+                       class="<?= e($inputSmClass) ?>">
                 <button type="submit" class="<?= e($btnDanger) ?>">Batalkan (Refund)</button>
             </form>
         <?php endif; ?>

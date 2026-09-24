@@ -7,11 +7,11 @@
 > **View:** [`src/Views/admin/transaksi/index.php`](../src/Views/admin/transaksi/index.php)  
 > **Controller:** `Admin\TransaksiController`  
 > **Related:** [`riwayat_transaksi_ui_guideline.md`](./riwayat_transaksi_ui_guideline.md), [`laporan_ui_guideline.md`](./laporan_ui_guideline.md), [`verifikasi_bukti_transfer_ui_guideline.md`](./verifikasi_bukti_transfer_ui_guideline.md)  
-> **Master:** [`MASTER_UI_GUIDELINE.md`](./MASTER_UI_GUIDELINE.md)
+> **Standar:** [Standar UI/UX](../.cursor/rules/pencatatan-ui-ux-standards.mdc)
 
 ## 0. Cara Eksekusi
 
-- Baca [`MASTER_UI_GUIDELINE.md`](./MASTER_UI_GUIDELINE.md) untuk tokens & pola global
+- Baca [Standar UI/UX](../.cursor/rules/pencatatan-ui-ux-standards.mdc) untuk §3–§4 (token) dan §18 (pola global)
 - Implementasi dimulai dari section 8 (Acceptance Criteria) item **CRITICAL**
 - Jangan ubah route/controller kecuali state UI baru membutuhkannya
 - Target file utama: [`src/Views/admin/transaksi/index.php`](../src/Views/admin/transaksi/index.php)
@@ -181,10 +181,10 @@ Setelah filter:
 
 ### Partial / File Reuse
 
-- Lihat pola global di [`MASTER_UI_GUIDELINE.md`](./MASTER_UI_GUIDELINE.md) section C
+- Lihat pola global di [Standar UI/UX](../.cursor/rules/pencatatan-ui-ux-standards.mdc) §18 Pola UX global
 
 ### Pola Global yang Berlaku
 
-- Filter Bar — lihat MASTER section C
-- Empty State — lihat MASTER section C
+- Filter Bar — lihat MASTER §18 Pola UX global
+- Empty State — lihat MASTER §18 Pola UX global
 

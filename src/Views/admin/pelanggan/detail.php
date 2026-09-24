@@ -22,15 +22,15 @@ $initial = mb_substr($namaPelanggan !== '' ? $namaPelanggan : 'P', 0, 1);
         <span class="font-semibold text-content-primary">Detail</span>
     </nav>
 
-    <section class="relative overflow-hidden rounded-2xl border border-white/80 bg-card p-6 sm:p-8 shadow-soft">
-        <div class="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-admin/5 blur-2xl" aria-hidden="true"></div>
+    <section class="<?= e(design_cn(design_surface('panel'), 'relative overflow-hidden p-6 sm:p-8')) ?>">
+        <div class="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-primary/10 blur-2xl" aria-hidden="true"></div>
         <div class="relative flex flex-wrap items-center justify-between gap-4">
             <div class="flex items-center gap-4 min-w-0">
                 <?php if (!empty($pelanggan['foto_profil_url'])): ?>
                     <img src="<?= e((string) $pelanggan['foto_profil_url']) ?>" alt="Foto profil"
-                         class="h-16 w-16 sm:h-20 sm:w-20 shrink-0 rounded-2xl object-cover border border-border shadow-soft">
+                         class="h-16 w-16 sm:h-20 sm:w-20 shrink-0 rounded-2xl object-cover border border-border">
                 <?php else: ?>
-                    <div class="flex h-16 w-16 sm:h-20 sm:w-20 shrink-0 items-center justify-center rounded-2xl bg-admin-soft font-heading text-2xl font-semibold text-admin shadow-soft" aria-hidden="true">
+                    <div class="flex h-16 w-16 sm:h-20 sm:w-20 shrink-0 items-center justify-center rounded-2xl bg-admin-soft font-heading text-2xl font-semibold text-admin" aria-hidden="true">
                         <?= e(mb_strtoupper($initial)) ?>
                     </div>
                 <?php endif; ?>
@@ -45,7 +45,7 @@ $initial = mb_substr($namaPelanggan !== '' ? $namaPelanggan : 'P', 0, 1);
                 </div>
             </div>
             <a href="/admin/pelanggan"
-               class="cursor-pointer inline-flex items-center gap-2 rounded-xl border border-border bg-page/60 px-4 py-2.5 text-sm font-semibold text-admin shadow-soft transition duration-soft hover:bg-admin-soft focus:outline-none focus-visible:ring-2 focus-visible:ring-admin">
+               class="<?= e(design_cn(ui_btn_secondary(), 'gap-2 rounded-xl text-primary')) ?>">
                 <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/>
                 </svg>
@@ -54,7 +54,7 @@ $initial = mb_substr($namaPelanggan !== '' ? $namaPelanggan : 'P', 0, 1);
         </div>
     </section>
 
-    <section class="rounded-2xl border border-white/80 bg-card p-6 sm:p-8 shadow-soft">
+    <section class="<?= e(design_cn(design_surface('panel'), 'p-6 sm:p-8')) ?>">
         <h2 class="font-heading text-lg text-content-primary mb-5">Profil</h2>
 
         <div class="grid gap-4 sm:grid-cols-2 text-sm">
@@ -130,13 +130,13 @@ $initial = mb_substr($namaPelanggan !== '' ? $namaPelanggan : 'P', 0, 1);
                     $vaksinCount = (int) ($kucing['vaksin_count'] ?? 0);
                     $eligible = !empty($kucing['eligible_pet_hotel']);
                     ?>
-                    <article class="rounded-2xl border border-white/80 bg-card p-5 sm:p-6 shadow-soft transition duration-soft hover:shadow-soft-lg">
+                    <article class="<?= e(design_cn(design_interactive('listArticle'), design_interactive('listArticleHover'), 'p-5 sm:p-6')) ?>">
                         <div class="flex flex-wrap gap-4 mb-4">
                             <?php if (!empty($kucing['foto_url'])): ?>
                                 <img src="<?= e((string) $kucing['foto_url']) ?>" alt="<?= e((string) $kucing['nama']) ?>"
-                                     class="h-16 w-16 shrink-0 rounded-2xl object-cover border border-border shadow-soft">
+                                     class="h-16 w-16 shrink-0 rounded-2xl object-cover border border-border">
                             <?php else: ?>
-                                <div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-primary-soft font-heading text-lg font-semibold text-primary shadow-soft" aria-hidden="true">
+                                <div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-primary-soft font-heading text-lg font-semibold text-primary" aria-hidden="true">
                                     <?= e(mb_substr((string) $kucing['nama'], 0, 1)) ?>
                                 </div>
                             <?php endif; ?>

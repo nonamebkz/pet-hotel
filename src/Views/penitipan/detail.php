@@ -30,16 +30,16 @@ $statusRefund = $transaksi ? StatusRefund::tryFrom((string) ($transaksi['status_
 ?>
 <div>
     <div class="mb-6">
-        <a href="/penitipan/riwayat" class="text-sm text-gray-500 hover:text-primary">&larr; Riwayat</a>
-        <h1 class="text-2xl font-bold text-gray-800 mt-2">Detail Penitipan</h1>
+        <a href="/penitipan/riwayat" class="<?= e(ui_back_link_class()) ?>">&larr; Riwayat</a>
+        <h1 class="text-2xl font-bold text-foreground mt-2">Detail Penitipan</h1>
     </div>
 
     <div class="grid gap-6 lg:grid-cols-2 max-w-5xl">
-        <div class="bg-white rounded-xl border p-6 space-y-4">
+        <div class="<?= e(design_cn(design_surface('metric'), 'p-6 space-y-4')) ?>">
             <div class="flex items-start justify-between gap-3">
                 <div>
-                    <div class="font-semibold text-lg text-gray-800"><?= e((string) $booking['kucing_nama']) ?></div>
-                    <div class="text-sm text-gray-500"><?= e((string) $booking['paket_nama']) ?> · <?= e((string) $booking['nama_kamar']) ?></div>
+                    <div class="font-semibold text-lg text-foreground"><?= e((string) $booking['kucing_nama']) ?></div>
+                    <div class="text-sm text-muted-foreground"><?= e((string) $booking['paket_nama']) ?> · <?= e((string) $booking['nama_kamar']) ?></div>
                 </div>
                 <?php if ($statusEnum): ?>
                     <span class="text-xs px-2 py-1 rounded-full <?= e($statusEnum->badgeClass()) ?>">
@@ -48,7 +48,7 @@ $statusRefund = $transaksi ? StatusRefund::tryFrom((string) ($transaksi['status_
                 <?php endif; ?>
             </div>
 
-            <div class="grid sm:grid-cols-2 gap-2 text-sm text-gray-600">
+            <div class="grid sm:grid-cols-2 gap-2 text-sm text-muted-foreground">
                 <div>Check-in: <?= e(date('d/m/Y', strtotime((string) $booking['check_in']))) ?></div>
                 <div>Check-out: <?= e(date('d/m/Y', strtotime((string) $booking['check_out']))) ?></div>
                 <div>Lama: <?= (int) $booking['lama_hari'] ?> hari</div>
@@ -56,13 +56,13 @@ $statusRefund = $transaksi ? StatusRefund::tryFrom((string) ($transaksi['status_
             </div>
 
             <?php if (!empty($booking['catatan_makan'])): ?>
-                <p class="text-sm text-gray-500">Catatan makan: <?= e((string) $booking['catatan_makan']) ?></p>
+                <p class="text-sm text-muted-foreground">Catatan makan: <?= e((string) $booking['catatan_makan']) ?></p>
             <?php endif; ?>
 
             <?php if ($vaksinList !== []): ?>
-                <div class="bg-gray-50 rounded-lg p-3 text-sm">
-                    <div class="font-medium text-gray-700 mb-1">Riwayat Vaksin</div>
-                    <ul class="text-gray-600 space-y-1">
+                <div class="bg-muted/50 rounded-lg p-3 text-sm">
+                    <div class="font-medium text-foreground mb-1">Riwayat Vaksin</div>
+                    <ul class="text-muted-foreground space-y-1">
                         <?php foreach ($vaksinList as $v): ?>
                             <li><?= e((string) $v['jenis_vaksin']) ?> — <?= e(date('d/m/Y', strtotime((string) $v['tanggal_vaksin']))) ?></li>
                         <?php endforeach; ?>
@@ -71,9 +71,9 @@ $statusRefund = $transaksi ? StatusRefund::tryFrom((string) ($transaksi['status_
             <?php endif; ?>
 
             <?php if ($transaksi): ?>
-                <div class="bg-gray-50 rounded-lg p-4 text-sm">
-                    <div class="font-medium text-gray-800 mb-2">Rincian Tagihan Awal</div>
-                    <div class="flex justify-between text-gray-600">
+                <div class="bg-muted/50 rounded-lg p-4 text-sm">
+                    <div class="font-medium text-foreground mb-2">Rincian Tagihan Awal</div>
+                    <div class="flex justify-between text-muted-foreground">
                         <span>Subtotal</span>
                         <span>Rp <?= e(number_format((float) $transaksi['subtotal_layanan'], 0, ',', '.')) ?></span>
                     </div>
@@ -83,11 +83,11 @@ $statusRefund = $transaksi ? StatusRefund::tryFrom((string) ($transaksi['status_
                             <span>- Rp <?= e(number_format((float) $transaksi['potongan_promo'], 0, ',', '.')) ?></span>
                         </div>
                     <?php endif; ?>
-                    <div class="flex justify-between text-gray-600">
+                    <div class="flex justify-between text-muted-foreground">
                         <span>Antar-jemput</span>
                         <span>Rp <?= e(number_format((float) $transaksi['biaya_antar_jemput'], 0, ',', '.')) ?></span>
                     </div>
-                    <div class="flex justify-between font-medium text-gray-800 mt-2 pt-2 border-t">
+                    <div class="flex justify-between font-medium text-foreground mt-2 pt-2 border-t">
                         <span>Total</span>
                         <span>Rp <?= e(number_format((float) $transaksi['total_bayar'], 0, ',', '.')) ?></span>
                     </div>
@@ -99,20 +99,20 @@ $statusRefund = $transaksi ? StatusRefund::tryFrom((string) ($transaksi['status_
             <div class="flex flex-wrap gap-3">
                 <?php if ((string) ($booking['status'] ?? '') === StatusPenitipan::MENUNGGU_PEMBAYARAN->value): ?>
                     <a href="/penitipan/pembayaran?id=<?= e((string) $booking['id']) ?>"
-                       class="bg-primary text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-primary-hover">
+                       class="bg-primary text-primary-foreground rounded-lg px-4 py-2 text-sm font-medium hover:opacity-90">
                         Upload Bukti Transfer
                     </a>
                 <?php endif; ?>
                 <?php if ($invoice && $transaksiLunas): ?>
                     <a href="/penitipan/invoice?id=<?= e((string) $booking['id']) ?>"
-                       class="border border-gray-300 rounded-lg px-4 py-2 text-sm hover:bg-gray-50">Lihat Invoice</a>
+                       class="border border-border rounded-lg px-4 py-2 text-sm hover:bg-muted">Lihat Invoice</a>
                 <?php endif; ?>
                 <?php if ($canCancel): ?>
                     <form method="POST" action="/penitipan/booking/batalkan" class="inline"
                           onsubmit="return confirm('Batalkan penitipan ini?')">
                         <?= Csrf::field() ?>
                         <input type="hidden" name="id" value="<?= e((string) $booking['id']) ?>">
-                        <button type="submit" class="text-sm text-red-600 hover:underline">Batalkan</button>
+                        <button type="submit" class="text-sm text-destructive hover:underline">Batalkan</button>
                     </form>
                 <?php elseif ($transaksiLunas && !$canCancel): ?>
                     <?php
@@ -125,20 +125,20 @@ $statusRefund = $transaksi ? StatusRefund::tryFrom((string) ($transaksi['status_
 
         <div class="space-y-6">
             <?php if ($canPerpanjang): ?>
-                <div class="bg-white rounded-xl border p-6">
-                    <h2 class="font-semibold text-gray-800 mb-3">Perpanjang Penitipan</h2>
+                <div class="<?= e(design_cn(design_surface('metric'), 'p-6')) ?>">
+                    <h2 class="font-semibold text-foreground mb-3">Perpanjang Penitipan</h2>
                     <form method="POST" action="/penitipan/perpanjangan" class="space-y-3" id="form-perpanjangan">
                         <?= Csrf::field() ?>
                         <input type="hidden" name="booking_id" value="<?= e((string) $booking['id']) ?>">
                         <div>
-                            <label class="block text-sm text-gray-700 mb-1">Check-out baru</label>
+                            <label class="block text-sm text-foreground mb-1">Check-out baru</label>
                             <input type="date" name="check_out_baru" id="check-out-baru"
                                    min="<?= e(date('Y-m-d', strtotime((string) $booking['check_out'] . ' +1 day'))) ?>"
-                                   class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" required>
+                                   class="w-full border border-border rounded-lg px-3 py-2 text-sm" required>
                         </div>
-                        <div id="estimasi-perpanjangan" class="text-sm text-gray-600 hidden"></div>
+                        <div id="estimasi-perpanjangan" class="text-sm text-muted-foreground hidden"></div>
                         <button type="submit"
-                                class="bg-primary text-white rounded-lg px-4 py-2 text-sm hover:bg-primary-hover">
+                                class="bg-primary text-primary-foreground rounded-lg px-4 py-2 text-sm hover:opacity-90">
                             Ajukan Perpanjangan
                         </button>
                     </form>
@@ -146,19 +146,19 @@ $statusRefund = $transaksi ? StatusRefund::tryFrom((string) ($transaksi['status_
             <?php endif; ?>
 
             <?php if ($perpanjanganList !== []): ?>
-                <div class="bg-white rounded-xl border p-6">
-                    <h2 class="font-semibold text-gray-800 mb-3">Riwayat Perpanjangan</h2>
+                <div class="<?= e(design_cn(design_surface('metric'), 'p-6')) ?>">
+                    <h2 class="font-semibold text-foreground mb-3">Riwayat Perpanjangan</h2>
                     <div class="space-y-3">
                         <?php foreach ($perpanjanganList as $pp): ?>
                             <div class="border rounded-lg p-3 text-sm">
                                 <div class="flex justify-between">
                                     <span><?= e(date('d/m/Y', strtotime((string) $pp['check_out_sebelum']))) ?>
                                         → <?= e(date('d/m/Y', strtotime((string) $pp['check_out_baru']))) ?></span>
-                                    <span class="text-xs px-2 py-0.5 rounded-full bg-gray-100">
+                                    <span class="text-xs px-2 py-0.5 rounded-full bg-muted">
                                         <?= e($perpanjanganLabels[$pp['status']] ?? (string) $pp['status']) ?>
                                     </span>
                                 </div>
-                                <div class="text-gray-500 mt-1">
+                                <div class="text-muted-foreground mt-1">
                                     +<?= (int) $pp['tambah_hari'] ?> hari ·
                                     Rp <?= e(number_format((float) $pp['subtotal_tambahan'], 0, ',', '.')) ?>
                                 </div>
@@ -173,12 +173,12 @@ $statusRefund = $transaksi ? StatusRefund::tryFrom((string) ($transaksi['status_
             <?php endif; ?>
 
             <?php if ($monitoringList !== []): ?>
-                <div class="bg-white rounded-xl border p-6">
-                    <h2 class="font-semibold text-gray-800 mb-3">Monitoring Harian</h2>
+                <div class="<?= e(design_cn(design_surface('metric'), 'p-6')) ?>">
+                    <h2 class="font-semibold text-foreground mb-3">Monitoring Harian</h2>
                     <div class="space-y-4">
                         <?php foreach ($monitoringList as $mon): ?>
                             <div class="border rounded-lg p-3 text-sm">
-                                <div class="font-medium text-gray-800">
+                                <div class="font-medium text-foreground">
                                     <?= e(date('d/m/Y', strtotime((string) $mon['tanggal']))) ?>
                                 </div>
                                 <?php if (!empty($mon['foto_url'])): ?>
@@ -186,13 +186,13 @@ $statusRefund = $transaksi ? StatusRefund::tryFrom((string) ($transaksi['status_
                                          class="mt-2 rounded-lg max-h-40 object-cover">
                                 <?php endif; ?>
                                 <?php if (!empty($mon['catatan_makan'])): ?>
-                                    <p class="text-gray-600 mt-1">Makan: <?= e((string) $mon['catatan_makan']) ?></p>
+                                    <p class="text-muted-foreground mt-1">Makan: <?= e((string) $mon['catatan_makan']) ?></p>
                                 <?php endif; ?>
                                 <?php if (!empty($mon['kondisi'])): ?>
-                                    <p class="text-gray-600">Kondisi: <?= e((string) $mon['kondisi']) ?></p>
+                                    <p class="text-muted-foreground">Kondisi: <?= e((string) $mon['kondisi']) ?></p>
                                 <?php endif; ?>
                                 <?php if (!empty($mon['aktivitas_harian'])): ?>
-                                    <p class="text-gray-600">Aktivitas: <?= e((string) $mon['aktivitas_harian']) ?></p>
+                                    <p class="text-muted-foreground">Aktivitas: <?= e((string) $mon['aktivitas_harian']) ?></p>
                                 <?php endif; ?>
                             </div>
                         <?php endforeach; ?>

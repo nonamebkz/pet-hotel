@@ -10,25 +10,27 @@ $statusLabels = $statusLabels ?? [];
 $filterStatus = $filterStatus ?? '';
 $hasFilter = $filterStatus !== '';
 
-$inputClass = 'w-full rounded-xl border border-border bg-white px-3.5 py-2.5 text-sm text-content-primary shadow-soft-inset transition duration-soft hover:border-admin/30 focus:border-admin focus:outline-none focus:ring-2 focus:ring-admin/25';
-$btnSuccess = 'cursor-pointer inline-flex items-center justify-center rounded-xl bg-success px-3.5 py-2 text-xs font-semibold text-white shadow-soft transition duration-soft hover:opacity-90';
-$btnDanger = 'cursor-pointer inline-flex items-center justify-center rounded-xl border border-red-200 bg-red-50 px-3.5 py-2 text-xs font-semibold text-red-700 transition duration-soft hover:bg-red-100';
+$heroClass = design_cn(design_surface('panel'), 'relative overflow-hidden p-6 sm:p-8');
+$filterFormClass = design_cn(design_surface('metric'), 'p-5');
+$inputClass = 'w-full rounded-lg border border-input bg-background px-3.5 py-2.5 text-base sm:text-sm text-foreground transition hover:border-primary/30 focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/25';
+$btnSuccess = 'cursor-pointer inline-flex items-center justify-center rounded-lg px-3.5 py-2 text-xs font-medium touch-target bg-emerald-600 text-white hover:opacity-90';
+$btnDanger = 'cursor-pointer inline-flex items-center justify-center rounded-lg border border-destructive/30 bg-destructive/10 px-3.5 py-2 text-xs font-semibold text-destructive transition hover:bg-destructive/15';
 ?>
 <div class="font-body space-y-6">
-    <section class="relative overflow-hidden rounded-2xl border border-white/80 bg-card p-6 sm:p-8 shadow-soft">
+    <section class="<?= e($heroClass) ?>">
         <div class="relative">
-            <p class="text-xs font-semibold uppercase tracking-wider text-content-secondary">Penitipan</p>
-            <h1 class="mt-1 font-heading text-2xl sm:text-3xl text-content-primary">Perpanjangan</h1>
-            <p class="mt-2 text-sm text-content-secondary">Konfirmasi permintaan perpanjangan check-out dari pelanggan.</p>
+            <p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Penitipan</p>
+            <h1 class="mt-1 font-heading text-2xl sm:text-3xl text-foreground">Perpanjangan</h1>
+            <p class="mt-2 text-sm text-muted-foreground">Konfirmasi permintaan perpanjangan check-out dari pelanggan.</p>
         </div>
     </section>
 
     <?php require __DIR__ . '/../_nav.php'; ?>
 
-    <form method="GET" action="/admin/penitipan/perpanjangan" class="rounded-2xl border border-white/80 bg-card p-5 shadow-soft">
+    <form method="GET" action="/admin/penitipan/perpanjangan" class="<?= e($filterFormClass) ?>">
         <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <div>
-                <label for="status" class="mb-1.5 block text-sm font-semibold text-content-primary">Status</label>
+                <label for="status" class="mb-1.5 block text-sm font-semibold text-foreground">Status</label>
                 <select id="status" name="status" class="<?= e($inputClass) ?>" onchange="this.form.submit()">
                     <option value="">Semua status</option>
                     <?php foreach ($statusLabels as $v => $l): ?>
@@ -46,31 +48,38 @@ $btnDanger = 'cursor-pointer inline-flex items-center justify-center rounded-xl 
         $description = $hasFilter ? 'Coba ubah filter status.' : 'Permintaan perpanjangan dari pelanggan akan muncul di sini.';
         $ctaLabel = $hasFilter ? 'Reset Filter' : null;
         $ctaHref = $hasFilter ? '/admin/penitipan/perpanjangan' : null;
-        $ctaClass = 'cursor-pointer inline-flex items-center justify-center rounded-xl bg-admin px-4 py-2.5 text-sm font-semibold text-white shadow-soft hover:bg-admin-hover';
+        $ctaClass = ui_btn_primary();
         require __DIR__ . '/../../../partials/ui/empty-state.php';
         ?>
     <?php else: ?>
         <div class="space-y-3">
             <?php foreach ($perpanjanganList as $pp): ?>
-                <?php $needsConfirm = (string) $pp['status'] === StatusPerpanjanganPenitipan::MENUNGGU_KONFIRMASI->value; ?>
-                <article class="rounded-2xl border <?= $needsConfirm ? 'border-amber-200 bg-warning-bg/25' : 'border-white/80 bg-card' ?> p-5 shadow-soft space-y-3">
+                <?php
+                $needsConfirm = (string) $pp['status'] === StatusPerpanjanganPenitipan::MENUNGGU_KONFIRMASI->value;
+                $articleClass = design_cn(
+                    design_interactive('listArticle'),
+                    'p-5 space-y-3',
+                    $needsConfirm ? 'border-amber-200 bg-warning-bg/25' : '',
+                );
+                ?>
+                <article class="<?= e($articleClass) ?>">
                     <div class="flex flex-wrap items-start justify-between gap-3">
                         <div>
-                            <h2 class="font-semibold text-content-primary">
+                            <h2 class="font-semibold text-foreground">
                                 <?= e((string) $pp['pelanggan_nama']) ?>
-                                <span class="text-content-secondary font-normal">· <?= e((string) $pp['kucing_nama']) ?></span>
+                                <span class="font-normal text-muted-foreground">· <?= e((string) $pp['kucing_nama']) ?></span>
                             </h2>
-                            <p class="mt-1 text-sm text-content-secondary">
+                            <p class="mt-1 text-sm text-muted-foreground">
                                 <?= e(date('d/m/Y', strtotime((string) $pp['check_out_sebelum']))) ?>
                                 → <?= e(date('d/m/Y', strtotime((string) $pp['check_out_baru']))) ?>
                                 · +<?= (int) $pp['tambah_hari'] ?> hari
                             </p>
                         </div>
                         <div class="text-right">
-                            <span class="inline-flex text-xs px-2.5 py-1 rounded-lg font-medium bg-admin-soft text-admin">
+                            <span class="inline-flex text-xs px-2.5 py-1 rounded-lg font-medium bg-primary/10 text-primary">
                                 <?= e($statusLabels[$pp['status']] ?? (string) $pp['status']) ?>
                             </span>
-                            <p class="mt-2 font-heading text-admin">
+                            <p class="mt-2 font-heading text-primary">
                                 Rp <?= e(number_format((float) $pp['subtotal_tambahan'], 0, ',', '.')) ?>
                             </p>
                         </div>

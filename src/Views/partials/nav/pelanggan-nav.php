@@ -17,13 +17,13 @@ $badge = nav_badge_classes();
     Lewati ke konten
 </a>
 
-<nav class="sticky top-0 z-40 print:hidden bg-card/90 backdrop-blur-md border-b border-white/80 shadow-soft" data-nav>
+<nav class="sticky top-0 z-40 print:hidden bg-card/90 backdrop-blur-md border-b border-border shadow-sm" data-nav>
     <div class="max-w-7xl mx-auto px-4 sm:px-6">
         <div class="flex items-center justify-between h-16 gap-3">
             <div class="flex items-center gap-4 min-w-0">
                 <a href="/dashboard"
                    class="group flex items-center gap-2.5 shrink-0 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
-                    <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-white shadow-soft transition duration-soft group-hover:scale-[1.03]">
+                    <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm transition duration-soft group-hover:scale-[1.03]">
                         <svg class="h-[18px] w-[18px]" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 21c-4-3.5-7-6.4-7-10a4 4 0 017-2.6A4 4 0 0119 11c0 3.6-3 6.5-7 10z"/>
                         </svg>
@@ -129,7 +129,7 @@ $badge = nav_badge_classes();
 
         <div id="pelanggan-mobile-nav" data-nav-mobile-panel class="hidden lg:hidden border-t border-border/80 pb-4">
             <div class="pt-3 space-y-3">
-                <div class="rounded-2xl bg-page/70 p-2 shadow-soft-inset">
+                <div class="rounded-2xl bg-muted/40 p-2 ring-1 ring-border">
                     <p class="px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-content-secondary">Menu Utama</p>
                     <div class="space-y-0.5">
                         <a href="/dashboard" class="<?= nav_mobile_link_classes(nav_is_active('/dashboard')) ?>">Dashboard</a>
@@ -144,7 +144,7 @@ $badge = nav_badge_classes();
                     </div>
                 </div>
 
-                <div class="rounded-2xl bg-page/70 p-2 shadow-soft-inset">
+                <div class="rounded-2xl bg-muted/40 p-2 ring-1 ring-border">
                     <p class="px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-content-secondary">Layanan</p>
                     <div class="space-y-0.5">
                         <a href="/grooming" class="<?= nav_mobile_link_classes(nav_is_active('/grooming', true)) ?>">Grooming</a>
@@ -154,7 +154,7 @@ $badge = nav_badge_classes();
                     </div>
                 </div>
 
-                <div class="rounded-2xl bg-page/70 p-2 shadow-soft-inset md:hidden">
+                <div class="rounded-2xl bg-muted/40 p-2 ring-1 ring-border md:hidden">
                     <p class="px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-content-secondary">Akun</p>
                     <div class="px-3 py-2 mb-1 flex items-center gap-3">
                         <span class="<?= nav_avatar_classes() ?>"><?= e($navInitials) ?></span>

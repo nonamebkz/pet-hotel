@@ -5,17 +5,19 @@ declare(strict_types=1);
 use App\Core\Csrf;
 
 $kamarList = $kamarList ?? [];
+$heroClass = design_cn(design_surface('panel'), 'relative overflow-hidden p-6 sm:p-8');
+$listArticleClass = design_cn(design_interactive('listArticle'), design_interactive('listArticleHover'), 'p-5 space-y-4');
 ?>
 <div class="font-body space-y-6">
-    <section class="relative overflow-hidden rounded-2xl border border-white/80 bg-card p-6 sm:p-8 shadow-soft">
+    <section class="<?= e($heroClass) ?>">
         <div class="relative flex flex-wrap items-start justify-between gap-4">
             <div>
-                <p class="text-xs font-semibold uppercase tracking-wider text-content-secondary">Penitipan</p>
-                <h1 class="mt-1 font-heading text-2xl sm:text-3xl text-content-primary">Kamar Penitipan</h1>
-                <p class="mt-2 text-sm text-content-secondary">Kelola kamar dan kapasitas harian penitipan.</p>
+                <p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Penitipan</p>
+                <h1 class="mt-1 font-heading text-2xl sm:text-3xl text-foreground">Kamar Penitipan</h1>
+                <p class="mt-2 text-sm text-muted-foreground">Kelola kamar dan kapasitas harian penitipan.</p>
             </div>
             <a href="/admin/penitipan/kamar/tambah"
-               class="cursor-pointer inline-flex items-center gap-2 rounded-xl bg-admin px-4 py-2.5 text-sm font-semibold text-white shadow-soft transition duration-soft hover:bg-admin-hover">
+               class="<?= e(design_cn(ui_btn_primary(), 'cursor-pointer gap-2')) ?>">
                 <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
                 Tambah Kamar
             </a>
@@ -31,29 +33,29 @@ $kamarList = $kamarList ?? [];
         $description = 'Tambahkan kamar sebelum mengatur kuota harian.';
         $ctaLabel = 'Tambah Kamar';
         $ctaHref = '/admin/penitipan/kamar/tambah';
-        $ctaClass = 'cursor-pointer inline-flex items-center justify-center rounded-xl bg-admin px-4 py-2.5 text-sm font-semibold text-white shadow-soft hover:bg-admin-hover';
+        $ctaClass = ui_btn_primary();
         require __DIR__ . '/../../../partials/ui/empty-state.php';
         ?>
     <?php else: ?>
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <?php foreach ($kamarList as $k): ?>
-                <article class="rounded-2xl border border-white/80 bg-card p-5 shadow-soft space-y-4 transition duration-soft hover:shadow-soft-lg">
+                <article class="<?= e($listArticleClass) ?>">
                     <div class="flex items-start justify-between gap-3">
                         <div>
-                            <h2 class="font-heading text-lg text-content-primary"><?= e((string) $k['nama_kamar']) ?></h2>
-                            <p class="mt-1 text-sm text-content-secondary">Kapasitas <?= (int) $k['kapasitas'] ?> slot</p>
+                            <h2 class="font-heading text-lg text-foreground"><?= e((string) $k['nama_kamar']) ?></h2>
+                            <p class="mt-1 text-sm text-muted-foreground">Kapasitas <?= (int) $k['kapasitas'] ?> slot</p>
                         </div>
-                        <span class="text-xs px-2 py-0.5 rounded-lg font-semibold <?= !empty($k['aktif']) ? 'bg-success-bg text-success' : 'bg-page text-content-secondary' ?>">
+                        <span class="text-xs px-2 py-0.5 rounded-lg font-semibold <?= !empty($k['aktif']) ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300' : 'bg-muted text-muted-foreground' ?>">
                             <?= !empty($k['aktif']) ? 'Aktif' : 'Nonaktif' ?>
                         </span>
                     </div>
                     <div class="flex gap-2 pt-1 border-t border-border/80">
                         <a href="/admin/penitipan/kamar/edit?id=<?= e(urlencode((string) $k['id'])) ?>"
-                           class="flex-1 cursor-pointer text-center rounded-xl border border-border bg-page/60 px-3 py-2 text-xs font-semibold text-admin hover:bg-admin-soft">Edit</a>
+                           class="flex-1 cursor-pointer text-center rounded-lg border border-border bg-muted/60 px-3 py-2 text-xs font-semibold text-primary hover:bg-muted">Edit</a>
                         <form method="POST" action="/admin/penitipan/kamar/hapus" class="flex-1" data-confirm="Hapus kamar ini?">
                             <?= Csrf::field() ?>
                             <input type="hidden" name="id" value="<?= e((string) $k['id']) ?>">
-                            <button type="submit" class="w-full cursor-pointer rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700 hover:bg-red-100">Hapus</button>
+                            <button type="submit" class="w-full cursor-pointer rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs font-semibold text-destructive hover:bg-destructive/15">Hapus</button>
                         </form>
                     </div>
                 </article>
