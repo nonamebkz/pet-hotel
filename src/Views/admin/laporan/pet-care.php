@@ -80,7 +80,7 @@ $periodeLabel = date('d/m/Y', strtotime($mulai)) . ' — ' . date('d/m/Y', strto
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <article class="<?= e(design_cn(design_surface('metric'), 'print:border print:shadow-none')) ?>">
                 <p class="text-sm text-muted-foreground">Jumlah Booking</p>
-                <p class="mt-1 font-heading text-2xl text-admin"><?= e((string) ($metrics['jumlah_booking'] ?? 0)) ?></p>
+                <p class="mt-1 font-heading text-2xl text-primary"><?= e((string) ($metrics['jumlah_booking'] ?? 0)) ?></p>
             </article>
             <article class="<?= e(design_cn(design_surface('metric'), 'print:border print:shadow-none')) ?>">
                 <p class="text-sm text-muted-foreground mb-2">Per Layanan</p>
@@ -136,7 +136,7 @@ $periodeLabel = date('d/m/Y', strtotime($mulai)) . ' — ' . date('d/m/Y', strto
                         <tbody class="divide-y divide-border/80">
                             <?php foreach ($rows as $row): ?>
                                 <?php $statusEnum = StatusBookingPetCare::tryFrom((string) $row['status']); ?>
-                                <tr class="transition duration-soft hover:bg-muted/50">
+                                <tr class="transition transition hover:bg-muted/50">
                                     <td class="px-4 py-3.5 whitespace-nowrap text-foreground"><?= e(date('d/m/Y', strtotime((string) $row['tanggal']))) ?></td>
                                     <td class="px-4 py-3.5 whitespace-nowrap text-muted-foreground"><?= e(substr((string) $row['slot_waktu'], 0, 5)) ?> WIB</td>
                                     <td class="px-4 py-3.5 font-medium text-foreground"><?= e((string) $row['pelanggan_nama']) ?></td>

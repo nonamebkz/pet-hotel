@@ -105,7 +105,7 @@ $advancedOpen = $filterJenis !== '' || $filterQ !== '';
             <h2 class="font-heading text-lg text-foreground">Filter</h2>
             <?php if ($hasActiveFilter): ?>
                 <a href="/admin/transaksi"
-                   class="cursor-pointer text-xs font-semibold text-muted-foreground transition duration-soft hover:text-primary focus:outline-none focus-visible:underline">
+                   class="cursor-pointer text-xs font-semibold text-muted-foreground transition transition hover:text-primary focus:outline-none focus-visible:underline">
                     Reset ke bulan ini
                 </a>
             <?php endif; ?>
@@ -143,10 +143,10 @@ $advancedOpen = $filterJenis !== '' || $filterQ !== '';
             </div>
         </div>
 
-        <details class="group rounded-xl border border-border bg-page/50 open:bg-page/80" <?= $advancedOpen ? 'open' : '' ?>>
-            <summary class="cursor-pointer list-none flex items-center justify-between gap-2 px-4 py-3 text-sm font-semibold text-primary transition duration-soft hover:bg-muted/50/50 rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-admin">
+        <details class="group rounded-xl border border-border bg-muted/50 open:bg-muted/60" <?= $advancedOpen ? 'open' : '' ?>>
+            <summary class="cursor-pointer list-none flex items-center justify-between gap-2 px-4 py-3 text-sm font-semibold text-primary transition transition hover:bg-muted/50 rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                 <span class="inline-flex items-center gap-2">
-                    <svg class="h-4 w-4 transition duration-soft group-open:rotate-90" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                    <svg class="h-4 w-4 transition transition group-open:rotate-90" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/>
                     </svg>
                     Filter lanjutan
@@ -232,7 +232,7 @@ $advancedOpen = $filterJenis !== '' || $filterQ !== '';
                             $refundEnum = StatusRefund::tryFrom((string) ($row['status_refund'] ?? StatusRefund::TIDAK_ADA->value));
                             $jenisLabel = (string) $row['tagihan_jenis'];
                             ?>
-                            <tr class="transition duration-soft hover:bg-muted/50/30">
+                            <tr class="transition transition hover:bg-muted/50">
                                 <td class="px-4 py-3.5 whitespace-nowrap align-top">
                                     <div class="font-medium text-foreground"><?= e(date('d/m/Y', strtotime((string) $row['created_at']))) ?></div>
                                     <div class="text-xs text-muted-foreground"><?= e(date('H:i', strtotime((string) $row['created_at']))) ?></div>
@@ -284,7 +284,7 @@ $advancedOpen = $filterJenis !== '' || $filterQ !== '';
                                     <?php if (!empty($row['bukti_file_url'])): ?>
                                         <a href="<?= e((string) $row['bukti_file_url']) ?>"
                                            target="_blank" rel="noopener noreferrer"
-                                           class="cursor-pointer inline-flex items-center gap-1 text-xs font-semibold text-primary transition duration-soft hover:underline focus:outline-none focus-visible:underline">
+                                           class="cursor-pointer inline-flex items-center gap-1 text-xs font-semibold text-primary transition transition hover:underline focus:outline-none focus-visible:underline">
                                             Lihat bukti
                                             <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
                                         </a>
@@ -294,7 +294,7 @@ $advancedOpen = $filterJenis !== '' || $filterQ !== '';
                                 </td>
                                 <td class="px-4 py-3.5 text-right whitespace-nowrap align-top">
                                     <a href="<?= e((string) $row['admin_booking_url']) ?>"
-                                       class="cursor-pointer inline-flex items-center rounded-xl border border-border bg-background px-3 py-1.5 text-xs font-semibold text-primary transition duration-soft hover:bg-muted/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-admin">
+                                       class="cursor-pointer inline-flex items-center rounded-xl border border-border bg-background px-3 py-1.5 text-xs font-semibold text-primary transition transition hover:bg-muted/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                                         Booking →
                                     </a>
                                 </td>
@@ -355,7 +355,7 @@ $advancedOpen = $filterJenis !== '' || $filterQ !== '';
                         <?php if (!empty($row['bukti_file_url'])): ?>
                             <a href="<?= e((string) $row['bukti_file_url']) ?>"
                                target="_blank" rel="noopener noreferrer"
-                               class="cursor-pointer inline-flex flex-1 items-center justify-center rounded-xl border border-border bg-background px-3 py-2 text-xs font-semibold text-primary transition duration-soft hover:bg-muted/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-admin">
+                               class="cursor-pointer inline-flex flex-1 items-center justify-center rounded-xl border border-border bg-background px-3 py-2 text-xs font-semibold text-primary transition transition hover:bg-muted/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                                 Lihat bukti
                             </a>
                         <?php endif; ?>

@@ -96,7 +96,7 @@ $initial = mb_substr($namaPelanggan !== '' ? $namaPelanggan : 'P', 0, 1);
                     Sudah pernah pakai promo penitipan
                 </span>
             <?php else: ?>
-                <span class="inline-flex items-center rounded-lg bg-page px-2.5 py-1 text-xs font-semibold text-muted-foreground">
+                <span class="inline-flex items-center rounded-lg bg-muted px-2.5 py-1 text-xs font-semibold text-muted-foreground">
                     Belum pernah pakai promo penitipan
                 </span>
             <?php endif; ?>
@@ -186,7 +186,7 @@ $initial = mb_substr($namaPelanggan !== '' ? $namaPelanggan : 'P', 0, 1);
                             <?php endif; ?>
                         </div>
 
-                        <div class="rounded-2xl border border-border bg-page/60 p-4">
+                        <div class="rounded-2xl border border-border bg-muted/60 p-4">
                             <div class="mb-2 text-sm font-semibold text-foreground">Riwayat Vaksin</div>
                             <?php
                             $vaksinList = $kucing['vaksin_list'] ?? [];

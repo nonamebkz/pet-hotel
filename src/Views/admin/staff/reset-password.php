@@ -58,7 +58,7 @@ $inputClass = static function (string $field, array $errors): string {
             <button type="button"
                     data-generate-password="reset-password"
                     data-generate-password-confirm="reset-password-confirm"
-                    class="cursor-pointer inline-flex items-center gap-1.5 rounded-xl border border-border bg-page/60 px-3 py-2 text-xs font-semibold text-primary transition duration-soft hover:bg-muted/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-admin">
+                    class="cursor-pointer inline-flex items-center gap-1.5 rounded-xl border border-border bg-background px-3 py-2 text-xs font-semibold text-primary transition transition hover:bg-muted/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                 Generate
             </button>
         </div>
@@ -71,13 +71,13 @@ $inputClass = static function (string $field, array $errors): string {
                        data-password-strength="reset-password-meter"
                        class="<?= e($inputClass('password', $errors)) ?>">
                 <button type="button" data-password-toggle="reset-password"
-                        class="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg px-2.5 py-1.5 text-xs font-medium text-muted-foreground transition duration-soft hover:bg-muted/50 hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-admin">
+                        class="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg px-2.5 py-1.5 text-xs font-medium text-muted-foreground transition transition hover:bg-muted/50 hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                     Tampilkan
                 </button>
             </div>
             <div id="reset-password-meter" class="mt-2.5">
                 <div class="h-1.5 overflow-hidden rounded-full bg-muted/50">
-                    <div data-strength-bar class="h-full rounded-full transition-all duration-soft" style="width: 0%"></div>
+                    <div data-strength-bar class="h-full rounded-full transition-all transition" style="width: 0%"></div>
                 </div>
                 <p data-strength-label class="mt-1 text-xs text-muted-foreground"></p>
             </div>
@@ -94,7 +94,7 @@ $inputClass = static function (string $field, array $errors): string {
                        data-password-match="reset-password"
                        class="<?= e($inputClass('password_confirmation', $errors)) ?>">
                 <button type="button" data-password-toggle="reset-password-confirm"
-                        class="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg px-2.5 py-1.5 text-xs font-medium text-muted-foreground transition duration-soft hover:bg-muted/50 hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-admin">
+                        class="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg px-2.5 py-1.5 text-xs font-medium text-muted-foreground transition transition hover:bg-muted/50 hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                     Tampilkan
                 </button>
             </div>
@@ -114,7 +114,7 @@ $inputClass = static function (string $field, array $errors): string {
                 Reset Password
             </button>
             <a href="/admin/staff"
-               class="cursor-pointer inline-flex items-center justify-center rounded-xl px-4 py-3 text-sm font-semibold text-muted-foreground transition duration-soft hover:text-primary focus:outline-none focus-visible:underline">
+               class="cursor-pointer inline-flex items-center justify-center rounded-xl px-4 py-3 text-sm font-semibold text-muted-foreground transition transition hover:text-primary focus:outline-none focus-visible:underline">
                 Batal
             </a>
         </div>

@@ -113,11 +113,11 @@ if (!$isEdit && $errors !== []) {
 
             <div class="flex flex-wrap items-center gap-3">
                 <button type="submit"
-                        class="cursor-pointer inline-flex items-center justify-center rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white transition duration-soft hover:bg-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60">
+                        class="cursor-pointer inline-flex items-center justify-center rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white transition transition hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60">
                     <?= e($submitLabel) ?>
                 </button>
                 <a href="/admin/staff"
-                   class="cursor-pointer inline-flex items-center justify-center rounded-xl px-4 py-3 text-sm font-semibold text-muted-foreground transition duration-soft hover:text-primary focus:outline-none focus-visible:underline">
+                   class="cursor-pointer inline-flex items-center justify-center rounded-xl px-4 py-3 text-sm font-semibold text-muted-foreground transition transition hover:text-primary focus:outline-none focus-visible:underline">
                     Batal
                 </a>
             </div>
@@ -191,7 +191,7 @@ if (!$isEdit && $errors !== []) {
                 <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
                     <a href="/admin/staff" class="cursor-pointer text-sm font-semibold text-muted-foreground hover:text-primary focus:outline-none focus-visible:underline">Batal</a>
                     <button type="button" data-step-next
-                            class="cursor-pointer inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-white transition duration-soft hover:bg-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                            class="cursor-pointer inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-white transition transition hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
                         Lanjut
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
                     </button>
@@ -207,7 +207,7 @@ if (!$isEdit && $errors !== []) {
                     <button type="button"
                             data-generate-password="staff-password"
                             data-generate-password-confirm="staff-password-confirm"
-                            class="cursor-pointer inline-flex items-center gap-1.5 rounded-xl border border-border bg-background px-3 py-2 text-xs font-semibold text-primary transition duration-soft hover:bg-primary-soft focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                            class="cursor-pointer inline-flex items-center gap-1.5 rounded-xl border border-border bg-background px-3 py-2 text-xs font-semibold text-primary transition transition hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                         <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182"/>
                         </svg>
@@ -223,13 +223,13 @@ if (!$isEdit && $errors !== []) {
                                data-password-strength="staff-password-meter"
                                class="<?= e($inputClass('password', $errors)) ?> pr-24">
                         <button type="button" data-password-toggle="staff-password"
-                                class="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg px-2.5 py-1.5 text-xs font-medium text-muted-foreground transition duration-soft hover:bg-primary-soft hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                                class="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg px-2.5 py-1.5 text-xs font-medium text-muted-foreground transition transition hover:bg-muted hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                             Tampilkan
                         </button>
                     </div>
                     <div id="staff-password-meter" class="mt-2.5">
                         <div class="h-1.5 overflow-hidden rounded-full bg-primary-soft">
-                            <div data-strength-bar class="h-full rounded-full transition-all duration-soft" style="width: 0%"></div>
+                            <div data-strength-bar class="h-full rounded-full transition-all transition" style="width: 0%"></div>
                         </div>
                         <p data-strength-label class="mt-1 text-xs text-muted-foreground"></p>
                     </div>
@@ -246,7 +246,7 @@ if (!$isEdit && $errors !== []) {
                                data-password-match="staff-password"
                                class="<?= e($inputClass('password_confirmation', $errors)) ?> pr-24">
                         <button type="button" data-password-toggle="staff-password-confirm"
-                                class="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg px-2.5 py-1.5 text-xs font-medium text-muted-foreground transition duration-soft hover:bg-primary-soft hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                                class="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg px-2.5 py-1.5 text-xs font-medium text-muted-foreground transition transition hover:bg-muted hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                             Tampilkan
                         </button>
                     </div>
@@ -258,11 +258,11 @@ if (!$isEdit && $errors !== []) {
 
                 <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
                     <button type="button" data-step-prev
-                            class="cursor-pointer inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-muted-foreground transition duration-soft hover:text-primary focus:outline-none focus-visible:underline">
+                            class="cursor-pointer inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-muted-foreground transition transition hover:text-primary focus:outline-none focus-visible:underline">
                         ← Kembali
                     </button>
                     <button type="button" data-step-next
-                            class="cursor-pointer inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-white transition duration-soft hover:bg-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                            class="cursor-pointer inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-white transition transition hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
                         Lanjut
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
                     </button>
@@ -275,7 +275,7 @@ if (!$isEdit && $errors !== []) {
                     <p class="mt-1 text-sm text-muted-foreground">Role tetap Staff. Pilih kapan akun boleh login.</p>
                 </div>
 
-                <div class="rounded-xl border border-border bg-page/50 px-4 py-3">
+                <div class="rounded-xl border border-border bg-muted/50 px-4 py-3">
                     <p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Role</p>
                     <p class="mt-1 text-sm font-semibold text-primary">Staff</p>
                     <p class="mt-0.5 text-xs text-muted-foreground">Owner tidak dapat dibuat dari halaman ini.</p>
@@ -303,7 +303,7 @@ if (!$isEdit && $errors !== []) {
                         foreach ($statusOptions as $value => $meta):
                             $checked = $defaultStatus === $value;
                         ?>
-                            <label class="relative cursor-pointer rounded-xl border p-4 transition duration-soft has-[:checked]:border-primary has-[:checked]:bg-primary/10 <?= $checked ? 'border-primary bg-primary/10' : 'border-border bg-muted/30 hover:border-primary/30' ?>">
+                            <label class="relative cursor-pointer rounded-xl border p-4 transition transition has-[:checked]:border-primary has-[:checked]:bg-primary/10 <?= $checked ? 'border-primary bg-primary/10' : 'border-border bg-muted/30 hover:border-primary/30' ?>">
                                 <input type="radio" name="status" value="<?= e($value) ?>" class="sr-only" <?= $checked ? 'checked' : '' ?> required>
                                 <div class="flex items-start justify-between gap-2">
                                     <span class="font-semibold text-foreground"><?= e($meta['label']) ?></span>
@@ -327,11 +327,11 @@ if (!$isEdit && $errors !== []) {
 
                 <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
                     <button type="button" data-step-prev
-                            class="cursor-pointer inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-muted-foreground transition duration-soft hover:text-primary focus:outline-none focus-visible:underline">
+                            class="cursor-pointer inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-muted-foreground transition transition hover:text-primary focus:outline-none focus-visible:underline">
                         ← Kembali
                     </button>
                     <button type="submit"
-                            class="cursor-pointer inline-flex items-center justify-center rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-white transition duration-soft hover:bg-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60">
+                            class="cursor-pointer inline-flex items-center justify-center rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-white transition transition hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60">
                         <?= e($submitLabel) ?>
                     </button>
                 </div>

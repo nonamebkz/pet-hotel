@@ -99,7 +99,7 @@ $segmentLabels = [
                         $badgeClass = $segmentBadges[$segment] ?? $segmentBadges['aktif'];
                         $segmentLabel = $segmentLabels[$segment] ?? ucfirst($segment);
                         ?>
-                        <tr class="transition duration-soft hover:bg-muted/50">
+                        <tr class="transition transition hover:bg-muted/50">
                             <td class="px-4 py-3.5 font-semibold text-foreground"><?= e((string) $pelanggan['nama']) ?></td>
                             <td class="px-4 py-3.5">
                                 <span class="text-xs px-2 py-0.5 rounded-lg font-semibold <?= e($badgeClass) ?>"><?= e($segmentLabel) ?></span>
