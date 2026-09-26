@@ -63,35 +63,55 @@ if ($kategori !== '') {
     ));
 }
 
+$countByKategori = ['' => count($notifikasiList)];
+foreach (array_keys($kategoriTabs) as $tabKey) {
+    if ($tabKey === '') {
+        continue;
+    }
+    $countByKategori[$tabKey] = count(array_filter(
+        $notifikasiList,
+        static fn (array $notif): bool => $resolveKategori((string) ($notif['jenis'] ?? '')) === $tabKey,
+    ));
+}
+
+$unreadTotal = count(array_filter(
+    $notifikasiList,
+    static fn (array $notif): bool => empty($notif['sudah_dibaca']),
+));
+$todayPrefix = date('Y-m-d');
+$unreadToday = count(array_filter(
+    $notifikasiList,
+    static fn (array $notif): bool => empty($notif['sudah_dibaca'])
+        && str_starts_with((string) ($notif['created_at'] ?? ''), $todayPrefix),
+));
+
 $btnSecondary = ui_btn_secondary();
 $tabActiveClass = design_cn(ui_btn_primary(), 'rounded-xl px-4 py-2 text-sm font-semibold');
 $tabInactiveClass = design_cn(ui_btn_secondary(), 'rounded-xl px-4 py-2 text-sm font-semibold text-muted-foreground');
+$notifMeta = '<span class="' . e(design_status_badge('muted')) . '">Baru hari ini: ' . e((string) $unreadToday) . '</span>'
+    . '<span class="' . e(design_status_badge($unreadTotal > 0 ? 'muted' : 'success')) . '">Perlu dibaca: ' . e((string) $unreadTotal) . '</span>';
 ?>
-<div class="font-body space-y-6">
-    <section class="<?= e(design_cn(design_surface('panel'), 'relative overflow-hidden p-6 sm:p-8')) ?>">
-        <div class="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-primary/10 blur-2xl" aria-hidden="true"></div>
-        <div class="relative flex flex-wrap items-start justify-between gap-4">
-            <div>
-                <p class="text-xs font-semibold uppercase tracking-wider text-content-secondary">Operasional</p>
-                <h1 class="mt-1 font-heading text-2xl sm:text-3xl text-content-primary">Notifikasi</h1>
-                <p class="mt-2 text-sm text-content-secondary max-w-xl">
-                    Semua pemberitahuan operasional untuk akun Anda.
-                </p>
-            </div>
-            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-sm" aria-hidden="true">
-                <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"/>
-                </svg>
-            </div>
-        </div>
-    </section>
+<div class="<?= e(ui_page_content_shell_classes()) ?>">
+    <?php
+    ui_page_header(
+        'Notifikasi',
+        'Operasional',
+        'Pusat pemantauan booking, pembayaran, reminder, dan sistem.',
+        null,
+        $notifMeta,
+    );
+    ?>
 
     <nav class="flex flex-wrap gap-2" aria-label="Filter kategori notifikasi">
         <?php foreach ($kategoriTabs as $key => $label): ?>
-            <?php $isActive = $kategori === $key; ?>
+            <?php
+            $isActive = $kategori === $key;
+            $tabCount = $countByKategori[$key] ?? 0;
+            ?>
             <a href="/admin/notifikasi<?= $key !== '' ? '?kategori=' . urlencode($key) : '' ?>"
-               class="cursor-pointer inline-flex items-center focus:outline-none focus-visible:ring-2 focus-visible:ring-ring <?= e($isActive ? $tabActiveClass : $tabInactiveClass) ?>">
+               class="cursor-pointer inline-flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring <?= e($isActive ? $tabActiveClass : $tabInactiveClass) ?>">
                 <?= e($label) ?>
+                <span class="tabular-nums opacity-80">(<?= e((string) $tabCount) ?>)</span>
             </a>
         <?php endforeach; ?>
     </nav>
@@ -100,12 +120,18 @@ $tabInactiveClass = design_cn(ui_btn_secondary(), 'rounded-xl px-4 py-2 text-sm 
         <?php
         $variant = $kategori !== '' ? 'filtered' : 'empty';
         $title = $kategori !== ''
-            ? 'Belum ada notifikasi untuk kategori ini'
-            : 'Belum ada notifikasi';
-        $description = 'Aktivitas booking, pembayaran, dan operasional akan muncul di sini secara otomatis.';
-        $ctaLabel = 'Lihat Riwayat Transaksi';
-        $ctaHref = '/admin/transaksi';
-        $ctaClass = $btnSecondary;
+            ? 'Tidak ada notifikasi untuk filter ini'
+            : 'Belum ada notifikasi operasional';
+        $description = 'Aktivitas booking, pembayaran, reminder, dan sistem akan muncul di sini. '
+            . 'Saat ada hal yang perlu ditindaklanjuti, Anda akan melihatnya di halaman ini.';
+        if ($kategori === 'pembayaran') {
+            $ctaLabel = 'Lihat Riwayat Transaksi';
+            $ctaHref = '/admin/transaksi';
+        } else {
+            $ctaLabel = 'Kembali ke Dashboard';
+            $ctaHref = '/admin/dashboard';
+        }
+        $ctaClass = $kategori === 'pembayaran' ? ui_btn_primary() : ui_btn_secondary();
         require __DIR__ . '/../../partials/ui/empty-state.php';
         ?>
     <?php else: ?>
@@ -129,10 +155,10 @@ $tabInactiveClass = design_cn(ui_btn_secondary(), 'rounded-xl px-4 py-2 text-sm 
                 }
 
                 $katColors = [
-                    'booking' => 'border-l-blue-400',
-                    'pembayaran' => 'border-l-green-400',
-                    'reminder' => 'border-l-amber-400',
-                    'sistem' => 'border-l-gray-300',
+                    'booking' => 'border-l-primary',
+                    'pembayaran' => 'border-l-emerald-500',
+                    'reminder' => 'border-l-amber-500',
+                    'sistem' => 'border-l-border',
                 ];
                 $isUnread = empty($notif['sudah_dibaca']);
                 ?>
@@ -141,14 +167,14 @@ $tabInactiveClass = design_cn(ui_btn_secondary(), 'rounded-xl px-4 py-2 text-sm 
                         <div class="min-w-0">
                             <div class="flex items-center gap-2">
                                 <?php if ($isUnread): ?>
-                                    <span class="h-2 w-2 shrink-0 rounded-full bg-admin" aria-hidden="true"></span>
+                                    <span class="h-2 w-2 shrink-0 rounded-full bg-primary" aria-hidden="true"></span>
                                 <?php endif; ?>
-                                <h2 class="font-heading text-base text-content-primary"><?= e((string) $notif['judul']) ?></h2>
+                                <h2 class="font-heading text-base text-foreground"><?= e((string) $notif['judul']) ?></h2>
                             </div>
-                            <p class="mt-1.5 text-sm text-content-secondary"><?= e((string) $notif['pesan']) ?></p>
+                            <p class="mt-1.5 text-sm text-muted-foreground"><?= e((string) $notif['pesan']) ?></p>
                             <?php if ($actionUrl !== null): ?>
                                 <a href="<?= e($actionUrl) ?>"
-                                   class="mt-2.5 inline-flex cursor-pointer items-center gap-1 text-sm font-semibold text-admin transition duration-soft hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-admin rounded-lg">
+                                   class="mt-2.5 inline-flex cursor-pointer items-center gap-1 text-sm font-semibold text-primary transition hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-lg">
                                     Lihat detail
                                     <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
@@ -156,7 +182,7 @@ $tabInactiveClass = design_cn(ui_btn_secondary(), 'rounded-xl px-4 py-2 text-sm 
                                 </a>
                             <?php endif; ?>
                         </div>
-                        <time class="shrink-0 text-xs font-medium text-content-secondary">
+                        <time class="shrink-0 text-xs font-medium text-muted-foreground">
                             <?= e(date('d/m/Y H:i', strtotime((string) $notif['created_at']))) ?>
                         </time>
                     </div>

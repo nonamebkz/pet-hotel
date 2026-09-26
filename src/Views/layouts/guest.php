@@ -25,9 +25,9 @@ declare(strict_types=1);
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 21c-4-3.5-7-6.4-7-10a4 4 0 017-2.6A4 4 0 0119 11c0 3.6-3 6.5-7 10z"/>
                         </svg>
                     </span>
-                    <span class="font-heading text-3xl tracking-tight text-content-primary">Petshop</span>
+                    <span class="font-heading text-3xl tracking-tight text-foreground">Petshop</span>
                 </a>
-                <p class="mt-2 text-sm text-content-secondary">Portal Pelanggan</p>
+                <p class="mt-2 text-sm text-muted-foreground">Portal Pelanggan</p>
             </div>
 
             <div class="<?= e(design_cn(design_surface('panel'), 'bg-card/95 p-6 sm:p-8')) ?>">

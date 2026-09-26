@@ -10,27 +10,29 @@ $statusLabels = $statusLabels ?? [];
 $filterStatus = $filterStatus ?? '';
 $hasFilter = $filterStatus !== '';
 
-$heroClass = design_cn(design_surface('panel'), 'relative overflow-hidden p-6 sm:p-8');
 $filterFormClass = design_cn(design_surface('metric'), 'p-5');
-$inputClass = 'w-full rounded-lg border border-input bg-background px-3.5 py-2.5 text-base sm:text-sm text-foreground transition hover:border-primary/30 focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/25';
-$btnSuccess = 'cursor-pointer inline-flex items-center justify-center rounded-lg px-3.5 py-2 text-xs font-medium touch-target bg-emerald-600 text-white hover:opacity-90';
-$btnDanger = 'cursor-pointer inline-flex items-center justify-center rounded-lg border border-destructive/30 bg-destructive/10 px-3.5 py-2 text-xs font-semibold text-destructive transition hover:bg-destructive/15';
+$inputClass = ui_form_input_class();
+$btnSuccess = design_cn(ui_btn_primary(), 'text-xs px-3.5 py-2 bg-emerald-600 hover:opacity-90');
+$btnDanger = design_cn(
+    ui_btn_secondary(),
+    'text-xs px-3.5 py-2 border-destructive/30 bg-destructive/10 text-destructive hover:bg-destructive/15',
+);
 ?>
-<div class="font-body space-y-6">
-    <section class="<?= e($heroClass) ?>">
-        <div class="relative">
-            <p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Penitipan</p>
-            <h1 class="mt-1 font-heading text-2xl sm:text-3xl text-foreground">Perpanjangan</h1>
-            <p class="mt-2 text-sm text-muted-foreground">Konfirmasi permintaan perpanjangan check-out dari pelanggan.</p>
-        </div>
-    </section>
+<div class="<?= e(ui_page_content_shell_classes()) ?>">
+    <?php
+    ui_page_header(
+        'Perpanjangan',
+        'Penitipan · Administrasi',
+        'Konfirmasi permintaan perpanjangan check-out dari pelanggan.',
+    );
+    ?>
 
     <?php require __DIR__ . '/../_nav.php'; ?>
 
     <form method="GET" action="/admin/penitipan/perpanjangan" class="<?= e($filterFormClass) ?>">
         <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <div>
-                <label for="status" class="mb-1.5 block text-sm font-semibold text-foreground">Status</label>
+                <label for="status" class="<?= e(ui_form_label_class()) ?>">Status</label>
                 <select id="status" name="status" class="<?= e($inputClass) ?>" onchange="this.form.submit()">
                     <option value="">Semua status</option>
                     <?php foreach ($statusLabels as $v => $l): ?>
@@ -38,6 +40,11 @@ $btnDanger = 'cursor-pointer inline-flex items-center justify-center rounded-lg 
                     <?php endforeach; ?>
                 </select>
             </div>
+            <?php if ($hasFilter): ?>
+                <div class="flex items-end">
+                    <a href="/admin/penitipan/perpanjangan" class="<?= e(ui_btn_secondary()) ?>">Reset filter</a>
+                </div>
+            <?php endif; ?>
         </div>
     </form>
 
@@ -56,10 +63,11 @@ $btnDanger = 'cursor-pointer inline-flex items-center justify-center rounded-lg 
             <?php foreach ($perpanjanganList as $pp): ?>
                 <?php
                 $needsConfirm = (string) $pp['status'] === StatusPerpanjanganPenitipan::MENUNGGU_KONFIRMASI->value;
+                $statusEnum = StatusPerpanjanganPenitipan::tryFrom((string) $pp['status']);
                 $articleClass = design_cn(
                     design_interactive('listArticle'),
                     'p-5 space-y-3',
-                    $needsConfirm ? 'border-amber-200 bg-warning-bg/25' : '',
+                    $needsConfirm ? design_advice_panel_surface('warning') : '',
                 );
                 ?>
                 <article class="<?= e($articleClass) ?>">
@@ -76,10 +84,10 @@ $btnDanger = 'cursor-pointer inline-flex items-center justify-center rounded-lg 
                             </p>
                         </div>
                         <div class="text-right">
-                            <span class="inline-flex text-xs px-2.5 py-1 rounded-lg font-medium bg-primary/10 text-primary">
+                            <span class="inline-flex text-xs px-2.5 py-1 rounded-lg font-medium <?= e($statusEnum?->badgeClass() ?? 'bg-primary/10 text-primary') ?>">
                                 <?= e($statusLabels[$pp['status']] ?? (string) $pp['status']) ?>
                             </span>
-                            <p class="mt-2 font-heading text-primary">
+                            <p class="mt-2 font-heading text-primary tabular-nums">
                                 Rp <?= e(number_format((float) $pp['subtotal_tambahan'], 0, ',', '.')) ?>
                             </p>
                         </div>
@@ -95,7 +103,7 @@ $btnDanger = 'cursor-pointer inline-flex items-center justify-center rounded-lg 
                             <form method="POST" action="/admin/penitipan/perpanjangan/tolak" class="flex flex-wrap items-center gap-2" data-confirm="Tolak perpanjangan ini?">
                                 <?= Csrf::field() ?>
                                 <input type="hidden" name="id" value="<?= e((string) $pp['id']) ?>">
-                                <input type="text" name="catatan" placeholder="Alasan" class="<?= e($inputClass) ?> !w-auto min-w-[8rem]">
+                                <input type="text" name="catatan" placeholder="Alasan" class="<?= e(design_cn($inputClass, '!w-auto min-w-[8rem] py-2 text-xs')) ?>">
                                 <button type="submit" class="<?= e($btnDanger) ?>">Tolak</button>
                             </form>
                         </div>

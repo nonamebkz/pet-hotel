@@ -32,46 +32,33 @@ foreach ($bookingList as $statRow) {
 }
 $countAktif = $countSedangDitipkanGlobal;
 
-$heroClass = design_cn(design_surface('panel'), 'relative overflow-hidden p-6 sm:p-8');
 $filterFormClass = design_cn(design_surface('metric'), 'p-5 sm:p-6');
 $metricCardClass = design_cn(design_surface('metric'), 'p-5');
 $metricLinkClass = design_cn(design_interactive('cardLink'), 'p-5 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring');
-$heroIconClass = design_cn('flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-sm', '');
 
-$inputClass = 'w-full rounded-lg border border-input bg-background px-3.5 py-2.5 text-base sm:text-sm text-foreground transition hover:border-primary/30 focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/25';
-$btnPrimary = design_cn(ui_btn_primary(), 'cursor-pointer text-xs px-3.5 py-2 disabled:opacity-60');
+$inputClass = ui_form_input_class();
+$btnPrimary = design_cn(ui_btn_primary(), 'min-h-[42px] px-5 disabled:opacity-60');
 
 $renderCard = static function (array $booking) use ($statusLabels, $opsiLabels, $refundLabels, $minVaksin, $filterStatus, $filterCheckIn, $filterMonitoring): void {
     require __DIR__ . '/_card.php';
 };
 ?>
-<div class="font-body space-y-6">
-    <section class="<?= e($heroClass) ?>">
-        <div class="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-success/10 blur-2xl" aria-hidden="true"></div>
-        <div class="relative flex flex-wrap items-start justify-between gap-4">
-            <div>
-                <p class="text-xs font-semibold uppercase tracking-wider text-content-secondary">Penitipan</p>
-                <h1 class="mt-1 font-heading text-2xl sm:text-3xl text-content-primary">Booking Penitipan</h1>
-                <p class="mt-2 text-sm text-content-secondary max-w-xl">
-                    Konfirmasi booking, check-in, monitoring harian, dan kelola refund.
-                </p>
-                <?php if ($autoFiltered && $filterMonitoring === 'belum_input'): ?>
-                    <p class="mt-2 text-xs font-medium text-amber-800">
-                        Menampilkan penitipan aktif yang belum diinput monitoring hari ini.
-                    </p>
-                <?php elseif ($autoFiltered): ?>
-                    <p class="mt-2 text-xs font-medium text-amber-800">
-                        Menampilkan booking yang menunggu konfirmasi terlebih dahulu.
-                    </p>
-                <?php endif; ?>
-            </div>
-            <div class="<?= e($heroIconClass) ?>" aria-hidden="true">
-                <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 21v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21m0 0h4.5V3.545M12.75 21h7.5V10.75M2.25 21h1.5m18 0h-18M2.25 9l4.5-1.636M18.75 3l-1.5.545m0 6.205l3 1m1.5.5l-1.5-.5M6.75 7.364V3h-3v18m3-13.636l10.5-3.819"/>
-                </svg>
-            </div>
-        </div>
-    </section>
+<?php
+$headerDesc = 'Konfirmasi booking, check-in, monitoring harian, dan kelola refund.';
+if ($autoFiltered && $filterMonitoring === 'belum_input') {
+    $headerDesc .= ' Menampilkan penitipan aktif yang belum diinput monitoring hari ini.';
+} elseif ($autoFiltered) {
+    $headerDesc .= ' Menampilkan booking yang menunggu konfirmasi terlebih dahulu.';
+}
+?>
+<div class="<?= e(ui_page_content_shell_classes()) ?>">
+    <?php
+    ui_page_header(
+        'Booking Penitipan',
+        'Penitipan',
+        $headerDesc,
+    );
+    ?>
 
     <?php require __DIR__ . '/../_nav.php'; ?>
 
@@ -79,38 +66,38 @@ $renderCard = static function (array $booking) use ($statusLabels, $opsiLabels, 
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
             <a href="/admin/penitipan/booking?status=<?= e(StatusPenitipan::MENUNGGU_KONFIRMASI->value) ?>"
                class="<?= e(design_cn($metricLinkClass, $countMenungguGlobal > 0 ? 'border-amber-200 bg-warning-bg/40 hover:border-amber-400' : '')) ?>">
-                <p class="text-sm text-content-secondary">Menunggu Konfirmasi</p>
-                <p class="mt-1 font-heading text-2xl <?= $countMenungguGlobal > 0 ? 'text-amber-700' : 'text-admin' ?>"><?= e((string) $countMenungguGlobal) ?></p>
+                <p class="text-sm text-muted-foreground">Menunggu Konfirmasi</p>
+                <p class="mt-1 font-heading text-2xl tabular-nums <?= $countMenungguGlobal > 0 ? 'text-amber-700 dark:text-amber-300' : 'text-primary' ?>"><?= e((string) $countMenungguGlobal) ?></p>
                 <?php if ($countMenungguGlobal > 0): ?>
-                    <p class="mt-1 text-xs text-content-secondary">Klik untuk filter</p>
+                    <p class="mt-1 text-xs text-muted-foreground">Klik untuk filter</p>
                 <?php endif; ?>
             </a>
             <a href="/admin/penitipan/pembayaran"
                class="<?= e(design_cn($metricLinkClass, $countMenungguVerifikasi > 0 ? 'border-amber-200 bg-warning-bg/40 hover:border-amber-400' : '')) ?>">
-                <p class="text-sm text-content-secondary">Menunggu Verifikasi Bukti</p>
-                <p class="mt-1 font-heading text-2xl <?= $countMenungguVerifikasi > 0 ? 'text-amber-700' : 'text-admin' ?>"><?= e((string) $countMenungguVerifikasi) ?></p>
+                <p class="text-sm text-muted-foreground">Menunggu Verifikasi Bukti</p>
+                <p class="mt-1 font-heading text-2xl <?= $countMenungguVerifikasi > 0 ? 'text-amber-700' : 'text-primary' ?>"><?= e((string) $countMenungguVerifikasi) ?></p>
                 <?php if ($countMenungguVerifikasi > 0): ?>
-                    <p class="mt-1 text-xs text-content-secondary">Klik untuk verifikasi</p>
+                    <p class="mt-1 text-xs text-muted-foreground">Klik untuk verifikasi</p>
                 <?php endif; ?>
             </a>
             <article class="<?= e($metricCardClass) ?>">
-                <p class="text-sm text-content-secondary">Siap / Check-in</p>
-                <p class="mt-1 font-heading text-2xl text-admin"><?= e((string) $countCheckIn) ?></p>
+                <p class="text-sm text-muted-foreground">Siap / Check-in</p>
+                <p class="mt-1 font-heading text-2xl text-primary"><?= e((string) $countCheckIn) ?></p>
             </article>
             <a href="/admin/penitipan/booking?status=<?= e(StatusPenitipan::SEDANG_DITITIPKAN->value) ?>"
                class="<?= e(design_cn($metricLinkClass, 'hover:border-emerald-500/40')) ?>">
-                <p class="text-sm text-content-secondary">Sedang Dititipkan</p>
+                <p class="text-sm text-muted-foreground">Sedang Dititipkan</p>
                 <p class="mt-1 font-heading text-2xl text-success"><?= e((string) $countAktif) ?></p>
                 <?php if ($countAktif > 0): ?>
-                    <p class="mt-1 text-xs text-content-secondary">Klik untuk filter</p>
+                    <p class="mt-1 text-xs text-muted-foreground">Klik untuk filter</p>
                 <?php endif; ?>
             </a>
             <a href="/admin/penitipan/booking?status=<?= e(StatusPenitipan::SEDANG_DITITIPKAN->value) ?>&monitoring=belum_input"
                class="<?= e(design_cn($metricLinkClass, $countBelumMonitoringGlobal > 0 ? 'border-amber-200 bg-warning-bg/40 hover:border-amber-400' : '')) ?>">
-                <p class="text-sm text-content-secondary">Belum Input Monitoring</p>
-                <p class="mt-1 font-heading text-2xl <?= $countBelumMonitoringGlobal > 0 ? 'text-amber-700' : 'text-admin' ?>"><?= e((string) $countBelumMonitoringGlobal) ?></p>
+                <p class="text-sm text-muted-foreground">Belum Input Monitoring</p>
+                <p class="mt-1 font-heading text-2xl <?= $countBelumMonitoringGlobal > 0 ? 'text-amber-700' : 'text-primary' ?>"><?= e((string) $countBelumMonitoringGlobal) ?></p>
                 <?php if ($countBelumMonitoringGlobal > 0): ?>
-                    <p class="mt-1 text-xs text-content-secondary">Hari ini · klik untuk filter</p>
+                    <p class="mt-1 text-xs text-muted-foreground">Hari ini · klik untuk filter</p>
                 <?php endif; ?>
             </a>
         </div>
@@ -118,18 +105,18 @@ $renderCard = static function (array $booking) use ($statusLabels, $opsiLabels, 
 
     <form method="GET" action="/admin/penitipan/booking" class="<?= e($filterFormClass) ?>">
         <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
-            <h2 class="font-heading text-lg text-content-primary">Filter</h2>
+            <h2 class="font-heading text-lg text-foreground">Filter</h2>
             <?php if ($hasFilter): ?>
-                <a href="/admin/penitipan/booking?status=&check_in=&monitoring=" class="cursor-pointer text-xs font-semibold text-content-secondary hover:text-admin focus:outline-none focus-visible:underline">Reset</a>
+                <a href="/admin/penitipan/booking?status=&check_in=&monitoring=" class="cursor-pointer text-xs font-semibold text-muted-foreground hover:text-primary focus:outline-none focus-visible:underline">Reset</a>
             <?php endif; ?>
         </div>
         <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div>
-                <label for="check_in" class="mb-1.5 block text-sm font-semibold text-content-primary">Check-in</label>
+                <label for="check_in" class="mb-1.5 block text-sm font-semibold text-foreground">Check-in</label>
                 <input type="date" id="check_in" name="check_in" value="<?= e($filterCheckIn) ?>" class="<?= e($inputClass) ?>">
             </div>
             <div>
-                <label for="status" class="mb-1.5 block text-sm font-semibold text-content-primary">Status</label>
+                <label for="status" class="mb-1.5 block text-sm font-semibold text-foreground">Status</label>
                 <select id="status" name="status" class="<?= e($inputClass) ?>">
                     <option value="">Semua status</option>
                     <?php foreach ($statusLabels as $v => $l): ?>
@@ -138,7 +125,7 @@ $renderCard = static function (array $booking) use ($statusLabels, $opsiLabels, 
                 </select>
             </div>
             <div class="flex items-end sm:col-span-2">
-                <button type="submit" class="<?= e($btnPrimary) ?> min-h-[42px] px-5">Terapkan Filter</button>
+                <button type="submit" class="<?= e($btnPrimary) ?>">Terapkan Filter</button>
             </div>
         </div>
     </form>
@@ -165,7 +152,7 @@ $renderCard = static function (array $booking) use ($statusLabels, $opsiLabels, 
         <?php if ($showPinnedPending && $pendingConfirmList !== []): ?>
             <section class="space-y-3">
                 <div class="flex flex-wrap items-center justify-between gap-2">
-                    <h2 class="font-heading text-lg text-content-primary">
+                    <h2 class="font-heading text-lg text-foreground">
                         Perlu Konfirmasi
                         <span class="ml-1 text-sm font-semibold text-amber-700">(<?= count($pendingConfirmList) ?>)</span>
                     </h2>
@@ -181,12 +168,12 @@ $renderCard = static function (array $booking) use ($statusLabels, $opsiLabels, 
         <?php if ($showPinnedPending && $pendingMonitoringList !== []): ?>
             <section class="space-y-3">
                 <div class="flex flex-wrap items-center justify-between gap-2">
-                    <h2 class="font-heading text-lg text-content-primary">
+                    <h2 class="font-heading text-lg text-foreground">
                         Perlu Monitoring Hari Ini
                         <span class="ml-1 text-sm font-semibold text-amber-700">(<?= count($pendingMonitoringList) ?>)</span>
                     </h2>
                     <a href="/admin/penitipan/booking?status=<?= e(StatusPenitipan::SEDANG_DITITIPKAN->value) ?>&monitoring=belum_input"
-                       class="cursor-pointer text-xs font-semibold text-admin hover:text-admin-hover focus:outline-none focus-visible:underline">
+                       class="cursor-pointer text-xs font-semibold text-primary hover:opacity-90 focus:outline-none focus-visible:underline">
                         Lihat semua →
                     </a>
                 </div>
@@ -201,7 +188,7 @@ $renderCard = static function (array $booking) use ($statusLabels, $opsiLabels, 
         <?php if ($otherBookingList !== []): ?>
             <section class="space-y-3">
                 <?php if ($showPinnedPending && ($pendingConfirmList !== [] || $pendingMonitoringList !== [])): ?>
-                    <h2 class="font-heading text-lg text-content-primary">Booking Lainnya</h2>
+                    <h2 class="font-heading text-lg text-foreground">Booking Lainnya</h2>
                 <?php endif; ?>
                 <div class="space-y-4">
                     <?php foreach ($otherBookingList as $booking): ?>

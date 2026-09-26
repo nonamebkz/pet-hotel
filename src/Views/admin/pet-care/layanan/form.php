@@ -12,27 +12,27 @@ $submitLabel = $submitLabel ?? 'Simpan';
 $defaultStatus = $layanan['status'] ?? old('status', 'NONAKTIF');
 $isEdit = $layanan !== null && !empty($layanan['id']);
 
-$inputClass = design_cn(
-    'w-full rounded-xl border border-input bg-background px-3.5 py-3 text-base sm:text-sm text-foreground transition',
-    'hover:border-primary/30 focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/25',
-);
-$errorBorder = ' border-destructive/50 focus:border-destructive focus:ring-destructive/25';
-?>
-<div class="font-body max-w-2xl space-y-6">
-    <nav class="flex flex-wrap items-center gap-2 text-sm text-muted-foreground" aria-label="Breadcrumb">
-        <a href="/admin/pet-care/layanan" class="hover:text-primary focus:outline-none focus-visible:underline">Layanan</a>
-        <span aria-hidden="true">/</span>
-        <span class="font-medium text-foreground"><?= $isEdit ? 'Edit' : 'Tambah' ?></span>
-    </nav>
+$inputClass = static function (string $field, array $errors): string {
+    $base = design_cn(ui_form_input_class(), 'py-3');
+    if (!empty($errors[$field])) {
+        return $base . ' border-destructive focus:border-destructive focus:ring-destructive/25';
+    }
 
-    <header>
-        <h1 class="font-heading text-2xl sm:text-3xl text-foreground">
-            <?= $isEdit ? 'Edit layanan' : 'Tambah layanan' ?>
-        </h1>
-        <p class="mt-2 text-sm text-muted-foreground">
-            Layanan baru default nonaktif — aktifkan setelah data lengkap dan siap ditampilkan.
-        </p>
-    </header>
+    return $base;
+};
+?>
+<div class="<?= e(design_cn(ui_page_content_shell_classes(), design_page_layout('formSm'))) ?>">
+    <?php
+    ui_breadcrumb([
+        ['label' => 'Layanan', 'href' => '/admin/pet-care/layanan'],
+        ['label' => $isEdit ? 'Edit' : 'Tambah'],
+    ]);
+    ui_page_header(
+        $isEdit ? 'Edit layanan' : 'Tambah layanan',
+        'Pet Care · Layanan',
+        'Layanan baru default nonaktif — aktifkan setelah data lengkap dan siap ditampilkan.',
+    );
+    ?>
 
     <?php if (!empty($errors['general'])): ?>
         <div class="rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive" role="alert">
@@ -53,7 +53,7 @@ $errorBorder = ' border-destructive/50 focus:border-destructive focus:ring-destr
                 <label for="nama" class="<?= e(ui_form_label_class()) ?>">Nama Layanan</label>
                 <input type="text" id="nama" name="nama"
                        value="<?= e((string) ($layanan['nama'] ?? old('nama', ''))) ?>"
-                       class="<?= e($inputClass . (!empty($errors['nama']) ? $errorBorder : '')) ?>">
+                       class="<?= e($inputClass('nama', $errors)) ?>">
                 <?php if (!empty($errors['nama'])): ?>
                     <p class="<?= e(ui_field_error_class()) ?>"><?= e((string) $errors['nama']) ?></p>
                 <?php endif; ?>
@@ -62,7 +62,7 @@ $errorBorder = ' border-destructive/50 focus:border-destructive focus:ring-destr
             <div>
                 <label for="deskripsi" class="<?= e(ui_form_label_class()) ?>">Deskripsi</label>
                 <textarea id="deskripsi" name="deskripsi" rows="3"
-                          class="<?= e($inputClass) ?>"
+                          class="<?= e($inputClass('deskripsi', $errors)) ?>"
                           placeholder="Jelaskan cakupan layanan pet care"><?= e((string) ($layanan['deskripsi'] ?? old('deskripsi', ''))) ?></textarea>
                 <p class="mt-1.5 text-xs text-muted-foreground">Tampil ke pelanggan saat memilih layanan.</p>
             </div>
@@ -76,7 +76,7 @@ $errorBorder = ' border-destructive/50 focus:border-destructive focus:ring-destr
                     <label for="harga" class="<?= e(ui_form_label_class()) ?>">Harga Estimasi (Rp)</label>
                     <input type="number" id="harga" name="harga" min="0" step="1000"
                            value="<?= e((string) ($layanan['harga'] ?? old('harga', ''))) ?>"
-                           class="<?= e($inputClass . (!empty($errors['harga']) ? $errorBorder : '')) ?>">
+                           class="<?= e($inputClass('harga', $errors)) ?>">
                     <?php if (!empty($errors['harga'])): ?>
                         <p class="<?= e(ui_field_error_class()) ?>"><?= e((string) $errors['harga']) ?></p>
                     <?php endif; ?>
@@ -85,7 +85,7 @@ $errorBorder = ' border-destructive/50 focus:border-destructive focus:ring-destr
                     <label for="estimasi_durasi_menit" class="<?= e(ui_form_label_class()) ?>">Estimasi Durasi (menit)</label>
                     <input type="number" id="estimasi_durasi_menit" name="estimasi_durasi_menit" min="1"
                            value="<?= e((string) ($layanan['estimasi_durasi_menit'] ?? old('estimasi_durasi_menit', ''))) ?>"
-                           class="<?= e($inputClass . (!empty($errors['estimasi_durasi_menit']) ? $errorBorder : '')) ?>">
+                           class="<?= e($inputClass('estimasi_durasi_menit', $errors)) ?>">
                     <?php if (!empty($errors['estimasi_durasi_menit'])): ?>
                         <p class="<?= e(ui_field_error_class()) ?>"><?= e((string) $errors['estimasi_durasi_menit']) ?></p>
                     <?php endif; ?>
@@ -98,7 +98,7 @@ $errorBorder = ' border-destructive/50 focus:border-destructive focus:ring-destr
 
             <div>
                 <label for="status" class="<?= e(ui_form_label_class()) ?>">Status</label>
-                <select id="status" name="status" class="<?= e($inputClass) ?> max-w-xs">
+                <select id="status" name="status" class="<?= e(design_cn($inputClass('status', $errors), 'max-w-xs')) ?>">
                     <?php foreach ($statusLabels as $value => $label): ?>
                         <option value="<?= e($value) ?>" <?= $defaultStatus === $value ? 'selected' : '' ?>>
                             <?= e($label) ?>

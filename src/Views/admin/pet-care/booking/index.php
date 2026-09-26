@@ -42,24 +42,14 @@ $listArticle = design_cn(design_interactive('listArticle'), 'space-y-4 p-5 sm:p-
 $listArticleWarning = design_cn(design_interactive('listArticle'), design_advice_panel_surface('warning'), 'space-y-4 p-5 sm:p-6');
 $metricCell = design_interactive('metricCell');
 ?>
-<div class="font-body space-y-6">
-    <section class="<?= e(design_cn(design_surface('panel'), 'relative overflow-hidden p-6 sm:p-8')) ?>">
-        <div class="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-primary/10 blur-2xl" aria-hidden="true"></div>
-        <div class="relative flex flex-wrap items-start justify-between gap-4">
-            <div>
-                <p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Pet Care</p>
-                <h1 class="mt-1 font-heading text-2xl sm:text-3xl text-foreground">Booking Pet Care</h1>
-                <p class="mt-2 text-sm text-muted-foreground max-w-xl">
-                    Lanjutkan proses konsultasi dan kelola pembatalan booking.
-                </p>
-            </div>
-            <div class="<?= e(design_icon_badge('default', 'flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl')) ?>" aria-hidden="true">
-                <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/>
-                </svg>
-            </div>
-        </div>
-    </section>
+<div class="<?= e(ui_page_content_shell_classes()) ?>">
+    <?php
+    ui_page_header(
+        'Booking Pet Care',
+        'Pet Care · Administrasi',
+        'Lanjutkan proses konsultasi dan kelola pembatalan booking.',
+    );
+    ?>
 
     <?php
     $activeTab = 'booking';

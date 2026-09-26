@@ -18,17 +18,17 @@ $isPdf = str_ends_with(strtolower($fileUrl), '.pdf');
 ?>
 <div class="uploaded-file-preview">
     <?php if ($label !== ''): ?>
-        <p class="text-xs font-medium text-gray-600 mb-1"><?= e($label) ?></p>
+        <p class="mb-1 text-xs font-medium text-muted-foreground"><?= e($label) ?></p>
     <?php endif; ?>
     <?php if ($isPdf): ?>
         <a href="<?= e($fileUrl) ?>" target="_blank" rel="noopener noreferrer"
-           class="inline-block border rounded-lg px-3 py-2 text-xs text-blue-600 hover:bg-blue-50">
+           class="inline-flex items-center rounded-lg border border-border bg-card px-3 py-2 text-xs text-primary transition hover:bg-muted">
             Buka PDF
         </a>
     <?php else: ?>
         <a href="<?= e($fileUrl) ?>" target="_blank" rel="noopener noreferrer">
             <img src="<?= e($fileUrl) ?>" alt="<?= e($label) ?>"
-                 class="<?= e($maxHeightClass) ?> max-w-full rounded-lg border object-contain">
+                 class="<?= e($maxHeightClass) ?> max-w-full rounded-lg border border-border object-contain">
         </a>
     <?php endif; ?>
 </div>

@@ -28,11 +28,17 @@ $bankConfig = $bankConfig ?? [];
 $whatsapp = (string) ($bankConfig['petshop_whatsapp'] ?? '');
 $statusRefund = $transaksi ? StatusRefund::tryFrom((string) ($transaksi['status_refund'] ?? '')) : null;
 ?>
-<div>
-    <div class="mb-6">
+<div class="<?= e(ui_page_content_shell_classes()) ?>">
+    <p>
         <a href="/penitipan/riwayat" class="<?= e(ui_back_link_class()) ?>">&larr; Riwayat</a>
-        <h1 class="text-2xl font-bold text-foreground mt-2">Detail Penitipan</h1>
-    </div>
+    </p>
+    <?php
+    ui_page_header(
+        'Detail Penitipan',
+        'Penitipan',
+        (string) ($booking['kucing_nama'] ?? '') !== '' ? (string) $booking['kucing_nama'] . ' · ' . (string) ($booking['paket_nama'] ?? '') : null,
+    );
+    ?>
 
     <div class="grid gap-6 lg:grid-cols-2 max-w-5xl">
         <div class="<?= e(design_cn(design_surface('metric'), 'p-6 space-y-4')) ?>">
@@ -78,7 +84,7 @@ $statusRefund = $transaksi ? StatusRefund::tryFrom((string) ($transaksi['status_
                         <span>Rp <?= e(number_format((float) $transaksi['subtotal_layanan'], 0, ',', '.')) ?></span>
                     </div>
                     <?php if ((float) $transaksi['potongan_promo'] > 0): ?>
-                        <div class="flex justify-between text-green-700">
+                        <div class="flex justify-between text-emerald-700 dark:text-emerald-300">
                             <span>Potongan promo</span>
                             <span>- Rp <?= e(number_format((float) $transaksi['potongan_promo'], 0, ',', '.')) ?></span>
                         </div>
@@ -99,13 +105,15 @@ $statusRefund = $transaksi ? StatusRefund::tryFrom((string) ($transaksi['status_
             <div class="flex flex-wrap gap-3">
                 <?php if ((string) ($booking['status'] ?? '') === StatusPenitipan::MENUNGGU_PEMBAYARAN->value): ?>
                     <a href="/penitipan/pembayaran?id=<?= e((string) $booking['id']) ?>"
-                       class="bg-primary text-primary-foreground rounded-lg px-4 py-2 text-sm font-medium hover:opacity-90">
+                       class="<?= e(ui_btn_primary()) ?>">
                         Upload Bukti Transfer
                     </a>
                 <?php endif; ?>
                 <?php if ($invoice && $transaksiLunas): ?>
                     <a href="/penitipan/invoice?id=<?= e((string) $booking['id']) ?>"
-                       class="border border-border rounded-lg px-4 py-2 text-sm hover:bg-muted">Lihat Invoice</a>
+                       class="<?= e(ui_btn_secondary()) ?>">
+                        Lihat Invoice
+                    </a>
                 <?php endif; ?>
                 <?php if ($canCancel): ?>
                     <form method="POST" action="/penitipan/booking/batalkan" class="inline"
@@ -134,11 +142,11 @@ $statusRefund = $transaksi ? StatusRefund::tryFrom((string) ($transaksi['status_
                             <label class="block text-sm text-foreground mb-1">Check-out baru</label>
                             <input type="date" name="check_out_baru" id="check-out-baru"
                                    min="<?= e(date('Y-m-d', strtotime((string) $booking['check_out'] . ' +1 day'))) ?>"
-                                   class="w-full border border-border rounded-lg px-3 py-2 text-sm" required>
+                                   class="<?= e(ui_form_input_class()) ?> text-sm py-2" required>
                         </div>
                         <div id="estimasi-perpanjangan" class="text-sm text-muted-foreground hidden"></div>
                         <button type="submit"
-                                class="bg-primary text-primary-foreground rounded-lg px-4 py-2 text-sm hover:opacity-90">
+                                class="<?= e(ui_btn_primary()) ?>">
                             Ajukan Perpanjangan
                         </button>
                     </form>

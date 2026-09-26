@@ -13,7 +13,6 @@ $activeTab = $activeTab ?? ($canInput ? 'input' : 'riwayat');
 $errors = $errors ?? [];
 $bookingId = (string) ($booking['id'] ?? '');
 $tabBaseUrl = '/admin/penitipan/monitoring/tambah?booking_id=' . urlencode($bookingId);
-$heroClass = design_cn(design_surface('panel'), 'relative overflow-hidden p-6');
 $contextAsideClass = design_cn(design_surface('panel'), design_advice_panel_surface('warning'), 'p-4 sm:p-5 space-y-3');
 $formPanelClass = design_cn(design_surface('metric'), 'p-5 sm:p-6 space-y-5');
 $listArticleClass = design_cn(design_interactive('listArticle'), 'p-4 space-y-2');
@@ -22,23 +21,22 @@ $inputClass = 'w-full rounded-lg border border-input bg-background px-3.5 py-3 t
 $tabActive = 'rounded-lg bg-card text-primary shadow-sm';
 $tabInactive = 'text-muted-foreground hover:text-primary';
 ?>
-<div class="font-body space-y-6 max-w-2xl">
-    <nav class="flex flex-wrap items-center gap-2 text-sm text-muted-foreground" aria-label="Breadcrumb">
-        <a href="/admin/penitipan/booking" class="cursor-pointer hover:text-primary focus:outline-none focus-visible:underline">Booking</a>
-        <span aria-hidden="true">/</span>
-        <span class="font-medium text-foreground">Monitoring</span>
-    </nav>
-
-    <section class="<?= e($heroClass) ?>">
-        <div class="relative">
-            <p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Monitoring harian</p>
-            <h1 class="mt-1 font-heading text-2xl text-foreground"><?= e((string) ($booking['kucing_nama'] ?? '')) ?></h1>
-            <p class="mt-1 text-sm text-muted-foreground">Pemilik: <?= e((string) ($booking['pelanggan_nama'] ?? '')) ?></p>
-            <?php if (!$canInput): ?>
-                <p class="mt-2 text-xs font-medium text-muted-foreground">Mode baca saja — booking sudah check-out.</p>
-            <?php endif; ?>
-        </div>
-    </section>
+<div class="<?= e(design_cn(ui_page_content_shell_classes(), design_page_layout('formSm'))) ?>">
+    <?php
+    ui_breadcrumb([
+        ['label' => 'Booking', 'href' => '/admin/penitipan/booking'],
+        ['label' => 'Monitoring'],
+    ]);
+    $monitoringDesc = 'Pemilik: ' . (string) ($booking['pelanggan_nama'] ?? '');
+    if (!$canInput) {
+        $monitoringDesc .= ' · Mode baca saja — booking sudah check-out.';
+    }
+    ui_page_header(
+        (string) ($booking['kucing_nama'] ?? 'Monitoring'),
+        'Penitipan · Monitoring harian',
+        $monitoringDesc,
+    );
+    ?>
 
     <?php require __DIR__ . '/../_nav.php'; ?>
 

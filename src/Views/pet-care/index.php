@@ -4,17 +4,20 @@ declare(strict_types=1);
 
 $layananList = $layananList ?? [];
 ?>
-<div>
-    <div class="flex items-center justify-between mb-6">
-        <div>
-            <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-foreground">Pet Care</h1>
-            <p class="text-sm text-muted-foreground mt-1">Layanan kesehatan kucing — booking online, bayar di loket saat kunjungan.</p>
-        </div>
-        <a href="/pet-care/booking"
-           class="bg-primary text-primary-foreground rounded-lg px-4 py-2 text-sm font-medium hover:opacity-90">
-            Ajukan Booking
-        </a>
-    </div>
+<div class="<?= e(ui_page_content_shell_classes()) ?>">
+    <?php
+    ob_start();
+    ?>
+    <a href="/pet-care/booking" class="<?= e(ui_btn_primary()) ?>">Ajukan Booking</a>
+    <?php
+    $actionsHtml = (string) ob_get_clean();
+    ui_page_header(
+        'Pet Care',
+        'Layanan',
+        'Layanan kesehatan kucing — booking online, bayar di loket saat kunjungan.',
+        $actionsHtml,
+    );
+    ?>
 
     <?php if ($layananList === []): ?>
         <div class="<?= e(design_cn(design_surface('metric'), 'p-8 text-center text-muted-foreground')) ?>">
@@ -36,7 +39,7 @@ $layananList = $layananList ?? [];
             <?php endforeach; ?>
         </div>
 
-        <div class="mt-6 bg-primary-soft border border-primary-soft rounded-xl p-4 text-sm text-foreground">
+        <div class="<?= e(design_cn(design_alert_inline('warning'), 'mt-6')) ?>">
             <strong>Catatan:</strong> Anda membawa kucing sendiri ke petshop (antar sendiri).
             Pembayaran dilakukan langsung di loket — harga di atas hanya estimasi.
         </div>

@@ -5,25 +5,25 @@ declare(strict_types=1);
 use App\Core\Csrf;
 
 $paketList = $paketList ?? [];
-$heroClass = design_cn(design_surface('panel'), 'relative overflow-hidden p-6 sm:p-8');
 $tableWrapClass = design_cn(design_surface('panel'), 'hidden md:block overflow-hidden');
 $listArticleClass = design_cn(design_interactive('listArticle'), design_interactive('listArticleHover'), 'p-4 space-y-3');
 ?>
-<div class="font-body space-y-6">
-    <section class="<?= e($heroClass) ?>">
-        <div class="relative flex flex-wrap items-start justify-between gap-4">
-            <div>
-                <p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Penitipan</p>
-                <h1 class="mt-1 font-heading text-2xl sm:text-3xl text-foreground">Paket Penitipan</h1>
-                <p class="mt-2 text-sm text-muted-foreground">Kelola paket harga per hari untuk layanan penitipan.</p>
-            </div>
-            <a href="/admin/penitipan/paket/tambah"
-               class="<?= e(design_cn(ui_btn_primary(), 'cursor-pointer gap-2')) ?>">
-                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
-                Tambah Paket
-            </a>
-        </div>
-    </section>
+<div class="<?= e(ui_page_content_shell_classes()) ?>">
+    <?php
+    ob_start();
+    ?>
+    <a href="/admin/penitipan/paket/tambah" class="<?= e(design_cn(ui_btn_primary(), 'gap-2')) ?>">
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+        Tambah Paket
+    </a>
+    <?php
+    ui_page_header(
+        'Paket Penitipan',
+        'Penitipan · Administrasi',
+        'Kelola paket harga per hari untuk layanan penitipan.',
+        (string) ob_get_clean(),
+    );
+    ?>
 
     <?php require __DIR__ . '/../_nav.php'; ?>
 
@@ -50,7 +50,7 @@ $listArticleClass = design_cn(design_interactive('listArticle'), design_interact
                 </thead>
                 <tbody class="divide-y divide-border/80">
                     <?php foreach ($paketList as $p): ?>
-                        <tr class="transition hover:bg-muted/30">
+                        <tr class="transition hover:bg-muted/50">
                             <td class="px-4 py-3.5 font-semibold text-foreground"><?= e((string) $p['nama']) ?></td>
                             <td class="px-4 py-3.5 font-medium text-primary">Rp <?= e(number_format((float) $p['harga_per_hari'], 0, ',', '.')) ?></td>
                             <td class="px-4 py-3.5">

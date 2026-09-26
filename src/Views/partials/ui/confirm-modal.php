@@ -14,7 +14,7 @@
             </button>
             <button type="button"
                     id="ui-confirm-ok"
-                    class="cursor-pointer rounded-lg bg-destructive px-4 py-2.5 text-sm font-semibold text-white touch-target transition hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                    class="<?= e(ui_btn_destructive()) ?>">
                 Ya, Lanjutkan
             </button>
         </div>

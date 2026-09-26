@@ -3,17 +3,32 @@
 declare(strict_types=1);
 
 $notifikasiList = $notifikasiList ?? [];
+$unreadCount = count(array_filter(
+    $notifikasiList,
+    static fn (array $notif): bool => empty($notif['sudah_dibaca']),
+));
 ?>
-<div>
-    <div class="mb-6">
-        <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-foreground">Notifikasi</h1>
-        <p class="text-sm text-muted-foreground mt-1">Semua pemberitahuan untuk akun Anda.</p>
-    </div>
+<div class="<?= e(ui_page_content_shell_classes()) ?>">
+    <?php
+    ui_page_header(
+        'Notifikasi',
+        'Akun',
+        'Semua pemberitahuan booking, pembayaran, dan operasional untuk akun Anda.',
+        null,
+        '<span class="' . e(design_status_badge($unreadCount > 0 ? 'muted' : 'success')) . '">Perlu dibaca: ' . e((string) $unreadCount) . '</span>',
+    );
+    ?>
 
     <?php if ($notifikasiList === []): ?>
-        <div class="<?= e(design_cn(design_surface('metric'), 'p-8 text-center text-muted-foreground')) ?>">
-            Belum ada notifikasi.
-        </div>
+        <?php
+        $variant = 'empty';
+        $title = 'Belum ada notifikasi';
+        $description = 'Update booking dan pembayaran akan muncul di sini secara otomatis.';
+        $ctaLabel = 'Kembali ke Beranda';
+        $ctaHref = '/dashboard';
+        $ctaClass = ui_btn_secondary();
+        require __DIR__ . '/../partials/ui/empty-state.php';
+        ?>
     <?php else: ?>
         <div class="space-y-3">
             <?php foreach ($notifikasiList as $notif): ?>
@@ -27,7 +42,7 @@ $notifikasiList = $notifikasiList ?? [];
                             <div class="font-medium text-foreground"><?= e((string) $notif['judul']) ?></div>
                             <p class="text-sm text-muted-foreground mt-1"><?= e((string) $notif['pesan']) ?></p>
                         </div>
-                        <time class="text-xs text-muted-foreground/70 shrink-0">
+                        <time class="text-xs text-muted-foreground shrink-0 tabular-nums">
                             <?= e(date('d/m/Y H:i', strtotime((string) $notif['created_at']))) ?>
                         </time>
                     </div>

@@ -11,12 +11,29 @@ $action = $action ?? '/kucing';
 $submitLabel = $submitLabel ?? 'Simpan';
 $jenisKelaminLabels = $jenisKelaminLabels ?? [];
 $isEdit = $kucing !== null && !empty($kucing['id']);
+
+$inputClass = static function (string $field, array $errors): string {
+    if (!empty($errors[$field])) {
+        return design_cn(ui_form_input_class(true), 'sm:text-sm');
+    }
+
+    return design_cn(ui_form_input_class(), 'sm:text-sm');
+};
 ?>
-<div class="<?= e(design_cn('max-w-3xl', ui_page_content_shell_classes(), design_page_layout('formLg'))) ?>">
-    <div class="mb-6">
-        <a href="/kucing" class="<?= e(ui_back_link_class()) ?>">&larr; Kembali ke daftar</a>
-        <h1 class="text-2xl font-bold text-foreground mt-2"><?= $isEdit ? 'Edit Kucing' : 'Tambah Kucing' ?></h1>
-    </div>
+<div class="<?= e(design_cn(ui_page_content_shell_classes(), design_page_layout('formLg'))) ?>">
+    <?php
+    ui_breadcrumb([
+        ['label' => 'Kucing Saya', 'href' => '/kucing'],
+        ['label' => $isEdit ? 'Edit Kucing' : 'Tambah Kucing'],
+    ]);
+    ui_page_header(
+        $isEdit ? 'Edit data kucing' : 'Tambah kucing baru',
+        'Profil hewan',
+        $isEdit
+            ? 'Perbarui identitas, kesehatan, dan riwayat vaksin.'
+            : 'Lengkapi profil kucing untuk keperluan booking layanan.',
+    );
+    ?>
 
     <form method="POST" action="<?= e($action) ?>" enctype="multipart/form-data" data-stepper>
         <?= Csrf::field() ?>
@@ -25,49 +42,49 @@ $isEdit = $kucing !== null && !empty($kucing['id']);
         <?php endif; ?>
 
         <?php if (!empty($errors['general'])): ?>
-            <p class="text-destructive text-sm mb-4"><?= e($errors['general']) ?></p>
+            <p class="<?= e(ui_field_error_class()) ?> mb-4"><?= e($errors['general']) ?></p>
         <?php endif; ?>
 
-        <div class="flex items-center gap-2 mb-6 text-sm">
-            <span data-step-indicator class="text-primary font-semibold">1. Identitas</span>
+        <div class="mb-6 flex items-center gap-2 text-sm">
+            <span data-step-indicator class="font-semibold text-primary">1. Identitas</span>
             <span class="text-border">→</span>
             <span data-step-indicator class="text-muted-foreground/70">2. Kesehatan</span>
             <span class="text-border">→</span>
             <span data-step-indicator class="text-muted-foreground/70">3. Vaksin</span>
         </div>
 
-        <div class="<?= e(design_cn(design_surface('metric'), 'p-6 space-y-4')) ?>" data-step-panel>
+        <div class="<?= e(design_cn(design_surface('metric'), 'space-y-4 p-6')) ?>" data-step-panel>
             <h2 class="text-base font-semibold text-foreground">Identitas Kucing</h2>
 
             <div class="flex items-center gap-4">
                 <?php if (!empty($kucing['foto_url'])): ?>
                     <img src="<?= e((string) $kucing['foto_url']) ?>" alt="Foto kucing"
-                         class="w-16 h-16 rounded-lg object-cover border">
+                         class="h-16 w-16 rounded-lg border border-border object-cover">
                 <?php endif; ?>
                 <div class="flex-1">
-                    <label for="foto" class="block text-sm font-medium text-foreground mb-1">Foto Kucing (opsional)</label>
+                    <label for="foto" class="<?= e(ui_form_label_class()) ?>">Foto Kucing (opsional)</label>
                     <input type="file" id="foto" name="foto" accept="image/jpeg,image/png,image/webp"
                            class="w-full text-sm text-muted-foreground">
                     <?php if (!empty($errors['foto'])): ?>
-                        <p class="text-destructive text-xs mt-1"><?= e($errors['foto']) ?></p>
+                        <p class="<?= e(ui_field_error_class()) ?>"><?= e($errors['foto']) ?></p>
                     <?php endif; ?>
                 </div>
             </div>
 
-            <div class="grid sm:grid-cols-2 gap-4">
+            <div class="grid gap-4 sm:grid-cols-2">
                 <div>
-                    <label for="nama" class="block text-sm font-medium text-foreground mb-1">Nama Kucing</label>
+                    <label for="nama" class="<?= e(ui_form_label_class()) ?>">Nama Kucing</label>
                     <input type="text" id="nama" name="nama" required
                            value="<?= e((string) old('nama', $kucing['nama'] ?? '')) ?>"
-                           class="w-full rounded-lg border border-border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
+                           class="<?= e($inputClass('nama', $errors)) ?>">
                     <?php if (!empty($errors['nama'])): ?>
-                        <p class="text-destructive text-xs mt-1"><?= e($errors['nama']) ?></p>
+                        <p class="<?= e(ui_field_error_class()) ?>"><?= e($errors['nama']) ?></p>
                     <?php endif; ?>
                 </div>
                 <div>
-                    <label for="jenis_kelamin" class="block text-sm font-medium text-foreground mb-1">Jenis Kelamin</label>
+                    <label for="jenis_kelamin" class="<?= e(ui_form_label_class()) ?>">Jenis Kelamin</label>
                     <select id="jenis_kelamin" name="jenis_kelamin" required
-                            class="w-full rounded-lg border border-border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
+                            class="<?= e($inputClass('jenis_kelamin', $errors)) ?>">
                         <option value="">— Pilih —</option>
                         <?php foreach ($jenisKelaminLabels as $value => $label): ?>
                             <option value="<?= e($value) ?>"
@@ -77,84 +94,80 @@ $isEdit = $kucing !== null && !empty($kucing['id']);
                         <?php endforeach; ?>
                     </select>
                     <?php if (!empty($errors['jenis_kelamin'])): ?>
-                        <p class="text-destructive text-xs mt-1"><?= e($errors['jenis_kelamin']) ?></p>
+                        <p class="<?= e(ui_field_error_class()) ?>"><?= e($errors['jenis_kelamin']) ?></p>
                     <?php endif; ?>
                 </div>
             </div>
 
-            <div class="grid sm:grid-cols-2 gap-4">
+            <div class="grid gap-4 sm:grid-cols-2">
                 <div>
-                    <label for="ras" class="block text-sm font-medium text-foreground mb-1">Ras</label>
+                    <label for="ras" class="<?= e(ui_form_label_class()) ?>">Ras</label>
                     <input type="text" id="ras" name="ras"
                            value="<?= e((string) old('ras', $kucing['ras'] ?? '')) ?>"
-                           class="w-full rounded-lg border border-border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
+                           class="<?= e($inputClass('ras', $errors)) ?>">
                 </div>
                 <div>
-                    <label for="tanggal_lahir" class="block text-sm font-medium text-foreground mb-1">Tanggal Lahir</label>
+                    <label for="tanggal_lahir" class="<?= e(ui_form_label_class()) ?>">Tanggal Lahir</label>
                     <input type="date" id="tanggal_lahir" name="tanggal_lahir"
                            value="<?= e((string) old('tanggal_lahir', $kucing['tanggal_lahir'] ?? '')) ?>"
-                           class="w-full rounded-lg border border-border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
+                           class="<?= e($inputClass('tanggal_lahir', $errors)) ?>">
                     <?php if (!empty($errors['tanggal_lahir'])): ?>
-                        <p class="text-destructive text-xs mt-1"><?= e($errors['tanggal_lahir']) ?></p>
+                        <p class="<?= e(ui_field_error_class()) ?>"><?= e($errors['tanggal_lahir']) ?></p>
                     <?php endif; ?>
                 </div>
             </div>
 
             <div class="flex justify-end pt-2">
-                <button type="button" data-step-next
-                        class="bg-primary text-primary-foreground rounded-lg px-4 py-2 text-sm font-medium hover:opacity-90">
+                <button type="button" data-step-next class="<?= e(ui_btn_primary()) ?>">
                     Lanjut →
                 </button>
             </div>
         </div>
 
-        <div class="<?= e(design_cn(design_surface('metric'), 'p-6 space-y-4 hidden')) ?>" data-step-panel>
+        <div class="<?= e(design_cn(design_surface('metric'), 'hidden space-y-4 p-6')) ?>" data-step-panel>
             <h2 class="text-base font-semibold text-foreground">Data Kesehatan</h2>
 
             <div>
-                <label for="berat_badan" class="block text-sm font-medium text-foreground mb-1">Berat Badan (kg)</label>
+                <label for="berat_badan" class="<?= e(ui_form_label_class()) ?>">Berat Badan (kg)</label>
                 <input type="number" id="berat_badan" name="berat_badan" step="0.01" min="0"
                        value="<?= e((string) old('berat_badan', $kucing['berat_badan'] ?? '')) ?>"
-                       class="w-full rounded-lg border border-border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
+                       class="<?= e($inputClass('berat_badan', $errors)) ?>">
                 <?php if (!empty($errors['berat_badan'])): ?>
-                    <p class="text-destructive text-xs mt-1"><?= e($errors['berat_badan']) ?></p>
+                    <p class="<?= e(ui_field_error_class()) ?>"><?= e($errors['berat_badan']) ?></p>
                 <?php endif; ?>
             </div>
 
             <div>
-                <label for="catatan_kesehatan" class="block text-sm font-medium text-foreground mb-1">Catatan Kesehatan / Alergi</label>
+                <label for="catatan_kesehatan" class="<?= e(ui_form_label_class()) ?>">Catatan Kesehatan / Alergi</label>
                 <textarea id="catatan_kesehatan" name="catatan_kesehatan" rows="3"
-                          class="w-full rounded-lg border border-border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+                          class="<?= e($inputClass('catatan_kesehatan', $errors)) ?>"
                           placeholder="Alergi makanan, kondisi khusus, dll."><?= e((string) old('catatan_kesehatan', $kucing['catatan_kesehatan'] ?? '')) ?></textarea>
             </div>
 
             <div class="flex justify-between pt-2">
-                <button type="button" data-step-prev
-                        class="border border-border text-foreground rounded-lg px-4 py-2 text-sm hover:bg-muted">
+                <button type="button" data-step-prev class="<?= e(ui_btn_secondary()) ?>">
                     ← Kembali
                 </button>
-                <button type="button" data-step-next
-                        class="bg-primary text-primary-foreground rounded-lg px-4 py-2 text-sm font-medium hover:opacity-90">
+                <button type="button" data-step-next class="<?= e(ui_btn_primary()) ?>">
                     Lanjut →
                 </button>
             </div>
         </div>
 
-        <div class="<?= e(design_cn(design_surface('metric'), 'p-6 space-y-4 hidden')) ?>" data-step-panel>
+        <div class="<?= e(design_cn(design_surface('metric'), 'hidden space-y-4 p-6')) ?>" data-step-panel>
             <button type="button"
                     data-collapsible-trigger="vaksin-section"
                     class="flex w-full items-center justify-between text-left">
                 <div>
                     <h2 class="text-base font-semibold text-foreground">Riwayat Vaksin (opsional)</h2>
-                    <p class="text-xs text-muted-foreground mt-0.5">Syarat vaksin hanya divalidasi saat booking pet hotel.</p>
+                    <p class="mt-0.5 text-xs text-muted-foreground">Syarat vaksin hanya divalidasi saat booking pet hotel.</p>
                 </div>
-                <span class="text-sm text-primary shrink-0 ml-4">Tampilkan/Sembunyikan</span>
+                <span class="ml-4 shrink-0 text-sm text-primary">Tampilkan/Sembunyikan</span>
             </button>
 
             <div id="vaksin-section">
-                <div class="flex items-center justify-end mb-3">
-                    <button type="button" id="add-vaksin-row"
-                            class="text-sm text-primary hover:text-primary-hover font-medium">
+                <div class="mb-3 flex items-center justify-end">
+                    <button type="button" id="add-vaksin-row" class="<?= e(ui_btn_tertiary()) ?>">
                         + Tambah baris
                     </button>
                 </div>
@@ -169,12 +182,11 @@ $isEdit = $kucing !== null && !empty($kucing['id']);
                 </div>
             </div>
 
-            <div class="flex justify-between pt-2 border-t">
-                <button type="button" data-step-prev
-                        class="border border-border text-foreground rounded-lg px-4 py-2 text-sm hover:bg-muted">
+            <div class="flex justify-between border-t border-border pt-2">
+                <button type="button" data-step-prev class="<?= e(ui_btn_secondary()) ?>">
                     ← Kembali
                 </button>
-                <button type="submit" class="bg-primary text-primary-foreground rounded-lg px-6 py-2 font-medium hover:opacity-90">
+                <button type="submit" class="<?= e(design_cn(ui_btn_primary(), 'px-6')) ?>">
                     <?= e($submitLabel) ?>
                 </button>
             </div>
@@ -240,14 +252,14 @@ $isEdit = $kucing !== null && !empty($kucing['id']);
                 '<div class="flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2">' +
                 '<span class="text-xs text-foreground truncate">' + escapeHtml(file.name) + '</span>' +
                 '<a href="' + objectUrl + '" target="_blank" rel="noopener noreferrer" ' +
-                'class="text-xs text-blue-600 hover:underline shrink-0">Buka PDF</a>' +
+                'class="text-xs text-primary hover:underline shrink-0">Buka PDF</a>' +
                 '</div>';
         } else {
             previewEl.innerHTML =
                 '<p class="text-xs font-medium text-muted-foreground mb-1">Preview file baru</p>' +
                 '<a href="' + objectUrl + '" target="_blank" rel="noopener noreferrer">' +
                 '<img src="' + objectUrl + '" alt="Preview sertifikat" ' +
-                'class="max-h-32 max-w-full rounded-lg border object-contain">' +
+                'class="max-h-32 max-w-full rounded-lg border border-border object-contain">' +
                 '</a>';
         }
 

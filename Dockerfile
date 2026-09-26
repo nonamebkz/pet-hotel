@@ -8,7 +8,7 @@ RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoload
 FROM php:8.4-apache
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends libzip-dev \
+    && apt-get install -y --no-install-recommends libzip-dev default-mysql-client \
     && docker-php-ext-install pdo pdo_mysql \
     && a2enmod rewrite headers \
     && rm -rf /var/lib/apt/lists/*

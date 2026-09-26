@@ -38,7 +38,7 @@
         });
     }
 
-    function closeMobileMenu(nav) {
+    function closeMobileMenu(nav, restoreFocus) {
         var panel = nav.querySelector('[data-nav-mobile-panel]');
         var trigger = nav.querySelector('[data-nav-mobile-trigger]');
 
@@ -48,6 +48,9 @@
 
         if (trigger) {
             trigger.setAttribute('aria-expanded', 'false');
+            if (restoreFocus) {
+                trigger.focus();
+            }
         }
 
         setMobileIcons(nav, false);
@@ -68,7 +71,7 @@
                 var isOpen = !mobilePanel.classList.contains('hidden');
 
                 if (isOpen) {
-                    closeMobileMenu(nav);
+                    closeMobileMenu(nav, false);
                 } else {
                     mobilePanel.classList.remove('hidden');
                     mobileTrigger.setAttribute('aria-expanded', 'true');
@@ -103,9 +106,22 @@
         });
     });
 
-    document.addEventListener('click', function () {
+    document.addEventListener('click', function (event) {
         closeAllDropdowns(null);
-        document.querySelectorAll('[data-nav]').forEach(closeMobileMenu);
+        document.querySelectorAll('[data-nav]').forEach(function (nav) {
+            var panel = nav.querySelector('[data-nav-mobile-panel]');
+            var trigger = nav.querySelector('[data-nav-mobile-trigger]');
+            if (!panel || panel.classList.contains('hidden')) {
+                return;
+            }
+            if (trigger && (event.target === trigger || trigger.contains(event.target))) {
+                return;
+            }
+            if (panel.contains(event.target)) {
+                return;
+            }
+            closeMobileMenu(nav, true);
+        });
     });
 
     document.addEventListener('keydown', function (event) {
@@ -114,6 +130,8 @@
         }
 
         closeAllDropdowns(null);
-        document.querySelectorAll('[data-nav]').forEach(closeMobileMenu);
+        document.querySelectorAll('[data-nav]').forEach(function (nav) {
+            closeMobileMenu(nav, true);
+        });
     });
 })();

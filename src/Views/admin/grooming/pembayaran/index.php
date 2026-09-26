@@ -15,24 +15,21 @@ $btnDanger = design_cn(
     'border-destructive/30 bg-destructive/10 text-destructive hover:bg-destructive/15',
 );
 ?>
-<div class="font-body space-y-6">
-    <section class="<?= e(design_cn(design_surface('panel'), 'relative overflow-hidden p-6 sm:p-8')) ?>">
-        <div class="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-amber-400/10 blur-2xl" aria-hidden="true"></div>
-        <div class="relative flex flex-wrap items-start justify-between gap-4">
-            <div>
-                <p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Grooming</p>
-                <h1 class="mt-1 font-heading text-2xl sm:text-3xl text-foreground">Verifikasi Bukti Transfer</h1>
-                <p class="mt-2 text-sm text-muted-foreground">
-                    Tinjau bukti transfer booking grooming yang menunggu konfirmasi.
-                </p>
-            </div>
-            <?php if ($pendingList !== []): ?>
-                <span class="<?= e(design_status_badge('muted', 'rounded-xl px-3 py-1.5 text-sm font-semibold bg-amber-500/10 text-amber-800 dark:text-amber-200')) ?>">
-                    <?= e((string) count($pendingList)) ?> menunggu
-                </span>
-            <?php endif; ?>
-        </div>
-    </section>
+<?php
+$pembayaranMeta = $pendingList !== []
+    ? '<span class="' . e(design_cn('rounded-full px-2.5 py-1 text-xs font-medium', 'bg-amber-500/10 text-amber-800 dark:text-amber-200')) . '">' . e((string) count($pendingList)) . ' menunggu verifikasi</span>'
+    : '<span class="' . e(design_status_badge('success')) . '">Tidak ada antrian</span>';
+?>
+<div class="<?= e(ui_page_content_shell_classes()) ?>">
+    <?php
+    ui_page_header(
+        'Verifikasi Bukti Transfer',
+        'Grooming · Pembayaran',
+        'Tinjau bukti transfer booking grooming yang menunggu konfirmasi.',
+        null,
+        $pembayaranMeta,
+    );
+    ?>
 
     <?php
     $activeTab = 'pembayaran';

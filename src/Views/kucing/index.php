@@ -6,14 +6,19 @@ use App\Core\Csrf;
 
 $kucingList = $kucingList ?? [];
 ?>
-<div>
-    <div class="flex items-center justify-between mb-6">
-        <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-foreground">Kucing Saya</h1>
-        <a href="/kucing/tambah"
-           class="bg-primary text-primary-foreground rounded-lg px-4 py-2 text-sm font-medium hover:opacity-90">
-            + Tambah Kucing
-        </a>
-    </div>
+<div class="<?= e(ui_page_content_shell_classes()) ?>">
+    <?php
+    ob_start();
+    ?>
+    <a href="/kucing/tambah" class="<?= e(ui_btn_primary()) ?>">+ Tambah Kucing</a>
+    <?php
+    ui_page_header(
+        'Kucing Saya',
+        'Profil hewan',
+        'Daftar kucing terdaftar untuk booking grooming, penitipan, dan pet care.',
+        (string) ob_get_clean(),
+    );
+    ?>
 
     <?php if ($kucingList === []): ?>
         <div class="<?= e(design_cn(design_surface('metric'), 'p-8 text-center')) ?>">

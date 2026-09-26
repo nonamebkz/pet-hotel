@@ -7,6 +7,7 @@
 #
 # Commands:
 #   all        Schema + seed dev (default)
+#   if-needed  Schema/seed hanya bila belum ada (untuk docker compose up / entrypoint)
 #   schema     Semua file schema-mariadb-*.sql
 #   seed       Seed minimal (owner + pengaturan)
 #   seed-dev   Semua seed development
@@ -42,7 +43,9 @@ load_env() {
         value="${value#\"}"
         value="${value%\'}"
         value="${value#\'}"
-        export "$key=$value"
+        if [[ -z "${!key:-}" ]]; then
+            export "$key=$value"
+        fi
     done < .env
 }
 
@@ -64,7 +67,7 @@ parse_args() {
                 ;;
             --wait) WAIT_DB=1 ;;
             -h|--help) usage 0 ;;
-            schema|seed|seed-dev|all) COMMAND="$arg" ;;
+            schema|seed|seed-dev|all|if-needed) COMMAND="$arg" ;;
             *) args+=("$arg") ;;
         esac
     done
@@ -131,31 +134,130 @@ wait_for_db() {
     exit 1
 }
 
+db_client() {
+    if command -v mariadb >/dev/null 2>&1; then
+        echo mariadb
+    elif command -v mysql >/dev/null 2>&1; then
+        echo mysql
+    else
+        echo ""
+    fi
+}
+
+# MariaDB client di image PHP Debian meminta SSL; server compose tidak menyediakan TLS.
+db_client_ssl_args() {
+    echo --skip-ssl
+}
+
 run_sql_inline() {
     local sql="$1"
     if [[ "$MODE" == "docker" ]]; then
         docker exec -e MYSQL_PWD="${DB_PASSWORD:-root}" "$CONTAINER" mariadb \
+            --skip-ssl \
             -u"${DB_USERNAME:-root}" \
             "${DB_DATABASE:-petshop}" \
             --max_allowed_packet=67108864 \
             -e "$sql"
     else
-        local client=""
-        if command -v mariadb >/dev/null 2>&1; then
-            client=mariadb
-        elif command -v mysql >/dev/null 2>&1; then
-            client=mysql
-        else
-            echo "ERROR: mariadb/mysql CLI tidak ditemukan. Gunakan --docker." >&2
+        local client
+        client="$(db_client)"
+        if [[ -z "$client" ]]; then
+            echo "ERROR: mariadb/mysql CLI tidak ditemukan. Gunakan --docker atau pasang default-mysql-client." >&2
             exit 1
         fi
         "$client" \
+            $(db_client_ssl_args) \
             -h"${DB_HOST:-127.0.0.1}" \
             -P"${DB_PORT:-3306}" \
             -u"${DB_USERNAME:-root}" \
             -p"${DB_PASSWORD:-}" \
             "${DB_DATABASE:-petshop}" \
             -e "$sql"
+    fi
+}
+
+run_sql_scalar() {
+    local sql="$1"
+    if [[ "$MODE" == "docker" ]]; then
+        docker exec -e MYSQL_PWD="${DB_PASSWORD:-root}" "$CONTAINER" mariadb \
+            --skip-ssl \
+            -N -B \
+            -u"${DB_USERNAME:-root}" \
+            "${DB_DATABASE:-petshop}" \
+            -e "$sql" 2>/dev/null | tail -n 1
+    else
+        local client
+        client="$(db_client)"
+        if [[ -z "$client" ]]; then
+            echo "0"
+            return 1
+        fi
+        "$client" \
+            $(db_client_ssl_args) \
+            -N -B \
+            -h"${DB_HOST:-127.0.0.1}" \
+            -P"${DB_PORT:-3306}" \
+            -u"${DB_USERNAME:-root}" \
+            -p"${DB_PASSWORD:-}" \
+            "${DB_DATABASE:-petshop}" \
+            -e "$sql" 2>/dev/null | tail -n 1
+    fi
+}
+
+table_exists() {
+    local table="$1"
+    local db="${DB_DATABASE:-petshop}"
+    local count
+    count="$(run_sql_scalar "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='${db}' AND table_name='${table}'")"
+    [[ "${count:-0}" =~ ^[0-9]+$ ]] && [[ "$count" -ge 1 ]]
+}
+
+schema_is_initialized() {
+    table_exists staff && table_exists pengaturan_petshop && table_exists transaksi
+}
+
+owner_seed_is_initialized() {
+    local count
+    count="$(run_sql_scalar "SELECT COUNT(*) FROM staff WHERE email='owner@petshop.local'")"
+    [[ "${count:-0}" =~ ^[0-9]+$ ]] && [[ "$count" -ge 1 ]]
+}
+
+seed_dev_is_initialized() {
+    if ! table_exists jenis_grooming; then
+        return 1
+    fi
+    local count
+    count="$(run_sql_scalar "SELECT COUNT(*) FROM jenis_grooming")"
+    [[ "${count:-0}" =~ ^[0-9]+$ ]] && [[ "$count" -ge 1 ]]
+}
+
+auto_seed_dev_enabled() {
+    case "${AUTO_DB_SEED_DEV:-1}" in
+        1|true|TRUE|yes|YES|on|ON) return 0 ;;
+        *) return 1 ;;
+    esac
+}
+
+run_if_needed() {
+    if schema_is_initialized; then
+        echo ">> Schema sudah ada — dilewati."
+    else
+        echo ">> Schema belum lengkap — mengimpor..."
+        run_files "$(schema_files)"
+    fi
+
+    if auto_seed_dev_enabled; then
+        if seed_dev_is_initialized; then
+            echo ">> Seed development sudah ada — dilewati."
+        else
+            echo ">> Seed development — mengimpor..."
+            run_files "$(seed_dev_files)"
+        fi
+    elif owner_seed_is_initialized; then
+        echo ">> Akun owner sudah ada — seed minimal dilewati."
+    else
+        echo ">> Seed minimal (owner + pengaturan)..."
+        run_files "$(seed_minimal_files)"
     fi
 }
 
@@ -170,19 +272,21 @@ run_sql_file() {
         local remote="/tmp/petshop-$(basename "$file")"
         docker cp "$file" "$CONTAINER:$remote"
         docker exec -e MYSQL_PWD="${DB_PASSWORD:-root}" "$CONTAINER" mariadb \
+            --skip-ssl \
             -u"${DB_USERNAME:-root}" \
             "${DB_DATABASE:-petshop}" \
             --max_allowed_packet=67108864 \
             -e "source ${remote}"
         docker exec "$CONTAINER" rm -f "$remote"
     else
-        local client=""
-        if command -v mariadb >/dev/null 2>&1; then
-            client=mariadb
-        else
-            client=mysql
+        local client
+        client="$(db_client)"
+        if [[ -z "$client" ]]; then
+            echo "ERROR: mariadb/mysql CLI tidak ditemukan." >&2
+            exit 1
         fi
         "$client" \
+            $(db_client_ssl_args) \
             -h"${DB_HOST:-127.0.0.1}" \
             -P"${DB_PORT:-3306}" \
             -u"${DB_USERNAME:-root}" \
@@ -214,15 +318,18 @@ main() {
         echo "   Host      : ${DB_HOST:-127.0.0.1}:${DB_PORT:-3306}"
     fi
 
-    if [[ "$WAIT_DB" -eq 1 ]]; then
+    if [[ "$WAIT_DB" -eq 1 || "$COMMAND" == "if-needed" ]]; then
         wait_for_db
     fi
 
     if [[ "$MODE" == "docker" ]]; then
-        run_sql_inline "SET GLOBAL max_allowed_packet = 67108864"
+        run_sql_inline "SET GLOBAL max_allowed_packet = 67108864" || true
     fi
 
     case "$COMMAND" in
+        if-needed)
+            run_if_needed
+            ;;
         schema)
             run_files "$(schema_files)"
             ;;

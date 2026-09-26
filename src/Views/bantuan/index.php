@@ -5,11 +5,14 @@ declare(strict_types=1);
 $bankConfig = $bankConfig ?? [];
 $whatsapp = (string) ($bankConfig['petshop_whatsapp'] ?? '');
 ?>
-<div>
-    <div class="mb-6">
-        <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-foreground">Bantuan & Pembatalan</h1>
-        <p class="text-sm text-muted-foreground mt-1">Informasi pembatalan booking dan refund untuk layanan grooming & penitipan.</p>
-    </div>
+<div class="<?= e(ui_page_content_shell_classes()) ?>">
+    <?php
+    ui_page_header(
+        'Bantuan & Pembatalan',
+        'Utilitas',
+        'Informasi pembatalan booking dan refund untuk layanan grooming & penitipan.',
+    );
+    ?>
 
     <div class="<?= e(design_cn(design_surface('metric'), 'p-6 space-y-6 max-w-2xl')) ?>">
         <section>
@@ -29,11 +32,11 @@ $whatsapp = (string) ($bankConfig['petshop_whatsapp'] ?? '');
             <?php if ($whatsapp !== ''): ?>
                 <a href="<?= e(whatsapp_url('Halo, saya butuh bantuan terkait pembatalan booking petshop.')) ?>"
                    target="_blank" rel="noopener"
-                   class="inline-flex items-center px-4 py-2 rounded-lg bg-green-600 text-white text-sm font-medium hover:bg-green-700">
+                   class="<?= e(design_cn(ui_btn_primary(), 'bg-emerald-600 hover:opacity-90')) ?>">
                     Hubungi Kami via WhatsApp
                 </a>
             <?php else: ?>
-                <p class="text-sm text-amber-700">Nomor WhatsApp petshop belum dikonfigurasi.</p>
+                <p class="<?= e(design_alert_inline('warning')) ?> text-sm">Nomor WhatsApp petshop belum dikonfigurasi.</p>
             <?php endif; ?>
         </section>
 

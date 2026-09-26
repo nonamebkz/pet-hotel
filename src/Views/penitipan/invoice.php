@@ -7,13 +7,19 @@ $transaksi = $transaksi ?? [];
 $invoice = $invoice ?? [];
 $opsiLabels = $opsiLabels ?? [];
 ?>
-<div>
-    <div class="mb-6">
+<div class="<?= e(ui_page_content_shell_classes()) ?>">
+    <p>
         <a href="/penitipan/detail?id=<?= e((string) $booking['id']) ?>" class="<?= e(ui_back_link_class()) ?>">&larr; Detail</a>
-        <h1 class="text-2xl font-bold text-foreground mt-2">Invoice Penitipan</h1>
-    </div>
+    </p>
+    <?php
+    ui_page_header(
+        'Invoice Penitipan',
+        'Penitipan',
+        (string) ($invoice['nomor_invoice'] ?? ''),
+    );
+    ?>
 
-    <div class="<?= e(design_cn(design_surface('metric'), 'p-8 max-w-lg mx-auto')) ?>">
+    <div class="<?= e(design_cn(design_surface('panel'), 'p-8 max-w-lg mx-auto')) ?>">
         <div class="text-center mb-6">
             <div class="text-sm text-muted-foreground">Petshop</div>
             <div class="font-bold text-lg text-foreground">INVOICE</div>
@@ -39,7 +45,7 @@ $opsiLabels = $opsiLabels ?? [];
                 <span>Rp <?= e(number_format((float) $transaksi['subtotal_layanan'], 0, ',', '.')) ?></span>
             </div>
             <?php if ((float) $transaksi['potongan_promo'] > 0): ?>
-                <div class="flex justify-between text-green-700">
+                <div class="flex justify-between text-emerald-700 dark:text-emerald-300">
                     <span>Potongan promo</span>
                     <span>- Rp <?= e(number_format((float) $transaksi['potongan_promo'], 0, ',', '.')) ?></span>
                 </div>

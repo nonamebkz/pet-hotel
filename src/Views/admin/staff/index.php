@@ -18,33 +18,32 @@ foreach ($staffList as $row) {
 }
 $totalCount = count($staffList);
 $btnPrimary = design_cn(ui_btn_primary(), 'gap-2');
+$metaHtml = '';
+if ($totalCount > 0) {
+    $metaHtml = '<span class="' . e(design_status_badge('success')) . '">' . e((string) $aktifCount) . ' aktif</span>'
+        . '<span class="' . e(design_status_badge('muted')) . '">' . e((string) $totalCount) . ' total</span>';
+}
 ?>
-<div class="font-body space-y-6">
-    <section class="<?= e(design_cn(design_surface('panel'), 'relative overflow-hidden p-6 sm:p-8')) ?>">
-        <div class="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-primary/10 blur-2xl" aria-hidden="true"></div>
-        <div class="relative flex flex-wrap items-start justify-between gap-4">
-            <div>
-                <p class="text-xs font-semibold uppercase tracking-wider text-content-secondary">Owner only</p>
-                <h1 class="mt-1 font-heading text-2xl sm:text-3xl text-content-primary">Manajemen Staff</h1>
-                <p class="mt-2 max-w-xl text-sm text-content-secondary">
-                    Tambah akun pegawai, atur kredensial, lalu aktifkan setelah password diserahkan.
-                </p>
-                <?php if ($totalCount > 0): ?>
-                    <p class="mt-3 text-xs font-medium text-content-secondary">
-                        <span class="text-admin font-semibold"><?= e((string) $aktifCount) ?></span> aktif
-                        · <?= e((string) $totalCount) ?> total
-                    </p>
-                <?php endif; ?>
-            </div>
-            <a href="/admin/staff/tambah"
-               class="cursor-pointer inline-flex items-center gap-2 rounded-xl bg-admin px-4 py-2.5 text-sm font-semibold text-white transition duration-soft hover:bg-admin-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-admin focus-visible:ring-offset-2">
-                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
-                </svg>
-                Tambah Staff
-            </a>
-        </div>
-    </section>
+<div class="<?= e(ui_page_content_shell_classes()) ?>">
+    <?php
+    ob_start();
+    ?>
+    <a href="/admin/staff/tambah" class="<?= e($btnPrimary) ?>">
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
+        </svg>
+        Tambah Staff
+    </a>
+    <?php
+    $actionsHtml = (string) ob_get_clean();
+    ui_page_header(
+        'Manajemen Staff',
+        'Owner only · Administrasi',
+        'Tambah akun pegawai, atur kredensial, lalu aktifkan setelah password diserahkan.',
+        $actionsHtml,
+        $metaHtml !== '' ? $metaHtml : null,
+    );
+    ?>
 
     <?php if ($staffList === []): ?>
         <?php
@@ -53,7 +52,7 @@ $btnPrimary = design_cn(ui_btn_primary(), 'gap-2');
         $description = 'Buat akun pertama agar tim dapat masuk ke dashboard operasional.';
         $ctaLabel = 'Tambah Staff';
         $ctaHref = '/admin/staff/tambah';
-        $ctaClass = 'cursor-pointer inline-flex items-center justify-center rounded-xl bg-admin px-4 py-2.5 text-sm font-semibold text-white transition duration-soft hover:bg-admin-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-admin focus-visible:ring-offset-2';
+        $ctaClass = $btnPrimary;
         require __DIR__ . '/../../partials/ui/empty-state.php';
         ?>
     <?php else: ?>
@@ -74,21 +73,21 @@ $btnPrimary = design_cn(ui_btn_primary(), 'gap-2');
                 ?>
                 <article class="<?= e(design_cn(design_interactive('listArticle'), design_interactive('listArticleHover'))) ?>">
                     <div class="flex flex-wrap items-start gap-4">
-                        <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-admin-soft font-heading text-sm font-semibold text-admin" aria-hidden="true">
+                        <div class="<?= e(design_cn(design_icon_badge('default'), 'flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl font-heading text-sm font-semibold')) ?>" aria-hidden="true">
                             <?= e($initials) ?>
                         </div>
 
                         <div class="min-w-0 flex-1">
                             <div class="flex flex-wrap items-center gap-2">
-                                <h2 class="font-heading text-lg text-content-primary truncate"><?= e($nama) ?></h2>
-                                <span class="inline-flex items-center rounded-lg bg-admin-soft px-2 py-0.5 text-xs font-semibold text-admin">
+                                <h2 class="font-heading text-lg text-foreground truncate"><?= e($nama) ?></h2>
+                                <span class="<?= e(design_status_badge('muted')) ?> !bg-primary/10 !text-primary">
                                     <?= e($roleLabels[$staff['role'] ?? ''] ?? (string) ($staff['role'] ?? '—')) ?>
                                 </span>
-                                <span class="inline-flex items-center rounded-lg px-2 py-0.5 text-xs font-semibold <?= $isActive ? 'bg-success-bg text-success' : 'bg-page text-content-secondary' ?>">
+                                <span class="inline-flex items-center rounded-lg px-2 py-0.5 text-xs font-semibold <?= $isActive ? design_status_badge('success') : design_status_badge('muted') ?>">
                                     <?= e($statusLabels[$staff['status']] ?? (string) $staff['status']) ?>
                                 </span>
                             </div>
-                            <dl class="mt-2 grid gap-1 text-sm text-content-secondary sm:grid-cols-2 lg:grid-cols-3">
+                            <dl class="mt-2 grid gap-1 text-sm text-muted-foreground sm:grid-cols-2 lg:grid-cols-3">
                                 <div class="truncate">
                                     <dt class="sr-only">Email</dt>
                                     <dd><?= e((string) $staff['email']) ?></dd>
@@ -107,11 +106,11 @@ $btnPrimary = design_cn(ui_btn_primary(), 'gap-2');
                         <div class="flex w-full flex-wrap items-center justify-end gap-2 sm:w-auto sm:ml-auto">
                             <div class="hidden sm:flex flex-wrap items-center gap-2">
                                 <a href="/admin/staff/edit?id=<?= e(urlencode((string) $staff['id'])) ?>"
-                                   class="cursor-pointer inline-flex items-center rounded-xl border border-border bg-page/60 px-3 py-2 text-xs font-semibold text-admin transition duration-soft hover:bg-admin-soft focus:outline-none focus-visible:ring-2 focus-visible:ring-admin">
+                                   class="<?= e(design_cn(ui_btn_secondary(), 'px-3 py-2 text-xs')) ?>">
                                     Edit
                                 </a>
                                 <a href="/admin/staff/reset-password?id=<?= e(urlencode((string) $staff['id'])) ?>"
-                                   class="cursor-pointer inline-flex items-center rounded-xl border border-border bg-page/60 px-3 py-2 text-xs font-semibold text-admin transition duration-soft hover:bg-admin-soft focus:outline-none focus-visible:ring-2 focus-visible:ring-admin">
+                                   class="<?= e(design_cn(ui_btn_secondary(), 'px-3 py-2 text-xs')) ?>">
                                     Reset Password
                                 </a>
                                 <form method="POST" action="/admin/staff/status"
@@ -155,8 +154,8 @@ $btnPrimary = design_cn(ui_btn_primary(), 'gap-2');
             <?php endforeach; ?>
         </div>
 
-        <p class="text-xs text-content-secondary px-1">
-            Tip: buat akun sebagai <strong class="font-semibold text-content-primary">Nonaktif</strong>, serahkan password ke staff, lalu aktifkan dari menu aksi.
+        <p class="text-xs text-muted-foreground px-1">
+            Tip: buat akun sebagai <strong class="font-semibold text-foreground">Nonaktif</strong>, serahkan password ke staff, lalu aktifkan dari menu aksi.
         </p>
     <?php endif; ?>
 </div>

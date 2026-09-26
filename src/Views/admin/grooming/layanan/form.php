@@ -9,23 +9,23 @@ $errors = $errors ?? [];
 $action = $action ?? '';
 $submitLabel = $submitLabel ?? 'Simpan';
 $isEdit = $jenis !== null && !empty($jenis['id']);
-$inputClass = design_cn(
-    'w-full rounded-xl border border-input bg-background px-3.5 py-3 text-base sm:text-sm text-foreground transition',
-    'hover:border-primary/30 focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/25',
-);
-$errorBorder = ' border-destructive/50 focus:border-destructive focus:ring-destructive/25';
-?>
-<div class="font-body max-w-xl space-y-6">
-    <nav class="flex flex-wrap items-center gap-2 text-sm text-muted-foreground" aria-label="Breadcrumb">
-        <a href="/admin/grooming/layanan" class="hover:text-primary focus:outline-none focus-visible:underline">Jenis</a>
-        <span aria-hidden="true">/</span>
-        <span class="font-medium text-foreground"><?= $isEdit ? 'Edit' : 'Tambah' ?></span>
-    </nav>
 
-    <header>
-        <h1 class="font-heading text-2xl sm:text-3xl text-foreground"><?= $isEdit ? 'Edit jenis grooming' : 'Tambah jenis grooming' ?></h1>
-        <p class="mt-2 text-sm text-muted-foreground">Atur nama, harga, dan status layanan.</p>
-    </header>
+$inputClass = static function (string $field) use ($errors): string {
+    return ui_form_input_class(!empty($errors[$field]));
+};
+?>
+<div class="<?= e(design_cn(ui_page_content_shell_classes(), design_page_layout('formSm'))) ?>">
+    <?php
+    ui_breadcrumb([
+        ['label' => 'Jenis Layanan', 'href' => '/admin/grooming/layanan'],
+        ['label' => $isEdit ? 'Edit' : 'Tambah'],
+    ]);
+    ui_page_header(
+        $isEdit ? 'Edit jenis grooming' : 'Tambah jenis grooming',
+        'Grooming · Administrasi',
+        'Atur nama, harga, dan status layanan.',
+    );
+    ?>
 
     <?php if (!empty($errors['general'])): ?>
         <div class="rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive" role="alert"><?= e((string) $errors['general']) ?></div>
@@ -38,23 +38,23 @@ $errorBorder = ' border-destructive/50 focus:border-destructive focus:ring-destr
         <?php endif; ?>
 
         <div>
-            <label for="nama" class="mb-1.5 block text-sm font-semibold text-foreground">Nama</label>
+            <label for="nama" class="<?= e(ui_form_label_class()) ?>">Nama</label>
             <input type="text" id="nama" name="nama" value="<?= e((string) ($jenis['nama'] ?? old('nama', ''))) ?>"
-                   class="<?= e($inputClass . (!empty($errors['nama']) ? $errorBorder : '')) ?>">
-            <?php if (!empty($errors['nama'])): ?><p class="mt-1.5 text-xs text-destructive"><?= e((string) $errors['nama']) ?></p><?php endif; ?>
+                   class="<?= e($inputClass('nama')) ?>">
+            <?php if (!empty($errors['nama'])): ?><p class="<?= e(ui_field_error_class()) ?>"><?= e((string) $errors['nama']) ?></p><?php endif; ?>
         </div>
 
         <div>
-            <label for="deskripsi" class="mb-1.5 block text-sm font-semibold text-foreground">Deskripsi</label>
-            <textarea id="deskripsi" name="deskripsi" rows="3" class="<?= e($inputClass) ?>"><?= e((string) ($jenis['deskripsi'] ?? old('deskripsi', ''))) ?></textarea>
+            <label for="deskripsi" class="<?= e(ui_form_label_class()) ?>">Deskripsi</label>
+            <textarea id="deskripsi" name="deskripsi" rows="3" class="<?= e(ui_form_input_class()) ?>"><?= e((string) ($jenis['deskripsi'] ?? old('deskripsi', ''))) ?></textarea>
         </div>
 
         <div>
-            <label for="harga" class="mb-1.5 block text-sm font-semibold text-foreground">Harga (Rp)</label>
+            <label for="harga" class="<?= e(ui_form_label_class()) ?>">Harga (Rp)</label>
             <input type="number" id="harga" name="harga" min="0" step="1000"
                    value="<?= e((string) ($jenis['harga'] ?? old('harga', ''))) ?>"
-                   class="<?= e($inputClass . (!empty($errors['harga']) ? $errorBorder : '')) ?>">
-            <?php if (!empty($errors['harga'])): ?><p class="mt-1.5 text-xs text-destructive"><?= e((string) $errors['harga']) ?></p><?php endif; ?>
+                   class="<?= e($inputClass('harga')) ?>">
+            <?php if (!empty($errors['harga'])): ?><p class="<?= e(ui_field_error_class()) ?>"><?= e((string) $errors['harga']) ?></p><?php endif; ?>
         </div>
 
         <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-border bg-muted/30 px-4 py-3">
@@ -63,9 +63,9 @@ $errorBorder = ' border-destructive/50 focus:border-destructive focus:ring-destr
             <span class="text-sm font-medium text-foreground">Aktif (dapat dipilih pelanggan)</span>
         </label>
 
-        <div class="flex flex-wrap gap-3">
-            <button type="submit" class="<?= e(ui_btn_primary()) ?> disabled:opacity-60"><?= e($submitLabel) ?></button>
-            <a href="/admin/grooming/layanan" class="<?= e(ui_btn_secondary()) ?>">Batal</a>
+        <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            <button type="submit" class="<?= e(design_cn(ui_btn_primary(), 'w-full sm:w-auto')) ?> disabled:opacity-60"><?= e($submitLabel) ?></button>
+            <a href="/admin/grooming/layanan" class="<?= e(design_cn(ui_btn_secondary(), 'w-full sm:w-auto text-center')) ?>">Batal</a>
         </div>
     </form>
 </div>

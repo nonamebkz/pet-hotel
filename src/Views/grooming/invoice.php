@@ -9,8 +9,16 @@ $transaksi = $transaksi ?? [];
 $invoice = $invoice ?? [];
 $opsiLabels = $opsiLabels ?? [];
 ?>
-<div class="max-w-lg mx-auto">
-    <div class="<?= e(design_cn(design_surface('metric'), 'p-8 print:shadow-none print:border-0')) ?>" id="invoice-print">
+<div class="<?= e(ui_page_content_shell_classes()) ?>">
+    <?php
+    ui_page_header(
+        'Invoice',
+        'Grooming',
+        (string) ($invoice['nomor_invoice'] ?? ''),
+    );
+    ?>
+
+    <div class="<?= e(design_cn(design_surface('panel'), 'p-8 max-w-lg mx-auto print:shadow-none print:border-0')) ?>" id="invoice-print">
         <div class="text-center mb-6">
             <h1 class="text-xl font-bold text-foreground">INVOICE</h1>
             <p class="text-sm text-muted-foreground"><?= e((string) $invoice['nomor_invoice']) ?></p>
@@ -61,7 +69,9 @@ $opsiLabels = $opsiLabels ?? [];
             </div>
         </div>
 
-        <div class="mt-6 text-center text-xs text-green-700 font-medium">LUNAS</div>
+        <div class="mt-6 text-center">
+            <span class="<?= e(design_status_badge('success')) ?>">LUNAS</span>
+        </div>
     </div>
 
     <div class="flex gap-3 mt-6 print:hidden">

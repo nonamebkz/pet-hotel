@@ -9,15 +9,15 @@ $defaultLng = app_settings('petshop_lng');
 $hasCoords = $mapLat !== null && $mapLat !== '' && $mapLng !== null && $mapLng !== '';
 ?>
 <div class="space-y-2">
-    <label class="block text-sm font-medium text-gray-700">Pilih Lokasi di Peta</label>
-    <p class="text-xs text-gray-500">Ketik alamat di atas untuk mencari otomatis, klik peta untuk menandai, atau geser penanda.</p>
+    <label class="<?= e(ui_form_label_class()) ?>">Pilih Lokasi di Peta</label>
+    <p class="text-xs text-muted-foreground">Ketik alamat di atas untuk mencari otomatis, klik peta untuk menandai, atau geser penanda.</p>
 
-    <div id="address-map" class="w-full h-72 rounded-lg border border-gray-300 z-0"></div>
+    <div id="address-map" class="w-full h-72 rounded-lg border border-border z-0"></div>
 
     <input type="hidden" id="latitude" name="latitude" value="<?= e((string) ($mapLat ?? '')) ?>">
     <input type="hidden" id="longitude" name="longitude" value="<?= e((string) ($mapLng ?? '')) ?>">
 
-    <p id="coords-display" class="text-sm text-gray-500">
+    <p id="coords-display" class="text-sm text-muted-foreground">
         <?php if ($hasCoords): ?>
             Koordinat: <?= e((string) $mapLat) ?>, <?= e((string) $mapLng) ?>
         <?php else: ?>

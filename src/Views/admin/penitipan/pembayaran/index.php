@@ -15,24 +15,21 @@ $btnDanger = 'cursor-pointer inline-flex items-center justify-center rounded-lg 
 $today = date('Y-m-d');
 $tomorrow = date('Y-m-d', strtotime('+1 day'));
 ?>
-<div class="font-body space-y-6">
-    <section class="<?= e($heroClass) ?>">
-        <div class="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-amber-400/10 blur-2xl" aria-hidden="true"></div>
-        <div class="relative flex flex-wrap items-start justify-between gap-4">
-            <div>
-                <p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Penitipan</p>
-                <h1 class="mt-1 font-heading text-2xl sm:text-3xl text-foreground">Verifikasi Bukti</h1>
-                <p class="mt-2 text-sm text-muted-foreground">
-                    Tinjau bukti transfer booking &amp; perpanjangan penitipan.
-                </p>
-            </div>
-            <?php if ($pendingList !== []): ?>
-                <span class="<?= e(design_status_badge('warning')) ?>">
-                    <?= e((string) count($pendingList)) ?> menunggu
-                </span>
-            <?php endif; ?>
-        </div>
-    </section>
+<?php
+$penitipanPembayaranMeta = $pendingList !== []
+    ? '<span class="' . e(design_status_badge('muted')) . '">' . e((string) count($pendingList)) . ' menunggu verifikasi</span>'
+    : '<span class="' . e(design_status_badge('success')) . '">Tidak ada antrian</span>';
+?>
+<div class="<?= e(ui_page_content_shell_classes()) ?>">
+    <?php
+    ui_page_header(
+        'Verifikasi Bukti',
+        'Penitipan · Pembayaran',
+        'Tinjau bukti transfer booking dan perpanjangan penitipan.',
+        null,
+        $penitipanPembayaranMeta,
+    );
+    ?>
 
     <?php require __DIR__ . '/../_nav.php'; ?>
 

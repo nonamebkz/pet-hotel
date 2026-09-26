@@ -7,29 +7,27 @@ use App\Core\Csrf;
 $errors = $errors ?? [];
 $pelanggan = $pelanggan ?? [];
 $addressComplete = $addressComplete ?? false;
+
+$headerMeta = $addressComplete
+    ? '<span class="' . e(design_status_badge('success')) . '">Alamat lengkap untuk antar-jemput</span>'
+    : '<span class="' . e(design_cn('rounded-full px-2.5 py-1 text-xs font-medium', 'bg-amber-500/10 text-amber-800 dark:text-amber-200')) . '">Alamat belum lengkap</span>';
 ?>
 <div class="<?= e(design_cn('max-w-2xl', ui_page_content_shell_classes(), design_page_layout('formSm'))) ?>">
-    <div class="flex items-center justify-between mb-6">
-        <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-foreground">Profil Saya</h1>
-        <?php if ($addressComplete): ?>
-            <span class="text-xs font-medium bg-green-100 text-green-800 px-3 py-1 rounded-full">
-                Alamat lengkap untuk antar-jemput
-            </span>
-        <?php else: ?>
-            <span class="text-xs font-medium bg-amber-100 text-amber-800 px-3 py-1 rounded-full">
-                Alamat belum lengkap
-            </span>
-        <?php endif; ?>
-    </div>
+    <?php
+    ui_page_header(
+        'Profil Saya',
+        'Akun',
+        'Alamat wajib lengkap hanya jika Anda memilih opsi antar-jemput saat booking grooming atau penitipan.',
+        null,
+        $headerMeta,
+    );
+    ?>
 
-    <p class="text-sm text-muted-foreground mb-2">
-        Alamat wajib lengkap hanya jika Anda memilih opsi antar-jemput saat booking grooming atau penitipan.
-    </p>
-    <p class="text-xs text-muted-foreground mb-6">
+    <p class="text-xs text-muted-foreground">
         Ketik alamat lengkap — peta akan mencari lokasi otomatis. Anda juga bisa klik atau geser penanda di peta.
     </p>
 
-    <form method="POST" action="/profil" enctype="multipart/form-data" id="profil-form" class="<?= e(design_cn(design_surface('metric'), 'p-6 space-y-4')) ?>">
+    <form method="POST" action="/profil" enctype="multipart/form-data" id="profil-form" class="<?= e(design_cn(design_surface('panel'), 'p-6 space-y-4')) ?>">
         <?= Csrf::field() ?>
 
         <?php if (!empty($errors['general'])): ?>

@@ -10,13 +10,13 @@ $emptyMessage = $emptyMessage ?? 'Belum ada riwayat vaksin.';
 ?>
 <div class="space-y-3">
     <?php if ($vaksinList === []): ?>
-        <p class="text-xs text-gray-500"><?= e($emptyMessage) ?></p>
+        <p class="text-xs text-muted-foreground"><?= e($emptyMessage) ?></p>
     <?php else: ?>
         <?php foreach ($vaksinList as $vaksin): ?>
             <div class="flex flex-wrap gap-3 items-start">
                 <div class="min-w-[140px]">
-                    <div class="text-gray-800"><?= e((string) $vaksin['jenis_vaksin']) ?></div>
-                    <div class="text-xs text-gray-500">
+                    <div class="text-sm font-medium text-foreground"><?= e((string) $vaksin['jenis_vaksin']) ?></div>
+                    <div class="text-xs text-muted-foreground">
                         <?= e(date('d/m/Y', strtotime((string) $vaksin['tanggal_vaksin']))) ?>
                     </div>
                 </div>
@@ -29,7 +29,7 @@ $emptyMessage = $emptyMessage ?? 'Belum ada riwayat vaksin.';
                         require __DIR__ . '/uploaded-file-preview.php';
                         ?>
                     <?php else: ?>
-                        <span class="text-xs text-gray-400">Tanpa sertifikat</span>
+                        <span class="text-xs text-muted-foreground/70">Tanpa sertifikat</span>
                     <?php endif; ?>
                 </div>
             </div>

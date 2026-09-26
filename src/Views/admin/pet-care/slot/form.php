@@ -10,26 +10,29 @@ $submitLabel = $submitLabel ?? 'Simpan';
 $tanggal = $tanggal ?? date('Y-m-d');
 $errors = Session::getFlash('errors', []);
 
-$inputClass = design_cn(
-    'w-full rounded-xl border border-input bg-background px-3.5 py-3 text-base sm:text-sm text-foreground transition',
-    'hover:border-primary/30 focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/25',
-);
-$errorBorder = ' border-destructive/50 focus:border-destructive focus:ring-destructive/25';
-?>
-<div class="font-body max-w-xl space-y-6">
-    <nav class="flex flex-wrap items-center gap-2 text-sm text-muted-foreground" aria-label="Breadcrumb">
-        <a href="/admin/pet-care/slot?tanggal=<?= e(urlencode($tanggal)) ?>"
-           class="hover:text-primary focus:outline-none focus-visible:underline">Slot Dokter</a>
-        <span aria-hidden="true">/</span>
-        <span class="font-medium text-foreground">Tambah</span>
-    </nav>
+$inputClass = static function (string $field, array $errors): string {
+    $base = design_cn(ui_form_input_class(), 'py-3');
+    if (!empty($errors[$field])) {
+        return $base . ' border-destructive focus:border-destructive focus:ring-destructive/25';
+    }
 
-    <header>
-        <h1 class="font-heading text-2xl sm:text-3xl text-foreground">Tambah slot dokter</h1>
-        <p class="mt-2 text-sm text-muted-foreground">
-            Buat slot waktu konsultasi. Maksimal 1 booking per slot (1 dokter).
-        </p>
-    </header>
+    return $base;
+};
+
+$slotListHref = '/admin/pet-care/slot?tanggal=' . urlencode($tanggal);
+?>
+<div class="<?= e(design_cn(ui_page_content_shell_classes(), design_page_layout('formSm'))) ?>">
+    <?php
+    ui_breadcrumb([
+        ['label' => 'Slot Dokter', 'href' => $slotListHref],
+        ['label' => 'Tambah'],
+    ]);
+    ui_page_header(
+        'Tambah slot dokter',
+        'Pet Care · Slot',
+        'Buat slot waktu konsultasi. Maksimal 1 booking per slot (1 dokter).',
+    );
+    ?>
 
     <?php if (!empty($errors['general'])): ?>
         <div class="rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive" role="alert">
@@ -46,7 +49,7 @@ $errorBorder = ' border-destructive/50 focus:border-destructive focus:ring-destr
             <label for="tanggal" class="<?= e(ui_form_label_class()) ?>">Tanggal</label>
             <input type="date" id="tanggal" name="tanggal" min="<?= e(date('Y-m-d')) ?>"
                    value="<?= e((string) old('tanggal', $tanggal)) ?>"
-                   class="<?= e($inputClass . (!empty($errors['tanggal']) ? $errorBorder : '')) ?>">
+                   class="<?= e($inputClass('tanggal', $errors)) ?>">
             <?php if (!empty($errors['tanggal'])): ?>
                 <p class="<?= e(ui_field_error_class()) ?>"><?= e((string) $errors['tanggal']) ?></p>
             <?php endif; ?>
@@ -56,7 +59,7 @@ $errorBorder = ' border-destructive/50 focus:border-destructive focus:ring-destr
             <label for="slot_waktu" class="<?= e(ui_form_label_class()) ?>">Waktu Slot</label>
             <input type="time" id="slot_waktu" name="slot_waktu"
                    value="<?= e((string) old('slot_waktu', '09:00')) ?>"
-                   class="<?= e($inputClass . (!empty($errors['slot_waktu']) ? $errorBorder : '')) ?>">
+                   class="<?= e($inputClass('slot_waktu', $errors)) ?>">
             <?php if (!empty($errors['slot_waktu'])): ?>
                 <p class="<?= e(ui_field_error_class()) ?>"><?= e((string) $errors['slot_waktu']) ?></p>
             <?php endif; ?>
@@ -67,7 +70,7 @@ $errorBorder = ' border-destructive/50 focus:border-destructive focus:ring-destr
             <button type="submit" class="<?= e(design_cn(ui_btn_primary(), 'disabled:opacity-60')) ?>">
                 <?= e($submitLabel) ?>
             </button>
-            <a href="/admin/pet-care/slot?tanggal=<?= e(urlencode($tanggal)) ?>" class="<?= e(ui_btn_secondary()) ?>">Batal</a>
+            <a href="<?= e($slotListHref) ?>" class="<?= e(ui_btn_secondary()) ?>">Batal</a>
         </div>
     </form>
 </div>

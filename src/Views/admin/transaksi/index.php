@@ -40,34 +40,23 @@ $inputClass = design_cn(
 
 $jenisBadge = static function (string $label): string {
     return match (true) {
-        str_contains($label, 'Grooming') => 'bg-primary-soft text-primary',
-        str_contains($label, 'Perpanjangan') => 'bg-warning-bg text-amber-800',
-        default => 'bg-success-bg text-success',
+        str_contains($label, 'Grooming') => design_status_badge('muted') . ' !bg-primary/10 !text-primary',
+        str_contains($label, 'Perpanjangan') => design_status_badge('muted') . ' !bg-amber-500/10 !text-amber-800 dark:!text-amber-200',
+        default => design_status_badge('success'),
     };
 };
 
 $periodeLabel = date('d/m/Y', strtotime($mulai)) . ' — ' . date('d/m/Y', strtotime($akhir));
 $advancedOpen = $filterJenis !== '' || $filterQ !== '';
 ?>
-<div class="font-body space-y-6">
-    <section class="<?= e(design_cn(design_surface('panel'), 'relative overflow-hidden p-6 sm:p-8')) ?>">
-        <div class="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-primary/10 blur-2xl" aria-hidden="true"></div>
-        <div class="relative flex flex-wrap items-start justify-between gap-4">
-            <div>
-                <p class="text-xs font-semibold uppercase tracking-wider text-content-secondary">Keuangan</p>
-                <h1 class="mt-1 font-heading text-2xl sm:text-3xl text-content-primary">Riwayat Transaksi</h1>
-                <p class="mt-2 text-sm text-content-secondary max-w-xl">
-                    Arsip pembayaran grooming, penitipan, dan perpanjangan.
-                    Periode: <span class="font-medium text-content-primary"><?= e($periodeLabel) ?></span>
-                </p>
-            </div>
-            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-sm" aria-hidden="true">
-                <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/>
-                </svg>
-            </div>
-        </div>
-    </section>
+<div class="<?= e(ui_page_content_shell_classes()) ?>">
+    <?php
+    ui_page_header(
+        'Riwayat Transaksi',
+        'Keuangan · Pembayaran',
+        'Arsip pembayaran grooming, penitipan, dan perpanjangan. Periode: ' . $periodeLabel,
+    );
+    ?>
 
     <nav class="flex flex-wrap gap-2" aria-label="Navigasi pembayaran">
         <a href="/admin/grooming/pembayaran"
@@ -86,26 +75,26 @@ $advancedOpen = $filterJenis !== '' || $filterQ !== '';
     <?php if ($rows !== [] || $hasActiveFilter): ?>
         <div class="grid sm:grid-cols-3 gap-4">
             <article class="<?= e(design_surface('metric')) ?>">
-                <p class="text-sm text-content-secondary">Ditampilkan</p>
-                <p class="mt-1 font-heading text-2xl text-admin"><?= e((string) count($rows)) ?></p>
-                <p class="mt-1 text-xs text-content-secondary">transaksi pada filter aktif</p>
+                <p class="text-sm text-muted-foreground">Ditampilkan</p>
+                <p class="mt-1 font-heading text-2xl text-primary"><?= e((string) count($rows)) ?></p>
+                <p class="mt-1 text-xs text-muted-foreground">transaksi pada filter aktif</p>
             </article>
             <article class="<?= e(design_surface('metric')) ?>">
-                <p class="text-sm text-content-secondary">Lunas</p>
+                <p class="text-sm text-muted-foreground">Lunas</p>
                 <p class="mt-1 font-heading text-2xl text-success"><?= e((string) $countLunas) ?></p>
-                <p class="mt-1 text-xs text-content-secondary">
+                <p class="mt-1 text-xs text-muted-foreground">
                     Rp <?= e(number_format($revenueLunas, 0, ',', '.')) ?>
                 </p>
             </article>
             <article class="rounded-2xl border bg-card p-5 <?= $countPending > 0 ? 'border-amber-200 bg-warning-bg/30' : '' ?>">
-                <p class="text-sm text-content-secondary">Menunggu Verifikasi</p>
-                <p class="mt-1 font-heading text-2xl <?= $countPending > 0 ? 'text-amber-700' : 'text-admin' ?>"><?= e((string) $countPending) ?></p>
+                <p class="text-sm text-muted-foreground">Menunggu Verifikasi</p>
+                <p class="mt-1 font-heading text-2xl <?= $countPending > 0 ? 'text-amber-700' : 'text-primary' ?>"><?= e((string) $countPending) ?></p>
                 <?php if ($countPending > 0): ?>
-                    <a href="/admin/grooming/pembayaran" class="mt-1 inline-flex cursor-pointer text-xs font-semibold text-admin hover:underline focus:outline-none focus-visible:underline">
+                    <a href="/admin/grooming/pembayaran" class="mt-1 inline-flex cursor-pointer text-xs font-semibold text-primary hover:underline focus:outline-none focus-visible:underline">
                         Ke antrian verifikasi →
                     </a>
                 <?php else: ?>
-                    <p class="mt-1 text-xs text-content-secondary">Tidak ada antrean di hasil ini</p>
+                    <p class="mt-1 text-xs text-muted-foreground">Tidak ada antrean di hasil ini</p>
                 <?php endif; ?>
             </article>
         </div>
@@ -113,10 +102,10 @@ $advancedOpen = $filterJenis !== '' || $filterQ !== '';
 
     <form method="GET" action="/admin/transaksi" class="rounded-2xl border bg-card p-5 sm:p-6 space-y-4">
         <div class="flex flex-wrap items-center justify-between gap-2">
-            <h2 class="font-heading text-lg text-content-primary">Filter</h2>
+            <h2 class="font-heading text-lg text-foreground">Filter</h2>
             <?php if ($hasActiveFilter): ?>
                 <a href="/admin/transaksi"
-                   class="cursor-pointer text-xs font-semibold text-content-secondary transition duration-soft hover:text-admin focus:outline-none focus-visible:underline">
+                   class="cursor-pointer text-xs font-semibold text-muted-foreground transition duration-soft hover:text-primary focus:outline-none focus-visible:underline">
                     Reset ke bulan ini
                 </a>
             <?php endif; ?>
@@ -124,15 +113,15 @@ $advancedOpen = $filterJenis !== '' || $filterQ !== '';
 
         <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div>
-                <label for="mulai" class="mb-1.5 block text-sm font-semibold text-content-primary">Tanggal mulai</label>
+                <label for="mulai" class="mb-1.5 block text-sm font-semibold text-foreground">Tanggal mulai</label>
                 <input type="date" id="mulai" name="mulai" value="<?= e($mulai) ?>" class="<?= e($inputClass) ?>">
             </div>
             <div>
-                <label for="akhir" class="mb-1.5 block text-sm font-semibold text-content-primary">Tanggal akhir</label>
+                <label for="akhir" class="mb-1.5 block text-sm font-semibold text-foreground">Tanggal akhir</label>
                 <input type="date" id="akhir" name="akhir" value="<?= e($akhir) ?>" class="<?= e($inputClass) ?>">
             </div>
             <div>
-                <label for="status" class="mb-1.5 block text-sm font-semibold text-content-primary">Status</label>
+                <label for="status" class="mb-1.5 block text-sm font-semibold text-foreground">Status</label>
                 <select id="status" name="status" class="<?= e($inputClass) ?>">
                     <option value="">Semua status</option>
                     <?php foreach ($statusLabels as $value => $label): ?>
@@ -155,7 +144,7 @@ $advancedOpen = $filterJenis !== '' || $filterQ !== '';
         </div>
 
         <details class="group rounded-xl border border-border bg-page/50 open:bg-page/80" <?= $advancedOpen ? 'open' : '' ?>>
-            <summary class="cursor-pointer list-none flex items-center justify-between gap-2 px-4 py-3 text-sm font-semibold text-admin transition duration-soft hover:bg-admin-soft/50 rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-admin">
+            <summary class="cursor-pointer list-none flex items-center justify-between gap-2 px-4 py-3 text-sm font-semibold text-primary transition duration-soft hover:bg-muted/50/50 rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-admin">
                 <span class="inline-flex items-center gap-2">
                     <svg class="h-4 w-4 transition duration-soft group-open:rotate-90" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/>
@@ -163,12 +152,12 @@ $advancedOpen = $filterJenis !== '' || $filterQ !== '';
                     Filter lanjutan
                 </span>
                 <?php if ($advancedOpen): ?>
-                    <span class="text-[10px] font-semibold uppercase tracking-wide rounded-lg bg-admin-soft px-2 py-0.5 text-admin">Aktif</span>
+                    <span class="text-[10px] font-semibold uppercase tracking-wide rounded-lg bg-muted/50 px-2 py-0.5 text-primary">Aktif</span>
                 <?php endif; ?>
             </summary>
             <div class="grid gap-4 sm:grid-cols-2 px-4 pb-4 pt-1 border-t border-border/80">
                 <div>
-                    <label for="jenis" class="mb-1.5 block text-sm font-semibold text-content-primary">Jenis layanan</label>
+                    <label for="jenis" class="mb-1.5 block text-sm font-semibold text-foreground">Jenis layanan</label>
                     <select id="jenis" name="jenis" class="<?= e($inputClass) ?>">
                         <option value="">Semua layanan</option>
                         <option value="<?= e(JenisLayanan::GROOMING->value) ?>"
@@ -182,7 +171,7 @@ $advancedOpen = $filterJenis !== '' || $filterQ !== '';
                     </select>
                 </div>
                 <div>
-                    <label for="q" class="mb-1.5 block text-sm font-semibold text-content-primary">Pelanggan</label>
+                    <label for="q" class="mb-1.5 block text-sm font-semibold text-foreground">Pelanggan</label>
                     <input type="search" id="q" name="q" value="<?= e($filterQ) ?>"
                            placeholder="Cari nama pelanggan..."
                            class="<?= e($inputClass) ?>">
@@ -225,15 +214,15 @@ $advancedOpen = $filterJenis !== '' || $filterQ !== '';
             <div class="overflow-x-auto">
                 <table class="w-full text-sm">
                     <thead>
-                        <tr class="border-b border-border bg-admin-soft/40">
-                            <th class="text-left px-4 py-3.5 font-semibold text-content-secondary text-xs uppercase tracking-wider">Tanggal</th>
-                            <th class="text-left px-4 py-3.5 font-semibold text-content-secondary text-xs uppercase tracking-wider">Pelanggan</th>
-                            <th class="text-left px-4 py-3.5 font-semibold text-content-secondary text-xs uppercase tracking-wider">Jenis</th>
-                            <th class="text-left px-4 py-3.5 font-semibold text-content-secondary text-xs uppercase tracking-wider">Layanan</th>
-                            <th class="text-right px-4 py-3.5 font-semibold text-content-secondary text-xs uppercase tracking-wider">Total</th>
-                            <th class="text-left px-4 py-3.5 font-semibold text-content-secondary text-xs uppercase tracking-wider">Status</th>
-                            <th class="text-left px-4 py-3.5 font-semibold text-content-secondary text-xs uppercase tracking-wider">Bukti</th>
-                            <th class="text-right px-4 py-3.5 font-semibold text-content-secondary text-xs uppercase tracking-wider">Aksi</th>
+                        <tr class="border-b border-border bg-muted/50/40">
+                            <th class="text-left px-4 py-3.5 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Tanggal</th>
+                            <th class="text-left px-4 py-3.5 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Pelanggan</th>
+                            <th class="text-left px-4 py-3.5 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Jenis</th>
+                            <th class="text-left px-4 py-3.5 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Layanan</th>
+                            <th class="text-right px-4 py-3.5 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Total</th>
+                            <th class="text-left px-4 py-3.5 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Status</th>
+                            <th class="text-left px-4 py-3.5 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Bukti</th>
+                            <th class="text-right px-4 py-3.5 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-border/80">
@@ -243,10 +232,10 @@ $advancedOpen = $filterJenis !== '' || $filterQ !== '';
                             $refundEnum = StatusRefund::tryFrom((string) ($row['status_refund'] ?? StatusRefund::TIDAK_ADA->value));
                             $jenisLabel = (string) $row['tagihan_jenis'];
                             ?>
-                            <tr class="transition duration-soft hover:bg-admin-soft/30">
+                            <tr class="transition duration-soft hover:bg-muted/50/30">
                                 <td class="px-4 py-3.5 whitespace-nowrap align-top">
-                                    <div class="font-medium text-content-primary"><?= e(date('d/m/Y', strtotime((string) $row['created_at']))) ?></div>
-                                    <div class="text-xs text-content-secondary"><?= e(date('H:i', strtotime((string) $row['created_at']))) ?></div>
+                                    <div class="font-medium text-foreground"><?= e(date('d/m/Y', strtotime((string) $row['created_at']))) ?></div>
+                                    <div class="text-xs text-muted-foreground"><?= e(date('H:i', strtotime((string) $row['created_at']))) ?></div>
                                     <?php if (!empty($row['dibayar_at'])): ?>
                                         <div class="text-xs text-success mt-1 font-medium">
                                             Lunas <?= e(date('d/m H:i', strtotime((string) $row['dibayar_at']))) ?>
@@ -254,9 +243,9 @@ $advancedOpen = $filterJenis !== '' || $filterQ !== '';
                                     <?php endif; ?>
                                 </td>
                                 <td class="px-4 py-3.5 align-top">
-                                    <div class="font-semibold text-content-primary"><?= e((string) $row['pelanggan_nama']) ?></div>
+                                    <div class="font-semibold text-foreground"><?= e((string) $row['pelanggan_nama']) ?></div>
                                     <?php if (!empty($row['pelanggan_telepon'])): ?>
-                                        <div class="text-xs text-content-secondary"><?= e((string) $row['pelanggan_telepon']) ?></div>
+                                        <div class="text-xs text-muted-foreground"><?= e((string) $row['pelanggan_telepon']) ?></div>
                                     <?php endif; ?>
                                 </td>
                                 <td class="px-4 py-3.5 whitespace-nowrap align-top">
@@ -265,10 +254,10 @@ $advancedOpen = $filterJenis !== '' || $filterQ !== '';
                                     </span>
                                 </td>
                                 <td class="px-4 py-3.5 align-top">
-                                    <div class="text-content-primary"><?= e((string) ($row['layanan_label'] ?? '')) ?></div>
-                                    <div class="text-xs text-content-secondary"><?= e((string) ($row['tanggal_display'] ?? '')) ?></div>
+                                    <div class="text-foreground"><?= e((string) ($row['layanan_label'] ?? '')) ?></div>
+                                    <div class="text-xs text-muted-foreground"><?= e((string) ($row['tanggal_display'] ?? '')) ?></div>
                                 </td>
-                                <td class="px-4 py-3.5 text-right font-semibold text-admin whitespace-nowrap align-top">
+                                <td class="px-4 py-3.5 text-right font-semibold text-primary whitespace-nowrap align-top">
                                     Rp <?= e(number_format((float) $row['total_bayar'], 0, ',', '.')) ?>
                                 </td>
                                 <td class="px-4 py-3.5 align-top">
@@ -288,24 +277,24 @@ $advancedOpen = $filterJenis !== '' || $filterQ !== '';
                                         <?php endif; ?>
                                     </div>
                                     <?php if (!empty($row['nomor_invoice'])): ?>
-                                        <div class="text-xs text-content-secondary mt-1.5 font-mono"><?= e((string) $row['nomor_invoice']) ?></div>
+                                        <div class="text-xs text-muted-foreground mt-1.5 font-mono"><?= e((string) $row['nomor_invoice']) ?></div>
                                     <?php endif; ?>
                                 </td>
                                 <td class="px-4 py-3.5 align-top">
                                     <?php if (!empty($row['bukti_file_url'])): ?>
                                         <a href="<?= e((string) $row['bukti_file_url']) ?>"
                                            target="_blank" rel="noopener noreferrer"
-                                           class="cursor-pointer inline-flex items-center gap-1 text-xs font-semibold text-admin transition duration-soft hover:underline focus:outline-none focus-visible:underline">
+                                           class="cursor-pointer inline-flex items-center gap-1 text-xs font-semibold text-primary transition duration-soft hover:underline focus:outline-none focus-visible:underline">
                                             Lihat bukti
                                             <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
                                         </a>
                                     <?php else: ?>
-                                        <span class="text-xs text-content-secondary/60">—</span>
+                                        <span class="text-xs text-muted-foreground/60">—</span>
                                     <?php endif; ?>
                                 </td>
                                 <td class="px-4 py-3.5 text-right whitespace-nowrap align-top">
                                     <a href="<?= e((string) $row['admin_booking_url']) ?>"
-                                       class="cursor-pointer inline-flex items-center rounded-xl border border-border bg-page/60 px-3 py-1.5 text-xs font-semibold text-admin transition duration-soft hover:bg-admin-soft focus:outline-none focus-visible:ring-2 focus-visible:ring-admin">
+                                       class="cursor-pointer inline-flex items-center rounded-xl border border-border bg-background px-3 py-1.5 text-xs font-semibold text-primary transition duration-soft hover:bg-muted/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-admin">
                                         Booking →
                                     </a>
                                 </td>
@@ -326,8 +315,8 @@ $advancedOpen = $filterJenis !== '' || $filterQ !== '';
                 <article class="<?= e(design_cn(design_interactive('listArticle'), 'space-y-3')) ?>">
                     <div class="flex items-start justify-between gap-3">
                         <div class="min-w-0">
-                            <p class="font-semibold text-content-primary truncate"><?= e((string) $row['pelanggan_nama']) ?></p>
-                            <p class="text-xs text-content-secondary mt-0.5">
+                            <p class="font-semibold text-foreground truncate"><?= e((string) $row['pelanggan_nama']) ?></p>
+                            <p class="text-xs text-muted-foreground mt-0.5">
                                 <?= e(date('d/m/Y H:i', strtotime((string) $row['created_at']))) ?>
                             </p>
                         </div>
@@ -337,12 +326,12 @@ $advancedOpen = $filterJenis !== '' || $filterQ !== '';
                     </div>
 
                     <div>
-                        <p class="text-sm text-content-primary"><?= e((string) ($row['layanan_label'] ?? '')) ?></p>
-                        <p class="text-xs text-content-secondary"><?= e((string) ($row['tanggal_display'] ?? '')) ?></p>
+                        <p class="text-sm text-foreground"><?= e((string) ($row['layanan_label'] ?? '')) ?></p>
+                        <p class="text-xs text-muted-foreground"><?= e((string) ($row['tanggal_display'] ?? '')) ?></p>
                     </div>
 
                     <div class="flex flex-wrap items-center justify-between gap-2">
-                        <p class="font-heading text-lg text-admin">
+                        <p class="font-heading text-lg text-primary">
                             Rp <?= e(number_format((float) $row['total_bayar'], 0, ',', '.')) ?>
                         </p>
                         <div class="flex flex-wrap gap-1 justify-end">
@@ -366,7 +355,7 @@ $advancedOpen = $filterJenis !== '' || $filterQ !== '';
                         <?php if (!empty($row['bukti_file_url'])): ?>
                             <a href="<?= e((string) $row['bukti_file_url']) ?>"
                                target="_blank" rel="noopener noreferrer"
-                               class="cursor-pointer inline-flex flex-1 items-center justify-center rounded-xl border border-border bg-page/60 px-3 py-2 text-xs font-semibold text-admin transition duration-soft hover:bg-admin-soft focus:outline-none focus-visible:ring-2 focus-visible:ring-admin">
+                               class="cursor-pointer inline-flex flex-1 items-center justify-center rounded-xl border border-border bg-background px-3 py-2 text-xs font-semibold text-primary transition duration-soft hover:bg-muted/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-admin">
                                 Lihat bukti
                             </a>
                         <?php endif; ?>
@@ -379,7 +368,7 @@ $advancedOpen = $filterJenis !== '' || $filterQ !== '';
             <?php endforeach; ?>
         </div>
 
-        <p class="text-xs text-content-secondary px-1">
+        <p class="text-xs text-muted-foreground px-1">
             <?= e((string) count($rows)) ?> transaksi ditampilkan untuk periode <?= e($periodeLabel) ?>.
         </p>
     <?php endif; ?>

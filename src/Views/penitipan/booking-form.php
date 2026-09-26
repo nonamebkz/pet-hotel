@@ -21,11 +21,16 @@ $selectedOpsi = (string) old('opsi_pengantaran', OpsiPengantaran::ANTAR_SENDIRI-
 $selectedCatatan = (string) old('catatan_makan', '');
 ?>
 <div class="<?= e(design_cn(ui_page_content_shell_classes(), design_page_layout('formLg'))) ?>">
-    <div class="mb-6">
+    <p>
         <a href="/penitipan" class="<?= e(ui_back_link_class()) ?>">&larr; Kembali</a>
-        <h1 class="mt-2 text-2xl font-bold tracking-tight text-foreground md:text-3xl">Booking Penitipan</h1>
-        <p class="text-sm text-muted-foreground mt-1">Pilih kucing eligible, tanggal, paket, dan opsi pengantaran.</p>
-    </div>
+    </p>
+    <?php
+    ui_page_header(
+        'Booking Penitipan',
+        'Penitipan',
+        'Pilih kucing eligible, tanggal, paket, dan opsi pengantaran.',
+    );
+    ?>
 
     <form method="POST" action="/penitipan/booking" class="<?= e(design_cn(design_surface('metric'), 'p-6 space-y-5 max-w-xl')) ?>" id="booking-form">
         <?= Csrf::field() ?>
@@ -77,9 +82,9 @@ $selectedCatatan = (string) old('catatan_makan', '');
             </p>
         </div>
 
-        <div id="vaksin-panel" class="hidden bg-blue-50 border border-blue-100 rounded-lg p-4 text-sm">
-            <div class="font-medium text-blue-900 mb-2">Riwayat Vaksin (read-only)</div>
-            <ul id="vaksin-list" class="text-blue-800 space-y-1"></ul>
+        <div id="vaksin-panel" class="<?= e(design_cn(design_surface('panel'), 'hidden p-4 text-sm')) ?>">
+            <div class="font-medium text-foreground mb-2">Riwayat Vaksin (read-only)</div>
+            <ul id="vaksin-list" class="text-muted-foreground space-y-1"></ul>
         </div>
 
         <div class="grid sm:grid-cols-2 gap-4">
@@ -125,18 +130,18 @@ $selectedCatatan = (string) old('catatan_makan', '');
                 <?php endforeach; ?>
             </div>
             <?php if (!$addressComplete): ?>
-                <p class="text-xs text-amber-700 mt-2">
-                    Untuk antar-jemput, <a href="/profil" class="underline">lengkapi alamat profil</a>.
+                <p class="<?= e(design_cn(design_alert_inline('warning'), 'mt-2')) ?>">
+                    Untuk antar-jemput, <a href="/profil" class="font-medium underline">lengkapi alamat profil</a>.
                 </p>
             <?php endif; ?>
-            <div id="pickup-estimasi" class="hidden mt-3 p-3 bg-blue-50 border border-blue-100 rounded-lg text-sm text-blue-900"></div>
+            <div id="pickup-estimasi" class="<?= e(design_cn(design_surface('panel'), 'hidden mt-3 p-3 text-sm text-foreground')) ?>"></div>
         </div>
 
         <div class="bg-muted/50 rounded-lg p-4 text-sm" id="ringkasan-biaya">
             <div class="font-medium text-foreground mb-2">Ringkasan Biaya</div>
             <div class="text-muted-foreground" id="line-lama">Lama penitipan: —</div>
             <div class="text-muted-foreground" id="line-subtotal">Subtotal penitipan: —</div>
-            <div class="text-green-700 hidden" id="line-promo">Potongan promo: —</div>
+            <div class="text-emerald-700 dark:text-emerald-300 hidden" id="line-promo">Potongan promo: —</div>
             <div class="text-muted-foreground" id="line-pickup">Biaya antar-jemput: Rp 0</div>
             <div class="font-medium text-foreground mt-2 pt-2 border-t" id="line-total">Total: —</div>
         </div>
@@ -230,7 +235,7 @@ $selectedCatatan = (string) old('catatan_makan', '');
     async function loadPickup() {
         if (!addressComplete) {
             pickupEstimasi.classList.remove('hidden');
-            pickupEstimasi.innerHTML = '<span class="text-amber-800">Alamat profil belum lengkap.</span>';
+            pickupEstimasi.innerHTML = '<span class="text-amber-900 dark:text-amber-200">Alamat profil belum lengkap.</span>';
             return;
         }
         pickupEstimasi.classList.remove('hidden');

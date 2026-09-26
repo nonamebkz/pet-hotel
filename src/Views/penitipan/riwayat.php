@@ -4,26 +4,35 @@ declare(strict_types=1);
 
 $bookingList = $bookingList ?? [];
 ?>
-<div>
-    <div class="mb-6 flex items-center justify-between">
-        <div>
-            <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-foreground">Riwayat Penitipan</h1>
-            <p class="text-sm text-muted-foreground mt-1">Semua booking pet hotel Anda.</p>
-        </div>
-        <a href="/penitipan/booking" class="<?= e(ui_btn_primary()) ?>">
-            + Ajukan Penitipan
-        </a>
-    </div>
+<div class="<?= e(ui_page_content_shell_classes()) ?>">
+    <?php
+    ob_start();
+    ?>
+    <a href="/penitipan/booking" class="<?= e(ui_btn_primary()) ?>">+ Ajukan Penitipan</a>
+    <?php
+    ui_page_header(
+        'Riwayat Penitipan',
+        'Penitipan',
+        'Semua booking pet hotel Anda.',
+        (string) ob_get_clean(),
+    );
+    ?>
 
     <?php if ($bookingList === []): ?>
-        <div class="<?= e(design_cn(design_surface('metric'), 'p-8 text-center text-muted-foreground')) ?>">
-            Belum ada riwayat penitipan.
-        </div>
+        <?php
+        ui_empty_state(
+            'empty',
+            'Belum ada riwayat penitipan',
+            'Ajukan penitipan pertama untuk kucing Anda.',
+            'Ajukan Penitipan',
+            '/penitipan/booking',
+        );
+        ?>
     <?php else: ?>
         <div class="space-y-3">
             <?php foreach ($bookingList as $booking): ?>
                 <a href="/penitipan/detail?id=<?= e((string) $booking['id']) ?>"
-                   class="<?= e(design_cn(design_interactive('listArticle'), design_interactive('listRowHover'), 'block transition')) ?>">
+                   class="<?= e(design_cn(design_interactive('listArticle'), design_interactive('listRowHover'), design_surface('panel'), 'block p-4 transition')) ?>">
                     <div class="flex items-start justify-between gap-3">
                         <div>
                             <div class="font-medium text-foreground"><?= e((string) $booking['kucing_nama']) ?></div>
@@ -36,7 +45,7 @@ $bookingList = $bookingList ?? [];
                                 (<?= (int) $booking['lama_hari'] ?> hari)
                             </div>
                         </div>
-                        <span class="text-xs px-2 py-1 rounded-full bg-muted text-foreground shrink-0">
+                        <span class="<?= e(design_status_badge('muted')) ?> shrink-0">
                             <?= e((string) ($booking['status_label'] ?? $booking['status'])) ?>
                         </span>
                     </div>

@@ -151,7 +151,7 @@ Perintah lain:
 ./scripts/db-init.sh --docker seed-dev    # seed development
 ./scripts/db-init.sh --docker --wait all  # schema + seed (DB sudah jalan)
 
-docker compose up -d --build                # manual tanpa init
+docker compose up -d --build                # schema + seed otomatis (skip jika sudah ada)
 docker compose down                         # stop
 docker compose down -v                      # stop + hapus volume DB
 ./scripts/docker-up.sh --fresh              # reset DB dari nol
@@ -191,8 +191,8 @@ Buka http://localhost:8080
 Stack: **MariaDB 10.11** + **PHP 8.4 Apache** (docroot `public/`).
 
 1. Clone repo ke server, masuk folder proyek.
-2. `cp .env.docker.example .env` — set `APP_URL` ke domain/IP production, `APP_DEBUG=false`, ganti `DB_PASSWORD`.
-3. `chmod +x scripts/*.sh && ./scripts/docker-up.sh`
+2. `cp .env.docker.example .env` — set `APP_URL` ke domain/IP production, `APP_DEBUG=false`, ganti `DB_PASSWORD`. Production disarankan `AUTO_DB_SEED_DEV=0`.
+3. `docker compose up -d --build` (atau `./scripts/docker-up.sh`) — database di-init otomatis pada start pertama; start berikutnya dilewati jika schema sudah ada.
 4. (Opsional) Cron notifikasi pembayaran — jalankan tiap 15 menit di host:
 
 ```bash

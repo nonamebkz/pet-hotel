@@ -25,10 +25,11 @@ $navUnreadCount = (int) ($navUnreadCount ?? 0);
 </head>
 <body class="min-h-screen bg-background font-body text-foreground antialiased">
     <?php require __DIR__ . '/../partials/nav/pelanggan-nav.php'; ?>
-    <main id="main-content" class="max-w-7xl mx-auto px-4 py-4 pb-mobile-nav md:py-8 md:pb-0">
+    <main id="main-content" class="<?= e(ui_layout_main_classes()) ?>">
         <?php require __DIR__ . '/../partials/flash.php'; ?>
         <?= $content ?? '' ?>
     </main>
+    <?php require __DIR__ . '/../partials/nav/pelanggan-bottom-nav.php'; ?>
     <?php require __DIR__ . '/../partials/ui/confirm-modal.php'; ?>
     <script src="/js/nav.js" defer></script>
     <script src="/js/ui.js" defer></script>

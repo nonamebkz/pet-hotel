@@ -4,27 +4,30 @@ declare(strict_types=1);
 
 use App\Core\Csrf;
 ?>
-<h2 class="text-xl font-semibold text-gray-800 mb-4">Lupa Password</h2>
+<header class="mb-6">
+    <h2 class="font-heading text-xl font-semibold text-foreground">Lupa Password</h2>
+    <p class="mt-1 text-sm text-muted-foreground">Kami akan mengirim link reset ke email staff Anda.</p>
+</header>
 
-<form method="POST" action="/admin/forgot-password" class="space-y-4">
+<form method="POST" action="/admin/forgot-password" class="<?= e(design_cn(design_surface('metric'), 'space-y-4')) ?>">
     <?= Csrf::field() ?>
     <div>
-        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+        <label for="email" class="<?= e(ui_form_label_class()) ?>">Email</label>
         <input type="email" id="email" name="email" value="<?= e((string) old('email')) ?>" required
-               class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-500">
+               class="<?= e(ui_form_input_class()) ?>">
     </div>
-    <button type="submit" class="w-full bg-admin text-white rounded-lg py-2 font-medium hover:bg-admin-hover">
+    <button type="submit" class="<?= e(ui_btn_primary()) ?> w-full">
         Kirim Link Reset
     </button>
 </form>
 
 <?php if (!empty($reset_url)): ?>
-    <div class="mt-4 rounded-lg bg-amber-50 border border-amber-200 px-4 py-3 text-sm">
-        <p class="font-medium text-amber-800 mb-1">Link reset (mode dev):</p>
-        <a href="<?= e($reset_url) ?>" class="text-slate-700 break-all hover:underline"><?= e($reset_url) ?></a>
+    <div class="<?= e(design_cn(design_alert_inline('warning'), 'mt-4 px-4 py-3 text-sm')) ?>">
+        <p class="font-medium mb-1">Link reset (mode dev):</p>
+        <a href="<?= e($reset_url) ?>" class="text-primary break-all hover:underline"><?= e($reset_url) ?></a>
     </div>
 <?php endif; ?>
 
-<p class="mt-4 text-center text-sm text-gray-600">
-    <a href="/admin/login" class="text-slate-700 hover:underline">Kembali ke login</a>
+<p class="mt-6 text-center text-sm text-muted-foreground">
+    <a href="/admin/login" class="<?= e(ui_back_link_class()) ?> font-semibold text-primary">Kembali ke login</a>
 </p>

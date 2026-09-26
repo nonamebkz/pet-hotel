@@ -12,17 +12,21 @@ $refundLabels = $refundLabels ?? StatusRefund::labels();
 $hasActiveFilter = $hasActiveFilter ?? ($filterStatus !== '');
 $activeFilters = $activeFilters ?? [];
 ?>
-<div>
-    <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
-        <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-foreground">Riwayat Transaksi</h1>
-    </div>
+<div class="<?= e(ui_page_content_shell_classes()) ?>">
+    <?php
+    ui_page_header(
+        'Riwayat Transaksi',
+        'Akun',
+        'Lihat status pembayaran dan unduh bukti untuk booking Anda.',
+    );
+    ?>
 
-    <div class="bg-page rounded-2xl border border-border p-4 mb-6">
+    <div class="<?= e(design_cn(design_surface('panel'), 'p-4 mb-2')) ?>">
         <form method="GET" action="/transaksi" class="flex flex-wrap items-end gap-3">
             <div>
-                <label class="block text-sm font-medium text-foreground mb-1">Status</label>
-                <select name="status"
-                        class="border border-border rounded-lg px-3 py-2 text-sm min-w-[200px] bg-white">
+                <label for="status" class="<?= e(ui_form_label_class()) ?>">Status pembayaran</label>
+                <select name="status" id="status"
+                        class="<?= e(design_cn(ui_form_input_class(), 'text-sm min-w-[200px] py-2')) ?>">
                     <option value="">Semua Status</option>
                     <?php foreach ($statusLabels as $value => $label): ?>
                         <option value="<?= e($value) ?>" <?= $filterStatus === $value ? 'selected' : '' ?>>
@@ -31,8 +35,7 @@ $activeFilters = $activeFilters ?? [];
                     <?php endforeach; ?>
                 </select>
             </div>
-            <button type="submit"
-                    class="bg-primary text-primary-foreground rounded-lg px-4 py-2 text-sm font-medium hover:opacity-90">
+            <button type="submit" class="<?= e(ui_btn_primary()) ?> text-sm">
                 Terapkan Filter
             </button>
         </form>

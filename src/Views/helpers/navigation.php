@@ -103,6 +103,33 @@ function nav_badge_classes(bool $adminTheme = false): string
     return 'inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-lg bg-primary text-primary-foreground text-[10px] font-bold leading-none';
 }
 
+function nav_sidebar_link_classes(bool $active): string
+{
+    $base = 'relative flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset';
+
+    if ($active) {
+        return $base . ' bg-primary/10 text-primary font-semibold before:absolute before:left-0 before:top-1/2 before:h-6 before:w-1 before:-translate-y-1/2 before:rounded-full before:bg-primary';
+    }
+
+    return $base . ' text-muted-foreground hover:bg-muted hover:text-foreground';
+}
+
+function nav_sidebar_sublink_classes(bool $active): string
+{
+    $base = 'flex min-h-10 items-center rounded-lg pl-9 pr-3 text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset';
+
+    if ($active) {
+        return $base . ' font-semibold text-primary';
+    }
+
+    return $base . ' text-muted-foreground hover:text-foreground';
+}
+
+function nav_section_heading_classes(): string
+{
+    return 'px-3 pt-4 pb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground first:pt-2';
+}
+
 function nav_initials(string $name): string
 {
     $parts = preg_split('/\s+/', trim($name)) ?: [];

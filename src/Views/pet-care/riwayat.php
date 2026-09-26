@@ -8,20 +8,30 @@ use App\Enums\StatusBookingPetCare;
 $bookingList = $bookingList ?? [];
 $statusLabels = $statusLabels ?? [];
 ?>
-<div>
-    <div class="flex items-center justify-between mb-6">
-        <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-foreground">Riwayat Pet Care</h1>
-        <a href="/pet-care/booking"
-           class="bg-primary text-primary-foreground rounded-lg px-4 py-2 text-sm font-medium hover:opacity-90">
-            + Booking Baru
-        </a>
-    </div>
+<div class="<?= e(ui_page_content_shell_classes()) ?>">
+    <?php
+    ob_start();
+    ?>
+    <a href="/pet-care/booking" class="<?= e(ui_btn_primary()) ?>">+ Booking Baru</a>
+    <?php
+    ui_page_header(
+        'Riwayat Pet Care',
+        'Pet Care',
+        'Semua booking pet care Anda.',
+        (string) ob_get_clean(),
+    );
+    ?>
 
     <?php if ($bookingList === []): ?>
-        <div class="<?= e(design_cn(design_surface('metric'), 'p-8 text-center')) ?>">
-            <p class="text-muted-foreground mb-4">Belum ada booking pet care.</p>
-            <a href="/pet-care/booking" class="text-primary hover:underline font-medium">Ajukan booking pertama</a>
-        </div>
+        <?php
+        ui_empty_state(
+            'empty',
+            'Belum ada booking pet care',
+            'Ajukan kunjungan pet care pertama untuk kucing Anda.',
+            'Ajukan Booking',
+            '/pet-care/booking',
+        );
+        ?>
     <?php else: ?>
         <div class="space-y-4">
             <?php foreach ($bookingList as $booking): ?>
@@ -29,7 +39,7 @@ $statusLabels = $statusLabels ?? [];
                 $statusEnum = StatusBookingPetCare::tryFrom((string) $booking['status']);
                 $canCancel = $statusEnum?->canCancel() ?? false;
                 ?>
-                <div class="<?= e(design_cn(design_surface('metric'), 'p-4')) ?>">
+                <div class="<?= e(design_cn(design_surface('panel'), 'p-4')) ?>">
                     <div class="flex flex-wrap items-start justify-between gap-3 mb-3">
                         <div>
                             <div class="font-semibold text-foreground"><?= e((string) $booking['layanan_nama']) ?></div>
@@ -54,7 +64,7 @@ $statusLabels = $statusLabels ?? [];
                     <?php endif; ?>
 
                     <?php if ($canCancel): ?>
-                        <form method="POST" action="/pet-care/booking/batalkan" class="pt-3 border-t"
+                        <form method="POST" action="/pet-care/booking/batalkan" class="pt-3 border-t border-border"
                               onsubmit="return confirm('Batalkan booking ini?')">
                             <?= Csrf::field() ?>
                             <input type="hidden" name="id" value="<?= e((string) $booking['id']) ?>">

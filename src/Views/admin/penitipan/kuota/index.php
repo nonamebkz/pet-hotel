@@ -8,27 +8,28 @@ $kuotaList = $kuotaList ?? [];
 $kamarList = $kamarList ?? [];
 $filterKamarId = $filterKamarId ?? '';
 $hasFilter = $filterKamarId !== '';
-$heroClass = design_cn(design_surface('panel'), 'relative overflow-hidden p-6 sm:p-8');
 $filterFormClass = design_cn(design_surface('metric'), 'p-5');
 $tableWrapClass = design_cn(design_surface('panel'), 'hidden md:block overflow-hidden');
 $listArticleClass = design_cn(design_interactive('listArticle'), design_interactive('listArticleHover'), 'p-4 space-y-3');
 $inputClass = 'w-full rounded-lg border border-input bg-background px-3.5 py-2.5 text-base sm:text-sm text-foreground transition hover:border-primary/30 focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/25';
 ?>
-<div class="font-body space-y-6">
-    <section class="<?= e($heroClass) ?>">
-        <div class="relative flex flex-wrap items-start justify-between gap-4">
-            <div>
-                <p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Penitipan</p>
-                <h1 class="mt-1 font-heading text-2xl sm:text-3xl text-foreground">Kuota Harian</h1>
-                <p class="mt-2 text-sm text-muted-foreground">Atur slot maksimal per kamar per tanggal.</p>
-            </div>
-            <a href="/admin/penitipan/kuota/tambah"
-               class="<?= e(design_cn(ui_btn_primary(), 'cursor-pointer gap-2')) ?>">
-                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
-                Tambah Kuota
-            </a>
-        </div>
-    </section>
+<div class="<?= e(ui_page_content_shell_classes()) ?>">
+    <?php
+    ob_start();
+    ?>
+    <a href="/admin/penitipan/kuota/tambah" class="<?= e(design_cn(ui_btn_primary(), 'gap-2')) ?>">
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+        Tambah Kuota
+    </a>
+    <?php
+    $actionsHtml = (string) ob_get_clean();
+    ui_page_header(
+        'Kuota Harian',
+        'Penitipan · Administrasi',
+        'Atur slot maksimal per kamar per tanggal.',
+        $actionsHtml,
+    );
+    ?>
 
     <?php require __DIR__ . '/../_nav.php'; ?>
 
@@ -83,7 +84,7 @@ $inputClass = 'w-full rounded-lg border border-input bg-background px-3.5 py-2.5
                         $penuh = $maks > 0 && $terisi >= $maks;
                         $pct = $maks > 0 ? min(100, (int) round(($terisi / $maks) * 100)) : 0;
                         ?>
-                        <tr class="transition hover:bg-muted/30">
+                        <tr class="transition hover:bg-muted/50">
                             <td class="px-4 py-3.5 font-semibold text-foreground"><?= e((string) $q['nama_kamar']) ?></td>
                             <td class="px-4 py-3.5 text-foreground"><?= e(date('d/m/Y', strtotime((string) $q['tanggal']))) ?></td>
                             <td class="px-4 py-3.5">

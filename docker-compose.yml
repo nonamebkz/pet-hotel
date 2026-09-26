@@ -31,6 +31,9 @@ services:
     environment:
       DB_HOST: mariadb
       DB_PORT: "3306"
+      # Saat container app start: init DB jika belum ada (lihat scripts/db-init.sh if-needed)
+      AUTO_DB_INIT: ${AUTO_DB_INIT:-1}
+      AUTO_DB_SEED_DEV: ${AUTO_DB_SEED_DEV:-1}
     volumes:
       - ./public/uploads:/var/www/html/public/uploads
       - ./storage/logs:/var/www/html/storage/logs

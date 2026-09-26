@@ -8,12 +8,13 @@ $freeRadiusKm = (float) ($pickupSettings['pickup_free_radius_km'] ?? 3);
 $feePerKm = (int) ($pickupSettings['pickup_extra_fee_per_km'] ?? 5000);
 ?>
 <div class="<?= e(ui_page_content_shell_classes()) ?>">
-    <div class="flex items-center justify-between mb-6">
-        <div>
-            <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-foreground">Grooming</h1>
-            <p class="text-sm text-muted-foreground mt-1">Layanan perawatan kucing — booking online dengan opsi antar-jemput.</p>
-        </div>
-    </div>
+    <?php
+    ui_page_header(
+        'Grooming',
+        'Booking',
+        'Layanan perawatan kucing — ajukan online dengan opsi antar-jemput.',
+    );
+    ?>
 
     <?php if ($jenisList === []): ?>
         <?php
@@ -50,11 +51,11 @@ $feePerKm = (int) ($pickupSettings['pickup_extra_fee_per_km'] ?? 5000);
                     </div>
                     <div class="flex flex-wrap gap-2">
                         <a href="/grooming/booking?jenis_grooming_id=<?= e(urlencode((string) $jenis['id'])) ?>"
-                           class="flex-1 text-center bg-primary text-primary-foreground rounded-lg px-3 py-2 text-sm font-medium hover:opacity-90">
+                           class="<?= e(design_cn(ui_btn_primary(), 'flex-1 text-center text-sm')) ?>">
                             Ajukan
                         </a>
                         <a href="/grooming/booking?jenis_grooming_id=<?= e(urlencode((string) $jenis['id'])) ?>#detail"
-                           class="flex-1 text-center border border-border text-foreground rounded-lg px-3 py-2 text-sm font-medium hover:bg-muted">
+                           class="<?= e(design_cn(ui_btn_secondary(), 'flex-1 text-center text-sm')) ?>">
                             Detail
                         </a>
                     </div>

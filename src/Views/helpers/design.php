@@ -54,6 +54,7 @@ const DESIGN_SKELETON = [
 
 /** @var array<string, string> */
 const DESIGN_PAGE_LAYOUT = [
+    'workspace' => 'mx-auto w-full max-w-[90rem]',
     'formSm' => 'mx-auto max-w-2xl pb-24 md:pb-0',
     'formLg' => 'mx-auto max-w-3xl pb-24 md:pb-0',
     'detail' => 'mx-auto max-w-2xl',

@@ -8,19 +8,30 @@ use App\Enums\StatusBookingGrooming;
 $bookingList = $bookingList ?? [];
 $statusLabels = $statusLabels ?? [];
 ?>
-<div>
-    <div class="flex items-center justify-between mb-6">
-        <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-foreground">Riwayat Grooming</h1>
-        <a href="/grooming/booking" class="<?= e(ui_btn_primary()) ?>">
-            + Booking Baru
-        </a>
-    </div>
+<div class="<?= e(ui_page_content_shell_classes()) ?>">
+    <?php
+    ob_start();
+    ?>
+    <a href="/grooming/booking" class="<?= e(ui_btn_primary()) ?>">+ Booking Baru</a>
+    <?php
+    ui_page_header(
+        'Riwayat Grooming',
+        'Grooming',
+        'Semua booking grooming Anda.',
+        (string) ob_get_clean(),
+    );
+    ?>
 
     <?php if ($bookingList === []): ?>
-        <div class="<?= e(design_cn(design_surface('metric'), 'p-8 text-center')) ?>">
-            <p class="text-muted-foreground mb-4">Belum ada booking grooming.</p>
-            <a href="/grooming/booking" class="text-primary hover:underline font-medium">Ajukan booking pertama</a>
-        </div>
+        <?php
+        ui_empty_state(
+            'empty',
+            'Belum ada booking grooming',
+            'Ajukan grooming pertama untuk kucing Anda.',
+            'Ajukan Booking',
+            '/grooming/booking',
+        );
+        ?>
     <?php else: ?>
         <div class="space-y-4">
             <?php foreach ($bookingList as $booking): ?>
@@ -28,7 +39,7 @@ $statusLabels = $statusLabels ?? [];
                 $statusEnum = StatusBookingGrooming::tryFrom((string) $booking['status']);
                 $canCancel = $statusEnum?->canCancelByPelanggan() ?? false;
                 ?>
-                <div class="<?= e(design_cn(design_surface('metric'), 'p-4')) ?>">
+                <div class="<?= e(design_cn(design_surface('panel'), 'p-4')) ?>">
                     <div class="flex flex-wrap items-start justify-between gap-3 mb-3">
                         <div>
                             <div class="font-semibold text-foreground"><?= e((string) $booking['jenis_nama']) ?></div>
@@ -49,12 +60,12 @@ $statusLabels = $statusLabels ?? [];
                         <div>Total: Rp <?= e(number_format((float) $booking['harga_layanan'] + (float) $booking['biaya_antar_jemput'], 0, ',', '.')) ?></div>
                     </div>
 
-                    <div class="flex flex-wrap gap-3 pt-3 border-t text-sm">
+                    <div class="flex flex-wrap gap-3 pt-3 border-t border-border text-sm">
                         <a href="/grooming/detail?id=<?= e((string) $booking['id']) ?>"
-                           class="text-primary hover:underline">Detail</a>
+                           class="<?= e(ui_btn_tertiary()) ?> px-0">Detail</a>
                         <?php if ((string) $booking['status'] === StatusBookingGrooming::MENUNGGU_PEMBAYARAN->value): ?>
                             <a href="/grooming/pembayaran?id=<?= e((string) $booking['id']) ?>"
-                               class="text-primary hover:underline font-medium">Bayar & Upload Bukti</a>
+                               class="text-primary font-medium hover:underline">Bayar & Upload Bukti</a>
                         <?php endif; ?>
                         <?php if ($canCancel): ?>
                             <form method="POST" action="/grooming/booking/batalkan" class="inline"

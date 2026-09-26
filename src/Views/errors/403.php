@@ -3,10 +3,10 @@
 declare(strict_types=1);
 
 ?>
-<div class="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-    <div class="text-center">
-        <h1 class="text-4xl font-bold text-gray-800 mb-2">403</h1>
-        <p class="text-gray-600"><?= e($message ?? 'Akses ditolak.') ?></p>
-        <a href="/" class="inline-block mt-4 text-primary hover:underline">Kembali ke beranda</a>
+<div class="min-h-screen flex items-center justify-center bg-background p-4">
+    <div class="<?= e(design_cn(design_surface('metric'), 'max-w-md w-full p-8 text-center')) ?>">
+        <h1 class="font-heading text-4xl font-bold text-foreground mb-2">403</h1>
+        <p class="text-muted-foreground"><?= e($message ?? 'Akses ditolak.') ?></p>
+        <a href="/" class="<?= e(ui_btn_primary()) ?> inline-flex mt-6">Kembali ke beranda</a>
     </div>
 </div>

@@ -26,11 +26,16 @@ foreach ($layananList as $layanan) {
 }
 ?>
 <div class="<?= e(design_cn(ui_page_content_shell_classes(), design_page_layout('formLg'))) ?>">
-    <div class="mb-6">
+    <p>
         <a href="/pet-care" class="<?= e(ui_back_link_class()) ?>">&larr; Kembali</a>
-        <h1 class="mt-2 text-2xl font-bold tracking-tight text-foreground md:text-3xl">Booking Pet Care</h1>
-        <p class="text-sm text-muted-foreground mt-1">Pilih tanggal, slot waktu, layanan, dan kucing Anda.</p>
-    </div>
+    </p>
+    <?php
+    ui_page_header(
+        'Booking Pet Care',
+        'Pet Care',
+        'Pilih tanggal, slot waktu, layanan, dan kucing Anda.',
+    );
+    ?>
 
     <?php if ($availableDates === []): ?>
         <div class="<?= e(design_cn(design_surface('metric'), 'p-8 text-center')) ?>">

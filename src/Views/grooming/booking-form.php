@@ -29,11 +29,16 @@ foreach ($jenisList as $jenis) {
 }
 ?>
 <div class="<?= e(design_cn(ui_page_content_shell_classes(), design_page_layout('formLg'))) ?>">
-    <div class="mb-6">
+    <p>
         <a href="/grooming" class="<?= e(ui_back_link_class()) ?>">&larr; Kembali</a>
-        <h1 class="mt-2 text-2xl font-bold tracking-tight text-foreground md:text-3xl">Booking Grooming</h1>
-        <p class="text-sm text-muted-foreground mt-1">Pilih tanggal, jenis grooming, kucing, dan opsi pengantaran.</p>
-    </div>
+    </p>
+    <?php
+    ui_page_header(
+        'Booking Grooming',
+        'Grooming',
+        'Pilih tanggal, jenis grooming, kucing, dan opsi pengantaran.',
+    );
+    ?>
 
     <?php if ($dateOptions === []): ?>
         <div class="<?= e(design_cn(design_surface('metric'), 'p-8 text-center')) ?>">
@@ -124,11 +129,11 @@ foreach ($jenisList as $jenis) {
                         <p class="text-xs text-destructive mt-1"><?= e((string) $errors['opsi_pengantaran']) ?></p>
                     <?php endif; ?>
                     <?php if (!$addressComplete): ?>
-                        <p class="text-xs text-amber-700 mt-2">
-                            Untuk antar-jemput, <a href="/profil" class="underline">lengkapi alamat profil</a> terlebih dahulu.
+                        <p class="<?= e(design_cn(design_alert_inline('warning'), 'mt-2')) ?>">
+                            Untuk antar-jemput, <a href="/profil" class="font-medium underline">lengkapi alamat profil</a> terlebih dahulu.
                         </p>
                     <?php endif; ?>
-                    <div id="pickup-estimasi" class="hidden mt-3 p-3 bg-blue-50 border border-blue-100 rounded-lg text-sm text-blue-900"></div>
+                    <div id="pickup-estimasi" class="<?= e(design_cn(design_surface('panel'), 'hidden mt-3 p-3 text-sm text-foreground')) ?>"></div>
                 </div>
 
                 <div>
@@ -196,7 +201,7 @@ foreach ($jenisList as $jenis) {
     async function loadPickupEstimasi() {
         if (!addressComplete) {
             pickupEstimasi.classList.remove('hidden');
-            pickupEstimasi.innerHTML = '<span class="text-amber-800">Alamat profil belum lengkap. <a href="/profil" class="underline">Lengkapi profil</a> untuk antar-jemput.</span>';
+            pickupEstimasi.innerHTML = '<span class="text-amber-900 dark:text-amber-200">Alamat profil belum lengkap. <a href="/profil" class="font-medium underline">Lengkapi profil</a> untuk antar-jemput.</span>';
             biayaPickup = 0;
             hargaPickupEl.textContent = 'Biaya antar-jemput: Rp 0';
             updateTotal();
@@ -211,7 +216,7 @@ foreach ($jenisList as $jenis) {
             const data = await res.json();
 
             if (!data.success) {
-                pickupEstimasi.innerHTML = '<span class="text-red-700">' + (data.error || 'Gagal menghitung jarak.') + '</span>';
+                pickupEstimasi.innerHTML = '<span class="text-destructive">' + (data.error || 'Gagal menghitung jarak.') + '</span>';
                 biayaPickup = 0;
             } else {
                 biayaPickup = data.biaya_antar_jemput;

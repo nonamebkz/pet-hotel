@@ -63,9 +63,9 @@ echo ">> Menunggu MariaDB healthy..."
 docker compose up -d --wait mariadb
 
 if [[ "$SEED" -eq 1 ]]; then
-    ./scripts/db-init.sh --docker --wait all
+    ./scripts/db-init.sh --docker --wait if-needed
 else
-    ./scripts/db-init.sh --docker --wait schema
+    AUTO_DB_SEED_DEV=0 ./scripts/db-init.sh --docker --wait if-needed
 fi
 
 echo ""

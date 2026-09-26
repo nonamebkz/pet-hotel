@@ -22,23 +22,22 @@ $btnDanger = design_cn(
     'text-xs px-3 py-1.5 border-destructive/30 bg-destructive/10 text-destructive hover:bg-destructive/15',
 );
 ?>
-<div class="font-body space-y-6">
-    <section class="<?= e(design_cn(design_surface('panel'), 'relative overflow-hidden p-6 sm:p-8')) ?>">
-        <div class="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-primary/10 blur-2xl" aria-hidden="true"></div>
-        <div class="relative flex flex-wrap items-start justify-between gap-4">
-            <div>
-                <p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Pet Care</p>
-                <h1 class="mt-1 font-heading text-2xl sm:text-3xl text-foreground">Slot Dokter</h1>
-                <p class="mt-2 text-sm text-muted-foreground max-w-xl">
-                    Atur ketersediaan slot konsultasi per tanggal (maks. 1 booking per slot).
-                </p>
-            </div>
-            <a href="/admin/pet-care/slot/tambah?tanggal=<?= e(urlencode($tanggal)) ?>" class="<?= e($btnPrimary) ?>">
-                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
-                Tambah Slot
-            </a>
-        </div>
-    </section>
+<div class="<?= e(ui_page_content_shell_classes()) ?>">
+    <?php
+    ob_start();
+    ?>
+    <a href="/admin/pet-care/slot/tambah?tanggal=<?= e(urlencode($tanggal)) ?>" class="<?= e($btnPrimary) ?>">
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+        Tambah Slot
+    </a>
+    <?php
+    ui_page_header(
+        'Slot Dokter',
+        'Pet Care · Administrasi',
+        'Atur ketersediaan slot konsultasi per tanggal (maks. 1 booking per slot).',
+        (string) ob_get_clean(),
+    );
+    ?>
 
     <?php
     $activeTab = 'slot';

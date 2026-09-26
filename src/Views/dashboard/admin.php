@@ -29,6 +29,14 @@ if ($pendingMonitoringPenitipanPreview !== []) {
     $monitoringQuickUrl = '/admin/penitipan/booking?status=SEDANG_DITITIPKAN';
 }
 $isOwner = ($role ?? null) === StaffRole::OWNER || ($role ?? null)?->value === 'OWNER';
+$pendingTaskCount = (int) $pendingVerification['total'] + (int) $pendingPenitipanConfirmation + (int) $pendingMonitoringPenitipan;
+if ($pendingTaskCount > 0) {
+    $operationalStatusLine = $pendingTaskCount . ' item menunggu tindakan hari ini';
+    $operationalStatusTone = 'warning';
+} else {
+    $operationalStatusLine = 'Operasional tenang — tidak ada antrian verifikasi atau konfirmasi';
+    $operationalStatusTone = 'success';
+}
 
 $hariIndo = [
     'Sunday' => 'Minggu', 'Monday' => 'Senin', 'Tuesday' => 'Selasa', 'Wednesday' => 'Rabu',
@@ -66,30 +74,28 @@ $quickCardClass = static function (bool $urgent = false, bool $success = false):
     );
 };
 ?>
-<div class="font-body space-y-6 md:space-y-8">
-    <section class="<?= e(design_cn(design_surface('panel'), 'relative overflow-hidden p-6 sm:p-8')) ?>">
-        <div class="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-primary/5 blur-2xl" aria-hidden="true"></div>
-        <div class="pointer-events-none absolute -bottom-20 -left-10 h-40 w-40 rounded-full bg-emerald-500/10 blur-2xl" aria-hidden="true"></div>
-
-        <div class="relative flex flex-wrap items-start justify-between gap-4">
-            <div>
-                <p class="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                    Dashboard <?= e($roleLabel ?? 'Internal') ?>
-                </p>
-                <h1 class="mt-1 font-heading text-2xl md:text-3xl font-bold tracking-tight text-foreground">
-                    Selamat datang, <?= e((string) $nama) ?>
-                </h1>
-                <p class="mt-2 text-sm text-muted-foreground">
-                    Ringkasan operasional — <?= e($tanggalLabel) ?>
-                </p>
-            </div>
-            <div class="<?= e(design_icon_badge('default', 'h-12 w-12 shrink-0 rounded-2xl p-0')) ?>" aria-hidden="true">
-                <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
-                </svg>
-            </div>
-        </div>
-    </section>
+<?php
+$dashboardMeta = '<span class="' . e($operationalStatusTone === 'warning'
+    ? design_cn('rounded-full px-2.5 py-1 text-xs font-medium', 'bg-amber-500/10 text-amber-800 dark:text-amber-200')
+    : design_status_badge('success')) . '">' . e($operationalStatusLine) . '</span>';
+$dashboardActions = '';
+if ($hasPending) {
+    $dashboardActions .= '<a href="/admin/grooming/pembayaran" class="' . e(ui_btn_primary()) . '">Lihat verifikasi</a>';
+}
+if ($isOwner) {
+    $dashboardActions .= '<a href="/admin/staff" class="' . e(ui_btn_secondary()) . '">Kelola staff</a>';
+}
+?>
+<div class="<?= e(ui_page_content_shell_classes()) ?>">
+    <?php
+    ui_page_header(
+        'Halo, ' . (string) $nama,
+        'Dashboard ' . (string) ($roleLabel ?? 'Internal') . ' · ' . $tanggalLabel,
+        'Ringkasan operasional hari ini dan antrian yang perlu ditindaklanjuti.',
+        $dashboardActions !== '' ? $dashboardActions : null,
+        $dashboardMeta,
+    );
+    ?>
 
     <?php if ($hasActionCenter): ?>
         <section
@@ -239,14 +245,30 @@ $quickCardClass = static function (bool $urgent = false, bool $success = false):
             <?php endif; ?>
         </section>
     <?php else: ?>
-        <?php
-        $variant = 'success';
-        $title = 'Semua tindakan operasional sudah beres';
-        $description = 'Tidak ada booking penitipan menunggu konfirmasi, bukti transfer menunggu verifikasi, atau monitoring harian yang belum diinput.';
-        $ctaLabel = 'Lihat riwayat transaksi';
-        $ctaHref = '/admin/transaksi';
-        require __DIR__ . '/../partials/ui/empty-state.php';
-        ?>
+        <section
+            class="<?= e(design_cn(design_surface('metric'), 'border-emerald-500/30 bg-emerald-500/5 p-4 sm:p-5')) ?>"
+            aria-label="Status operasional"
+        >
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-start gap-3 min-w-0">
+                    <span class="<?= e(design_icon_badge('success', 'h-10 w-10 shrink-0 rounded-xl p-0')) ?>">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </span>
+                    <div>
+                        <h2 class="text-sm font-semibold text-foreground">Status verifikasi hari ini: Aman</h2>
+                        <p class="mt-0.5 text-sm text-muted-foreground">
+                            Menunggu tindakan: 0 · Tidak ada konfirmasi penitipan atau monitoring tertunda.
+                        </p>
+                    </div>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <a href="/admin/grooming/pembayaran" class="<?= e(ui_btn_secondary()) ?>">Verifikasi</a>
+                    <a href="/admin/transaksi" class="<?= e(ui_btn_secondary()) ?>">Riwayat transaksi</a>
+                </div>
+            </div>
+        </section>
     <?php endif; ?>
 
     <section aria-labelledby="kpi-heading" class="space-y-3">
@@ -255,31 +277,6 @@ $quickCardClass = static function (bool $urgent = false, bool $success = false):
             <h2 id="kpi-heading" class="text-base font-semibold text-foreground">Ringkasan Hari Ini</h2>
         </div>
         <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            <article class="<?= e(design_cn(design_surface('metric'), 'p-5')) ?>">
-                <div class="mb-4 flex items-start justify-between gap-3">
-                    <span class="<?= e(design_icon_badge('default')) ?>">
-                        <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/>
-                        </svg>
-                    </span>
-                    <span class="<?= e(design_status_badge($bookingDelta >= 0 ? 'success' : 'danger')) ?> tabular-nums">
-                        <?= $bookingDelta >= 0 ? '+' : '' ?><?= e((string) $bookingDelta) ?>
-                    </span>
-                </div>
-                <p class="text-sm text-muted-foreground">Booking Hari Ini</p>
-                <p class="mt-1 font-heading text-3xl font-semibold tabular-nums text-primary"><?= e((string) $bookingsToday['total']) ?></p>
-                <p class="mt-2 text-xs text-muted-foreground">
-                    <?php if ((int) $bookingsToday['total'] === 0): ?>
-                        Belum ada booking hari ini
-                    <?php else: ?>
-                        Grooming <?= e((string) $bookingsToday['grooming']) ?>
-                        · Penitipan <?= e((string) $bookingsToday['penitipan']) ?>
-                        · Pet Care <?= e((string) $bookingsToday['pet_care']) ?>
-                    <?php endif; ?>
-                </p>
-                <p class="mt-1 text-xs text-muted-foreground">vs kemarin</p>
-            </article>
-
             <article class="<?= e(design_cn(
                 design_surface('metric'),
                 'p-5',
@@ -303,6 +300,31 @@ $quickCardClass = static function (bool $urgent = false, bool $success = false):
                 <a href="/admin/grooming/pembayaran" class="mt-3 inline-flex text-xs font-semibold text-primary hover:opacity-90">
                     Kelola verifikasi →
                 </a>
+            </article>
+
+            <article class="<?= e(design_cn(design_surface('metric'), 'p-5')) ?>">
+                <div class="mb-4 flex items-start justify-between gap-3">
+                    <span class="<?= e(design_icon_badge('default')) ?>">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/>
+                        </svg>
+                    </span>
+                    <span class="<?= e(design_status_badge($bookingDelta >= 0 ? 'success' : 'danger')) ?> tabular-nums">
+                        <?= $bookingDelta >= 0 ? '+' : '' ?><?= e((string) $bookingDelta) ?>
+                    </span>
+                </div>
+                <p class="text-sm text-muted-foreground">Booking Hari Ini</p>
+                <p class="mt-1 font-heading text-3xl font-semibold tabular-nums text-primary"><?= e((string) $bookingsToday['total']) ?></p>
+                <p class="mt-2 text-xs text-muted-foreground">
+                    <?php if ((int) $bookingsToday['total'] === 0): ?>
+                        Belum ada booking masuk hari ini
+                    <?php else: ?>
+                        Grooming <?= e((string) $bookingsToday['grooming']) ?>
+                        · Penitipan <?= e((string) $bookingsToday['penitipan']) ?>
+                        · Pet Care <?= e((string) $bookingsToday['pet_care']) ?>
+                    <?php endif; ?>
+                </p>
+                <p class="mt-1 text-xs text-muted-foreground">vs kemarin</p>
             </article>
 
             <a

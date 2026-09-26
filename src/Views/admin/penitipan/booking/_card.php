@@ -22,12 +22,15 @@ $vaksinOk = (int) ($booking['vaksin_count'] ?? 0) >= $minVaksin;
 $needsConfirm = (string) $booking['status'] === StatusPenitipan::MENUNGGU_KONFIRMASI->value;
 $refundEnum = StatusRefund::tryFrom((string) ($booking['status_refund'] ?? StatusRefund::TIDAK_ADA->value));
 
-$btnPrimary = design_cn(ui_btn_primary(), 'cursor-pointer text-xs px-3.5 py-2 disabled:opacity-60');
-$btnSuccess = 'cursor-pointer inline-flex items-center justify-center rounded-lg px-3.5 py-2 text-xs font-medium touch-target bg-emerald-600 text-white hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500';
-$btnDanger = 'cursor-pointer inline-flex items-center justify-center rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs font-semibold text-destructive transition hover:bg-destructive/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-destructive/40';
-$btnGhost = design_cn(ui_btn_secondary(), 'cursor-pointer text-xs px-3.5 py-2 text-primary');
+$btnPrimary = design_cn(ui_btn_primary(), 'text-xs px-3.5 py-2 disabled:opacity-60');
+$btnSuccess = design_cn(ui_btn_primary(), 'text-xs px-3.5 py-2 bg-emerald-600 hover:opacity-90');
+$btnDanger = design_cn(
+    ui_btn_secondary(),
+    'text-xs px-3 py-2 border-destructive/30 bg-destructive/10 text-destructive hover:bg-destructive/15',
+);
+$btnGhost = design_cn(ui_btn_secondary(), 'text-xs px-3.5 py-2 text-primary');
 $metricCellClass = design_cn(design_interactive('metricCell'), 'px-3.5 py-2.5');
-$inputSmClass = 'w-full min-w-[10rem] rounded-lg border border-input bg-background px-3 py-2 text-xs text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/25';
+$inputSmClass = design_cn(ui_form_input_class(), 'min-w-[10rem] py-2 text-xs');
 
 $filterHidden = static function () use ($filterStatus, $filterCheckIn, $filterMonitoring): void {
     echo '<input type="hidden" name="filter_status" value="' . e($filterStatus) . '">';
@@ -120,7 +123,7 @@ $articleClass = design_cn(
     </dl>
 
     <?php if (!empty($booking['vaksin_list'])): ?>
-        <details class="rounded-xl border border-border bg-muted/40 open:bg-muted/60" <?= $needsConfirm ? 'open' : '' ?>>
+        <details class="<?= e(design_cn(design_surface('metric'), 'open:bg-muted/60')) ?>" <?= $needsConfirm ? 'open' : '' ?>>
             <summary class="cursor-pointer list-none px-4 py-3 text-sm font-semibold text-primary flex items-center justify-between gap-2">
                 <span>Riwayat vaksin</span>
                 <svg class="h-4 w-4 opacity-70" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
@@ -136,7 +139,7 @@ $articleClass = design_cn(
 
     <div class="flex flex-wrap gap-2 pt-1 border-t border-border/80">
         <?php if ($needsConfirm): ?>
-            <div class="w-full rounded-xl border border-amber-200/80 bg-warning-bg/40 p-3 space-y-3">
+            <div class="<?= e(design_cn(design_advice_panel_surface('warning'), 'w-full p-3 space-y-3')) ?>">
                 <?php if ($vaksinOk): ?>
                     <form method="POST" action="/admin/penitipan/booking/konfirmasi" class="flex flex-wrap items-center gap-2" data-loading-submit>
                         <?= Csrf::field() ?>

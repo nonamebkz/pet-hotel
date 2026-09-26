@@ -5,21 +5,22 @@ declare(strict_types=1);
 $jenisList = $jenisList ?? [];
 $btnPrimary = design_cn(ui_btn_primary(), 'gap-2');
 ?>
-<div class="font-body space-y-6">
-    <section class="<?= e(design_cn(design_surface('panel'), 'relative overflow-hidden p-6 sm:p-8')) ?>">
-        <div class="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-primary/10 blur-2xl" aria-hidden="true"></div>
-        <div class="relative flex flex-wrap items-start justify-between gap-4">
-            <div>
-                <p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Grooming</p>
-                <h1 class="mt-1 font-heading text-2xl sm:text-3xl text-foreground">Jenis Layanan</h1>
-                <p class="mt-2 text-sm text-muted-foreground">Kelola paket grooming yang ditawarkan ke pelanggan.</p>
-            </div>
-            <a href="/admin/grooming/layanan/tambah" class="<?= e($btnPrimary) ?>">
-                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
-                Tambah Jenis
-            </a>
-        </div>
-    </section>
+<div class="<?= e(ui_page_content_shell_classes()) ?>">
+    <?php
+    ob_start();
+    ?>
+    <a href="/admin/grooming/layanan/tambah" class="<?= e($btnPrimary) ?>">
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+        Tambah Jenis
+    </a>
+    <?php
+    ui_page_header(
+        'Jenis Layanan',
+        'Grooming · Administrasi',
+        'Kelola paket grooming yang ditawarkan ke pelanggan.',
+        (string) ob_get_clean(),
+    );
+    ?>
 
     <?php $activeTab = 'layanan'; require __DIR__ . '/../_subnav.php'; ?>
 

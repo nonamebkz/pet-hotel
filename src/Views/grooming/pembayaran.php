@@ -10,14 +10,20 @@ $bukti = $bukti ?? null;
 $bankConfig = $bankConfig ?? [];
 $errors = $errors ?? [];
 ?>
-<div>
-    <div class="mb-6">
+<div class="<?= e(ui_page_content_shell_classes()) ?>">
+    <p>
         <a href="/grooming/detail?id=<?= e((string) $booking['id']) ?>" class="<?= e(ui_back_link_class()) ?>">&larr; Detail Booking</a>
-        <h1 class="text-2xl font-bold text-foreground mt-2">Pembayaran Grooming</h1>
-    </div>
+    </p>
+    <?php
+    ui_page_header(
+        'Pembayaran Grooming',
+        'Grooming',
+        'Transfer sesuai nominal lalu upload bukti untuk verifikasi.',
+    );
+    ?>
 
     <div class="grid gap-6 lg:grid-cols-2 max-w-4xl">
-        <div class="<?= e(design_cn(design_surface('metric'), 'p-6 space-y-4')) ?>">
+        <div class="<?= e(design_cn(design_surface('panel'), 'p-6 space-y-4')) ?>">
             <h2 class="font-semibold text-foreground">Rekening Tujuan</h2>
             <div class="text-sm text-muted-foreground space-y-1">
                 <div>Bank: <strong><?= e((string) ($bankConfig['bank_name'] ?? '')) ?></strong></div>
@@ -31,18 +37,18 @@ $errors = $errors ?? [];
                     Rp <?= e(number_format((float) $transaksi['total_bayar'], 0, ',', '.')) ?>
                 </div>
                 <?php if (!empty($transaksi['batas_waktu_bayar'])): ?>
-                    <div class="text-xs text-amber-700 mt-2">
+                    <p class="<?= e(design_cn(design_alert_inline('warning'), 'mt-2')) ?>">
                         Batas waktu: <?= e(date('d/m/Y H:i', strtotime((string) $transaksi['batas_waktu_bayar']))) ?>
-                    </div>
+                    </p>
                 <?php endif; ?>
             </div>
         </div>
 
-        <div class="<?= e(design_cn(design_surface('metric'), 'p-6')) ?>">
+        <div class="<?= e(design_cn(design_surface('panel'), 'p-6')) ?>">
             <h2 class="font-semibold text-foreground mb-4">Upload Bukti Transfer</h2>
 
             <?php if ($bukti && (string) $bukti['status_verifikasi'] === 'DITOLAK'): ?>
-                <div class="mb-4 p-3 bg-red-50 border border-red-100 rounded-lg text-sm text-red-800">
+                <div class="<?= e(design_cn(design_advice_panel_surface('danger'), design_surface('panel'), 'mb-4 p-3 text-sm text-destructive')) ?>">
                     Bukti sebelumnya ditolak. Upload bukti baru.
                 </div>
             <?php endif; ?>
@@ -61,7 +67,7 @@ $errors = $errors ?? [];
                         Bukti Transfer <span class="text-destructive">*</span>
                     </label>
                     <input type="file" name="bukti" accept="image/jpeg,image/png,image/webp,application/pdf"
-                           class="w-full text-sm border border-border rounded-lg px-3 py-2" required>
+                           class="<?= e(ui_form_input_class(!empty($errors['bukti']))) ?> text-sm py-2" required>
                     <p class="text-xs text-muted-foreground mt-1">JPG, PNG, WebP, atau PDF. Maks. 2 MB.</p>
                     <?php if (!empty($errors['bukti'])): ?>
                         <p class="text-xs text-destructive mt-1"><?= e((string) $errors['bukti']) ?></p>

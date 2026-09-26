@@ -23,13 +23,19 @@ $statusEnum = StatusBookingGrooming::tryFrom((string) ($booking['status'] ?? '')
 $canCancel = $statusEnum?->canCancelByPelanggan() ?? false;
 $statusRefund = $transaksi ? StatusRefund::tryFrom((string) ($transaksi['status_refund'] ?? '')) : null;
 ?>
-<div>
-    <div class="mb-6">
+<div class="<?= e(ui_page_content_shell_classes()) ?>">
+    <p>
         <a href="/grooming/riwayat" class="<?= e(ui_back_link_class()) ?>">&larr; Riwayat</a>
-        <h1 class="text-2xl font-bold text-foreground mt-2">Detail Booking Grooming</h1>
-    </div>
+    </p>
+    <?php
+    ui_page_header(
+        'Detail Booking',
+        'Grooming',
+        (string) ($booking['jenis_nama'] ?? '') !== '' ? (string) $booking['jenis_nama'] . ' · ' . (string) ($booking['kucing_nama'] ?? '') : null,
+    );
+    ?>
 
-    <div class="<?= e(design_cn(design_surface('metric'), 'p-6 space-y-4 max-w-2xl')) ?>">
+    <div class="<?= e(design_cn(design_surface('panel'), 'p-6 space-y-4 max-w-2xl')) ?>">
         <div class="flex items-start justify-between gap-3">
             <div>
                 <div class="font-semibold text-lg text-foreground"><?= e((string) $booking['jenis_nama']) ?></div>
@@ -73,9 +79,9 @@ $statusRefund = $transaksi ? StatusRefund::tryFrom((string) ($transaksi['status_
                     <span>Rp <?= e(number_format((float) $transaksi['total_bayar'], 0, ',', '.')) ?></span>
                 </div>
                 <?php if (!empty($transaksi['batas_waktu_bayar']) && (string) $transaksi['status_pembayaran'] === StatusPembayaran::MENUNGGU_PEMBAYARAN->value): ?>
-                    <div class="text-xs text-amber-700 mt-2">
+                    <p class="<?= e(design_cn(design_alert_inline('warning'), 'mt-2')) ?>">
                         Batas waktu bayar: <?= e(date('d/m/Y H:i', strtotime((string) $transaksi['batas_waktu_bayar']))) ?>
-                    </div>
+                    </p>
                 <?php endif; ?>
             </div>
         <?php endif; ?>
@@ -83,7 +89,7 @@ $statusRefund = $transaksi ? StatusRefund::tryFrom((string) ($transaksi['status_
         <?php require __DIR__ . '/../partials/refund-status.php'; ?>
 
         <?php if ($bukti && (string) $bukti['status_verifikasi'] === StatusVerifikasi::DITOLAK->value): ?>
-            <div class="bg-red-50 border border-red-100 rounded-lg p-3 text-sm text-red-800">
+            <div class="<?= e(design_cn(design_advice_panel_surface('danger'), design_surface('panel'), 'p-3 text-sm text-destructive')) ?>">
                 Bukti transfer ditolak.
                 <?php if (!empty($bukti['catatan_penolakan'])): ?>
                     Catatan: <?= e((string) $bukti['catatan_penolakan']) ?>
