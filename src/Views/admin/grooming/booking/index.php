@@ -271,12 +271,12 @@ $filterHidden = static function () use ($filterStatus, $filterTanggal): void {
 
                                         <?php if (!empty($booking['can_staff_cancel_refund'])): ?>
                                             <form method="POST" action="/admin/grooming/booking/batalkan-refund"
-                                                  class="rounded-xl border border-red-100 bg-red-50/50 p-2.5 space-y-2"
+                                                  class="<?= e(design_cn(design_advice_panel_surface('danger'), 'rounded-xl p-2.5 space-y-2')) ?>"
                                                   data-confirm="Batalkan booking lunas ini? Refund akan ditandai pending.">
                                                 <?= Csrf::field() ?>
                                                 <input type="hidden" name="id" value="<?= e((string) $booking['id']) ?>">
                                                 <?php $filterHidden(); ?>
-                                                <label class="block text-[11px] font-semibold text-red-800">Batalkan + refund</label>
+                                                <label class="block text-[11px] font-semibold text-destructive">Batalkan + refund</label>
                                                 <div class="flex flex-wrap gap-1.5">
                                                     <input type="text" name="alasan" placeholder="Alasan (opsional)"
                                                            class="<?= e($inputClassSm) ?>">

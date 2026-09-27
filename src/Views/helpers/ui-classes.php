@@ -56,7 +56,15 @@ function ui_form_label_class(): string
 
 function ui_field_error_class(): string
 {
-    return 'mt-1 text-xs text-destructive';
+    return 'mt-1.5 text-xs text-destructive';
+}
+
+function ui_form_error_alert_class(): string
+{
+    return design_cn(
+        design_advice_panel_surface('danger'),
+        'flex items-start gap-3 rounded-2xl px-4 py-3 text-sm text-destructive',
+    );
 }
 
 function ui_back_link_class(): string

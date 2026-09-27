@@ -118,7 +118,7 @@ $activeFilters = $activeFilters ?? [];
                     </div>
 
                     <?php if (!empty($row['bukti_ditolak']) && !empty($row['bukti_catatan_penolakan'])): ?>
-                        <div class="text-sm text-red-700 bg-red-50 border border-red-100 rounded-lg px-3 py-2 mb-3">
+                        <div class="<?= e(design_cn(design_advice_panel_surface('danger'), 'text-sm rounded-lg px-3 py-2 mb-3 text-destructive')) ?>">
                             Catatan penolakan: <?= e((string) $row['bukti_catatan_penolakan']) ?>
                         </div>
                     <?php endif; ?>

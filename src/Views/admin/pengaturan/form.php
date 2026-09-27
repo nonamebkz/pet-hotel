@@ -77,7 +77,7 @@ $inputClass = static function (string $fieldName, array $errors): string {
                            value="<?= $field('pickup_free_radius_km') ?>"
                            class="<?= e($inputClass('pickup_free_radius_km', $errors)) ?>">
                     <?php if (!empty($errors['pickup_free_radius_km'])): ?>
-                        <p class="mt-1.5 text-xs text-red-600"><?= e((string) $errors['pickup_free_radius_km']) ?></p>
+                        <p class="<?= e(ui_field_error_class()) ?>"><?= e((string) $errors['pickup_free_radius_km']) ?></p>
                     <?php endif; ?>
                 </div>
                 <div>
@@ -86,7 +86,7 @@ $inputClass = static function (string $fieldName, array $errors): string {
                            value="<?= $field('pickup_extra_fee_per_km') ?>"
                            class="<?= e($inputClass('pickup_extra_fee_per_km', $errors)) ?>">
                     <?php if (!empty($errors['pickup_extra_fee_per_km'])): ?>
-                        <p class="mt-1.5 text-xs text-red-600"><?= e((string) $errors['pickup_extra_fee_per_km']) ?></p>
+                        <p class="<?= e(ui_field_error_class()) ?>"><?= e((string) $errors['pickup_extra_fee_per_km']) ?></p>
                     <?php endif; ?>
                 </div>
             </div>
@@ -116,7 +116,7 @@ $inputClass = static function (string $fieldName, array $errors): string {
                        value="<?= $field('payment_deadline_hours') ?>"
                        class="max-w-xs <?= e($inputClass('payment_deadline_hours', $errors)) ?>">
                 <?php if (!empty($errors['payment_deadline_hours'])): ?>
-                    <p class="mt-1.5 text-xs text-red-600"><?= e((string) $errors['payment_deadline_hours']) ?></p>
+                    <p class="<?= e(ui_field_error_class()) ?>"><?= e((string) $errors['payment_deadline_hours']) ?></p>
                 <?php endif; ?>
             </div>
             <div class="grid gap-4 sm:grid-cols-3">
@@ -125,7 +125,7 @@ $inputClass = static function (string $fieldName, array $errors): string {
                     <input type="text" id="bank_name" name="bank_name" maxlength="50" value="<?= $field('bank_name') ?>"
                            class="<?= e($inputClass('bank_name', $errors)) ?>">
                     <?php if (!empty($errors['bank_name'])): ?>
-                        <p class="mt-1.5 text-xs text-red-600"><?= e((string) $errors['bank_name']) ?></p>
+                        <p class="<?= e(ui_field_error_class()) ?>"><?= e((string) $errors['bank_name']) ?></p>
                     <?php endif; ?>
                 </div>
                 <div>
@@ -133,7 +133,7 @@ $inputClass = static function (string $fieldName, array $errors): string {
                     <input type="text" id="bank_account_number" name="bank_account_number" maxlength="30" value="<?= $field('bank_account_number') ?>"
                            class="<?= e($inputClass('bank_account_number', $errors)) ?>">
                     <?php if (!empty($errors['bank_account_number'])): ?>
-                        <p class="mt-1.5 text-xs text-red-600"><?= e((string) $errors['bank_account_number']) ?></p>
+                        <p class="<?= e(ui_field_error_class()) ?>"><?= e((string) $errors['bank_account_number']) ?></p>
                     <?php endif; ?>
                 </div>
                 <div>
@@ -141,7 +141,7 @@ $inputClass = static function (string $fieldName, array $errors): string {
                     <input type="text" id="bank_account_name" name="bank_account_name" maxlength="100" value="<?= $field('bank_account_name') ?>"
                            class="<?= e($inputClass('bank_account_name', $errors)) ?>">
                     <?php if (!empty($errors['bank_account_name'])): ?>
-                        <p class="mt-1.5 text-xs text-red-600"><?= e((string) $errors['bank_account_name']) ?></p>
+                        <p class="<?= e(ui_field_error_class()) ?>"><?= e((string) $errors['bank_account_name']) ?></p>
                     <?php endif; ?>
                 </div>
             </div>
@@ -169,7 +169,7 @@ $inputClass = static function (string $fieldName, array $errors): string {
                     <input type="number" id="promo_min_days" name="promo_min_days" min="1" value="<?= $field('promo_min_days') ?>"
                            class="<?= e($inputClass('promo_min_days', $errors)) ?>">
                     <?php if (!empty($errors['promo_min_days'])): ?>
-                        <p class="mt-1.5 text-xs text-red-600"><?= e((string) $errors['promo_min_days']) ?></p>
+                        <p class="<?= e(ui_field_error_class()) ?>"><?= e((string) $errors['promo_min_days']) ?></p>
                     <?php endif; ?>
                 </div>
                 <div>
@@ -177,7 +177,7 @@ $inputClass = static function (string $fieldName, array $errors): string {
                     <input type="number" id="promo_discount_percent" name="promo_discount_percent" min="1" max="100" value="<?= $field('promo_discount_percent') ?>"
                            class="<?= e($inputClass('promo_discount_percent', $errors)) ?>">
                     <?php if (!empty($errors['promo_discount_percent'])): ?>
-                        <p class="mt-1.5 text-xs text-red-600"><?= e((string) $errors['promo_discount_percent']) ?></p>
+                        <p class="<?= e(ui_field_error_class()) ?>"><?= e((string) $errors['promo_discount_percent']) ?></p>
                     <?php endif; ?>
                 </div>
                 <div>
@@ -185,7 +185,7 @@ $inputClass = static function (string $fieldName, array $errors): string {
                     <input type="number" id="min_vaccination_count" name="min_vaccination_count" min="0" value="<?= $field('min_vaccination_count') ?>"
                            class="<?= e($inputClass('min_vaccination_count', $errors)) ?>">
                     <?php if (!empty($errors['min_vaccination_count'])): ?>
-                        <p class="mt-1.5 text-xs text-red-600"><?= e((string) $errors['min_vaccination_count']) ?></p>
+                        <p class="<?= e(ui_field_error_class()) ?>"><?= e((string) $errors['min_vaccination_count']) ?></p>
                     <?php endif; ?>
                 </div>
                 <div>
@@ -193,7 +193,7 @@ $inputClass = static function (string $fieldName, array $errors): string {
                     <input type="text" id="petshop_whatsapp" name="petshop_whatsapp" placeholder="6281234567890" value="<?= $field('petshop_whatsapp') ?>"
                            class="<?= e($inputClass('petshop_whatsapp', $errors)) ?>">
                     <?php if (!empty($errors['petshop_whatsapp'])): ?>
-                        <p class="mt-1.5 text-xs text-red-600"><?= e((string) $errors['petshop_whatsapp']) ?></p>
+                        <p class="<?= e(ui_field_error_class()) ?>"><?= e((string) $errors['petshop_whatsapp']) ?></p>
                     <?php endif; ?>
                 </div>
             </div>

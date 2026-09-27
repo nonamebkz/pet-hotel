@@ -31,7 +31,7 @@ $inputClass = static function (string $field, array $errors): string {
     ?>
 
     <?php if (!empty($errors['general'])): ?>
-        <div class="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800" role="alert">
+        <div class="<?= e(ui_form_error_alert_class()) ?>" role="alert">
             <svg class="h-5 w-5 shrink-0 text-red-500" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"/>
             </svg>
@@ -82,7 +82,7 @@ $inputClass = static function (string $field, array $errors): string {
                 <p data-strength-label class="mt-1 text-xs text-muted-foreground"></p>
             </div>
             <?php if (!empty($errors['password'])): ?>
-                <p class="mt-1.5 text-xs text-red-600"><?= e((string) $errors['password']) ?></p>
+                <p class="<?= e(ui_field_error_class()) ?>"><?= e((string) $errors['password']) ?></p>
             <?php endif; ?>
         </div>
 
@@ -100,7 +100,7 @@ $inputClass = static function (string $field, array $errors): string {
             </div>
             <p data-match-hint class="mt-1.5 text-xs text-muted-foreground"></p>
             <?php if (!empty($errors['password_confirmation'])): ?>
-                <p class="mt-1 text-xs text-red-600"><?= e((string) $errors['password_confirmation']) ?></p>
+                <p class="<?= e(ui_field_error_class()) ?>"><?= e((string) $errors['password_confirmation']) ?></p>
             <?php endif; ?>
         </div>
 

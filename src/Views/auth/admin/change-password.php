@@ -42,8 +42,8 @@ $inputClass = 'w-full rounded-lg border border-border bg-background px-3.5 py-3 
     </aside>
 
     <?php if (!empty($error)): ?>
-        <div class="<?= e(design_cn(design_alert_inline('warning'), 'px-4 py-3 text-sm')) ?>" role="alert">
-            <svg class="mt-0.5 h-5 w-5 shrink-0 text-red-500" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24" aria-hidden="true">
+        <div class="<?= e(ui_form_error_alert_class()) ?>" role="alert">
+            <svg class="mt-0.5 h-5 w-5 shrink-0 text-destructive" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"/>
             </svg>
             <span><?= e((string) $error) ?></span>

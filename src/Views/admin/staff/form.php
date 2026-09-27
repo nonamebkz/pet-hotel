@@ -46,7 +46,7 @@ if (!$isEdit && $errors !== []) {
     ?>
 
     <?php if (!empty($errors['general'])): ?>
-        <div class="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800" role="alert">
+        <div class="<?= e(ui_form_error_alert_class()) ?>" role="alert">
             <svg class="mt-0.5 h-5 w-5 shrink-0 text-red-500" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"/>
             </svg>
@@ -78,7 +78,7 @@ if (!$isEdit && $errors !== []) {
                            value="<?= e((string) ($staff['nama'] ?? old('nama', ''))) ?>"
                            class="<?= e($inputClass('nama', $errors)) ?>">
                     <?php if (!empty($errors['nama'])): ?>
-                        <p class="mt-1.5 text-xs text-red-600"><?= e((string) $errors['nama']) ?></p>
+                        <p class="<?= e(ui_field_error_class()) ?>"><?= e((string) $errors['nama']) ?></p>
                     <?php endif; ?>
                 </div>
 
@@ -88,7 +88,7 @@ if (!$isEdit && $errors !== []) {
                            value="<?= e((string) ($staff['email'] ?? old('email', ''))) ?>"
                            class="<?= e($inputClass('email', $errors)) ?>">
                     <?php if (!empty($errors['email'])): ?>
-                        <p class="mt-1.5 text-xs text-red-600"><?= e((string) $errors['email']) ?></p>
+                        <p class="<?= e(ui_field_error_class()) ?>"><?= e((string) $errors['email']) ?></p>
                     <?php endif; ?>
                 </div>
 
@@ -99,7 +99,7 @@ if (!$isEdit && $errors !== []) {
                            placeholder="Minimal 3 karakter jika diisi"
                            class="<?= e($inputClass('username', $errors)) ?>">
                     <?php if (!empty($errors['username'])): ?>
-                        <p class="mt-1.5 text-xs text-red-600"><?= e((string) $errors['username']) ?></p>
+                        <p class="<?= e(ui_field_error_class()) ?>"><?= e((string) $errors['username']) ?></p>
                     <?php endif; ?>
                 </div>
             </section>
@@ -162,7 +162,7 @@ if (!$isEdit && $errors !== []) {
                            placeholder="Contoh: Siti Aminah"
                            class="<?= e($inputClass('nama', $errors)) ?>">
                     <?php if (!empty($errors['nama'])): ?>
-                        <p class="mt-1.5 text-xs text-red-600"><?= e((string) $errors['nama']) ?></p>
+                        <p class="<?= e(ui_field_error_class()) ?>"><?= e((string) $errors['nama']) ?></p>
                     <?php endif; ?>
                 </div>
 
@@ -173,7 +173,7 @@ if (!$isEdit && $errors !== []) {
                            placeholder="staff@petshop.com"
                            class="<?= e($inputClass('email', $errors)) ?>">
                     <?php if (!empty($errors['email'])): ?>
-                        <p class="mt-1.5 text-xs text-red-600"><?= e((string) $errors['email']) ?></p>
+                        <p class="<?= e(ui_field_error_class()) ?>"><?= e((string) $errors['email']) ?></p>
                     <?php endif; ?>
                 </div>
 
@@ -184,7 +184,7 @@ if (!$isEdit && $errors !== []) {
                            placeholder="Login alternatif selain email"
                            class="<?= e($inputClass('username', $errors)) ?>">
                     <?php if (!empty($errors['username'])): ?>
-                        <p class="mt-1.5 text-xs text-red-600"><?= e((string) $errors['username']) ?></p>
+                        <p class="<?= e(ui_field_error_class()) ?>"><?= e((string) $errors['username']) ?></p>
                     <?php endif; ?>
                 </div>
 
@@ -234,7 +234,7 @@ if (!$isEdit && $errors !== []) {
                         <p data-strength-label class="mt-1 text-xs text-muted-foreground"></p>
                     </div>
                     <?php if (!empty($errors['password'])): ?>
-                        <p class="mt-1.5 text-xs text-red-600"><?= e((string) $errors['password']) ?></p>
+                        <p class="<?= e(ui_field_error_class()) ?>"><?= e((string) $errors['password']) ?></p>
                     <?php endif; ?>
                 </div>
 
@@ -252,7 +252,7 @@ if (!$isEdit && $errors !== []) {
                     </div>
                     <p data-match-hint class="mt-1.5 text-xs text-muted-foreground"></p>
                     <?php if (!empty($errors['password_confirmation'])): ?>
-                        <p class="mt-1 text-xs text-red-600"><?= e((string) $errors['password_confirmation']) ?></p>
+                        <p class="<?= e(ui_field_error_class()) ?>"><?= e((string) $errors['password_confirmation']) ?></p>
                     <?php endif; ?>
                 </div>
 
@@ -280,7 +280,7 @@ if (!$isEdit && $errors !== []) {
                     <p class="mt-1 text-sm font-semibold text-primary">Staff</p>
                     <p class="mt-0.5 text-xs text-muted-foreground">Owner tidak dapat dibuat dari halaman ini.</p>
                     <?php if (!empty($errors['role'])): ?>
-                        <p class="mt-1.5 text-xs text-red-600"><?= e((string) $errors['role']) ?></p>
+                        <p class="<?= e(ui_field_error_class()) ?>"><?= e((string) $errors['role']) ?></p>
                     <?php endif; ?>
                 </div>
 
@@ -316,7 +316,7 @@ if (!$isEdit && $errors !== []) {
                         <?php endforeach; ?>
                     </div>
                     <?php if (!empty($errors['status'])): ?>
-                        <p class="mt-2 text-xs text-red-600"><?= e((string) $errors['status']) ?></p>
+                        <p class="<?= e(ui_field_error_class()) ?>"><?= e((string) $errors['status']) ?></p>
                     <?php endif; ?>
                 </fieldset>
 

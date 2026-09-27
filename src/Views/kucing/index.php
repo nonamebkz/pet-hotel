@@ -79,7 +79,7 @@ $kucingList = $kucingList ?? [];
                             <?= Csrf::field() ?>
                             <input type="hidden" name="id" value="<?= e((string) $kucing['id']) ?>">
                             <button type="submit"
-                                    class="w-full text-sm border border-red-200 text-destructive rounded-lg py-1.5 hover:bg-red-50">
+                                    class="<?= e(design_cn(ui_btn_secondary(), 'w-full border-destructive/30 text-destructive hover:bg-destructive/10')) ?>">
                                 Hapus
                             </button>
                         </form>

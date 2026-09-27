@@ -152,7 +152,7 @@ $initial = mb_substr($namaPelanggan !== '' ? $namaPelanggan : 'P', 0, 1);
                                             Eligible pet hotel
                                         </span>
                                     <?php else: ?>
-                                        <span class="inline-flex items-center rounded-lg bg-red-50 px-2 py-0.5 text-xs font-semibold text-red-700">
+                                        <span class="<?= e(design_status_badge('danger')) ?>">
                                             Vaksin belum memenuhi syarat (min. <?= (int) $minVaksin ?>)
                                         </span>
                                     <?php endif; ?>
