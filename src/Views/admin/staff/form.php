@@ -61,7 +61,7 @@ if (!$isEdit && $errors !== []) {
 
             <section class="<?= e(design_cn(design_surface('panel'), 'p-5 sm:p-6 space-y-5')) ?>">
                 <div class="flex items-center gap-3">
-                    <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-soft text-primary">
+                    <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
                         <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
                         </svg>
@@ -104,7 +104,7 @@ if (!$isEdit && $errors !== []) {
                 </div>
             </section>
 
-            <aside class="rounded-2xl border border-border bg-primary-soft/50 px-4 py-3.5 text-sm text-muted-foreground">
+            <aside class="rounded-2xl border border-border bg-primary/5 px-4 py-3.5 text-sm text-muted-foreground">
                 Status akun &amp; password tidak diubah di sini.
                 <a href="/admin/staff/reset-password?id=<?= e(urlencode((string) ($staff['id'] ?? ''))) ?>"
                    class="ml-1 cursor-pointer font-semibold text-primary hover:underline focus:outline-none focus-visible:underline">Reset password</a>
@@ -138,7 +138,7 @@ if (!$isEdit && $errors !== []) {
                 ?>
                     <li class="flex flex-col items-center gap-1.5 text-center sm:flex-row sm:gap-3 sm:text-left"
                         data-step-indicator>
-                        <span data-step-dot class="flex h-8 w-8 items-center justify-center rounded-xl bg-primary-soft text-primary text-sm font-semibold" aria-hidden="true">
+                        <span data-step-dot class="flex h-8 w-8 items-center justify-center rounded-xl bg-primary/10 text-primary text-sm font-semibold" aria-hidden="true">
                             <?= e((string) ($i + 1)) ?>
                         </span>
                         <span class="min-w-0">
@@ -228,7 +228,7 @@ if (!$isEdit && $errors !== []) {
                         </button>
                     </div>
                     <div id="staff-password-meter" class="mt-2.5">
-                        <div class="h-1.5 overflow-hidden rounded-full bg-primary-soft">
+                        <div class="h-1.5 overflow-hidden rounded-full bg-primary/10">
                             <div data-strength-bar class="h-full rounded-full transition-all transition" style="width: 0%"></div>
                         </div>
                         <p data-strength-label class="mt-1 text-xs text-muted-foreground"></p>

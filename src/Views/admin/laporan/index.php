@@ -57,23 +57,27 @@ $periodeLabel = date('d/m/Y', strtotime($mulai)) . ' — ' . date('d/m/Y', strto
             </p>
         </div>
 
+        <?php
+        $laporanCardClass = design_cn(
+            design_interactive('cardLink'),
+            design_surface('metric'),
+            'block p-5 sm:p-6 print:border print:shadow-none',
+        );
+        ?>
         <div class="grid sm:grid-cols-3 gap-4">
-            <a href="/admin/laporan/grooming<?= e($querySuffix) ?>"
-               class="rounded-2xl border bg-card p-5 sm:p-6 transition transition hover:border-primary/30 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-ring print:border print:shadow-none">
+            <a href="/admin/laporan/grooming<?= e($querySuffix) ?>" class="<?= e($laporanCardClass) ?>">
                 <p class="text-sm text-muted-foreground">Booking Grooming</p>
-                <p class="mt-1 font-heading text-3xl text-primary"><?= e((string) $ringkasan['grooming']) ?></p>
+                <p class="mt-1 font-heading text-3xl tabular-nums text-primary"><?= e((string) $ringkasan['grooming']) ?></p>
                 <p class="mt-2 text-xs font-semibold text-primary print:hidden">Lihat detail →</p>
             </a>
-            <a href="/admin/laporan/penitipan<?= e($querySuffix) ?>"
-               class="rounded-2xl border bg-card p-5 sm:p-6 transition transition hover:border-primary/30 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-ring print:border print:shadow-none">
+            <a href="/admin/laporan/penitipan<?= e($querySuffix) ?>" class="<?= e($laporanCardClass) ?>">
                 <p class="text-sm text-muted-foreground">Booking Pet Hotel</p>
-                <p class="mt-1 font-heading text-3xl text-primary"><?= e((string) $ringkasan['penitipan']) ?></p>
+                <p class="mt-1 font-heading text-3xl tabular-nums text-primary"><?= e((string) $ringkasan['penitipan']) ?></p>
                 <p class="mt-2 text-xs font-semibold text-primary print:hidden">Lihat detail →</p>
             </a>
-            <a href="/admin/laporan/pet-care<?= e($querySuffix) ?>"
-               class="rounded-2xl border bg-card p-5 sm:p-6 transition transition hover:border-primary/30 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-ring print:border print:shadow-none">
+            <a href="/admin/laporan/pet-care<?= e($querySuffix) ?>" class="<?= e($laporanCardClass) ?>">
                 <p class="text-sm text-muted-foreground">Booking Pet Care</p>
-                <p class="mt-1 font-heading text-3xl text-primary"><?= e((string) $ringkasan['pet_care']) ?></p>
+                <p class="mt-1 font-heading text-3xl tabular-nums text-primary"><?= e((string) $ringkasan['pet_care']) ?></p>
                 <p class="mt-2 text-xs font-semibold text-primary print:hidden">Lihat detail →</p>
             </a>
         </div>

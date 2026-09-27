@@ -25,7 +25,7 @@ $hasCoords = $mapLat !== null && $mapLat !== '' && $mapLng !== null && $mapLng !
     </p>
 
     <?php if (!empty($errors['petshop_lat']) || !empty($errors['petshop_lng'])): ?>
-        <p class="text-red-600 text-xs"><?= e($errors['petshop_lat'] ?? $errors['petshop_lng'] ?? '') ?></p>
+        <p class="<?= e(ui_field_error_class()) ?>"><?= e($errors['petshop_lat'] ?? $errors['petshop_lng'] ?? '') ?></p>
     <?php endif; ?>
 </div>
 

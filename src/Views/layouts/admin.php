@@ -31,7 +31,6 @@ $navUnreadCount = (int) ($navUnreadCount ?? 0);
         </div>
         <?= $content ?? '' ?>
     </main>
-    </div>
     <?php require __DIR__ . '/../partials/ui/confirm-modal.php'; ?>
     <script src="/js/nav.js" defer></script>
     <script src="/js/ui.js" defer></script>

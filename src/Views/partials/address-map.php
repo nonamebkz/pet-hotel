@@ -26,7 +26,7 @@ $hasCoords = $mapLat !== null && $mapLat !== '' && $mapLng !== null && $mapLng !
     </p>
 
     <?php if (!empty($errors['latitude']) || !empty($errors['longitude']) || !empty($errors['location'])): ?>
-        <p class="text-red-600 text-xs"><?= e($errors['latitude'] ?? $errors['longitude'] ?? $errors['location'] ?? '') ?></p>
+        <p class="<?= e(ui_field_error_class()) ?>"><?= e($errors['latitude'] ?? $errors['longitude'] ?? $errors['location'] ?? '') ?></p>
     <?php endif; ?>
 </div>
 

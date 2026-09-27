@@ -79,7 +79,7 @@ foreach ($layananList as $layanan) {
                                        class="peer sr-only"
                                        <?= $selectedKuota === (string) $slot['id'] ? 'checked' : '' ?>
                                        required>
-                                <span class="block text-center border rounded-lg py-2 text-sm peer-checked:border-primary peer-checked:bg-primary-soft peer-checked:text-primary-hover hover:border-primary/30">
+                                <span class="block text-center border rounded-lg py-2 text-sm peer-checked:border-primary peer-checked:bg-primary/10 peer-checked:text-primary hover:border-primary/30">
                                     <?= e(substr((string) $slot['slot_waktu'], 0, 5)) ?>
                                 </span>
                             </label>

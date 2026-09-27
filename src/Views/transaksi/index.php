@@ -94,7 +94,7 @@ $activeFilters = $activeFilters ?? [];
                             </div>
                         </div>
                         <div class="text-right shrink-0">
-                            <div class="text-sm font-semibold text-primary-hover mb-2">
+                            <div class="text-sm font-semibold text-primary mb-2">
                                 Rp <?= e(number_format((float) $row['total_bayar'], 0, ',', '.')) ?>
                             </div>
                             <div class="flex flex-wrap justify-end gap-1">

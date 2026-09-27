@@ -22,12 +22,12 @@ $tabs = [
         }
         ?>
         <?php if ($isActive): ?>
-            <span class="inline-flex items-center border-b-2 border-primary px-3 pb-3 pt-1 text-sm font-medium text-foreground">
+            <span class="inline-flex items-center border-b-2 border-primary px-4 py-2.5 text-sm font-medium text-foreground">
                 <?= e($tab['label']) ?>
             </span>
         <?php else: ?>
             <a href="<?= e($tab['href']) ?>"
-               class="inline-flex items-center rounded-sm px-3 pb-3 pt-1 text-sm font-medium text-muted-foreground transition hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+               class="inline-flex touch-target items-center border-b-2 border-transparent px-4 py-2.5 text-sm font-medium text-muted-foreground transition hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                 <?= e($tab['label']) ?>
             </a>
         <?php endif; ?>

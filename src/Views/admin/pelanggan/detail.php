@@ -92,7 +92,7 @@ $initial = mb_substr($namaPelanggan !== '' ? $namaPelanggan : 'P', 0, 1);
                 </span>
             <?php endif; ?>
             <?php if ($promoUsed): ?>
-                <span class="inline-flex items-center rounded-lg bg-primary-soft px-2.5 py-1 text-xs font-semibold text-primary">
+                <span class="inline-flex items-center rounded-lg bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">
                     Sudah pernah pakai promo penitipan
                 </span>
             <?php else: ?>
@@ -133,7 +133,7 @@ $initial = mb_substr($namaPelanggan !== '' ? $namaPelanggan : 'P', 0, 1);
                                 <img src="<?= e((string) $kucing['foto_url']) ?>" alt="<?= e((string) $kucing['nama']) ?>"
                                      class="h-16 w-16 shrink-0 rounded-2xl object-cover border border-border">
                             <?php else: ?>
-                                <div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-primary-soft font-heading text-lg font-semibold text-primary" aria-hidden="true">
+                                <div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-primary/10 font-heading text-lg font-semibold text-primary" aria-hidden="true">
                                     <?= e(mb_substr((string) $kucing['nama'], 0, 1)) ?>
                                 </div>
                             <?php endif; ?>
@@ -156,7 +156,7 @@ $initial = mb_substr($namaPelanggan !== '' ? $namaPelanggan : 'P', 0, 1);
                                             Vaksin belum memenuhi syarat (min. <?= (int) $minVaksin ?>)
                                         </span>
                                     <?php endif; ?>
-                                    <span class="inline-flex items-center rounded-lg bg-primary-soft px-2 py-0.5 text-xs font-semibold text-primary">
+                                    <span class="inline-flex items-center rounded-lg bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
                                         <?= $vaksinCount ?> entri vaksin lengkap
                                     </span>
                                 </div>

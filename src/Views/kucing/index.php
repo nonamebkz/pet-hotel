@@ -35,7 +35,7 @@ $kucingList = $kucingList ?? [];
                             <img src="<?= e((string) $kucing['foto_url']) ?>" alt="<?= e((string) $kucing['nama']) ?>"
                                  class="w-14 h-14 rounded-lg object-cover border">
                         <?php else: ?>
-                            <div class="w-14 h-14 rounded-lg bg-primary-soft flex items-center justify-center text-primary text-sm font-bold">
+                            <div class="w-14 h-14 rounded-lg bg-primary/10 flex items-center justify-center text-primary text-sm font-bold">
                                 <?= e(mb_substr((string) $kucing['nama'], 0, 1)) ?>
                             </div>
                         <?php endif; ?>

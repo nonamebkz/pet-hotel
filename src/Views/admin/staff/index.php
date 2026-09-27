@@ -118,7 +118,7 @@ if ($totalCount > 0) {
                                     <?= \App\Core\Csrf::field() ?>
                                     <input type="hidden" name="id" value="<?= e((string) $staff['id']) ?>">
                                     <button type="submit"
-                                            class="cursor-pointer inline-flex items-center rounded-xl border px-3 py-2 text-xs font-semibold transition transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 <?= $isActive ? 'border-red-200 bg-red-50 text-red-700 hover:bg-red-100 focus-visible:ring-red-400' : 'border-success/30 bg-success-bg text-success hover:bg-success/10 focus-visible:ring-success' ?>">
+                                            class="cursor-pointer inline-flex items-center rounded-xl border px-3 py-2 text-xs font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 <?= $isActive ? 'border-red-200 bg-red-50 text-red-700 hover:bg-red-100 focus-visible:ring-red-400' : 'border-success/30 bg-success-bg text-success hover:bg-success/10 focus-visible:ring-success' ?>">
                                         <?= $isActive ? 'Nonaktifkan' : 'Aktifkan' ?>
                                     </button>
                                 </form>

@@ -63,7 +63,7 @@ $feePerKm = (int) ($pickupSettings['pickup_extra_fee_per_km'] ?? 5000);
             <?php endforeach; ?>
         </div>
 
-        <div class="mt-6 bg-primary-soft border border-primary-soft rounded-xl p-4 text-sm text-foreground">
+        <div class="<?= e(design_cn(design_alert_inline('warning'), 'mt-6 text-sm')) ?>">
             <strong>Antar-jemput:</strong> Gratis jika jarak ≤ <?= e(number_format($freeRadiusKm, 1, ',', '.')) ?> km dari petshop.
             Di atas <?= e(number_format($freeRadiusKm, 1, ',', '.')) ?> km dikenakan biaya
             Rp <?= e(number_format($feePerKm, 0, ',', '.')) ?> per km tambahan.
